@@ -189,3 +189,44 @@ For every contribution cycle, the agent must perform these steps in order and mu
 
 ### Completion Rule
 - A task is complete only when code changes are written, tests are executed, and the updated result is placed in the target GitHub folder with a written change summary.
+
+---
+
+## Hard Quality Gates (Non-Negotiable)
+
+- Do not declare success without executable evidence.
+- Every change must include:
+    - Exact commands run
+    - Pass/fail outcome
+    - Artifact paths produced
+- If a required check cannot run, record:
+    - Blocker
+    - Attempted workaround
+    - Residual risk
+
+## GitHub Review Requirements
+
+- Before implementation, inspect:
+    - Remote default branch
+    - Latest commit on target branch
+    - Relevant repository context (issues/PRs) when requested
+- After push, report:
+    - Commit hash
+    - Files included in commit
+    - Confirmation that no extra files were uploaded
+
+## Selected-File Push Policy
+
+- Stage files explicitly by path.
+- Never use broad staging for delivery commits.
+- Verify commit contents with `git show --name-only --pretty=format: HEAD`.
+- If unexpected files appear, abort commit and restage only approved files.
+
+## Validation Evidence Block (Required Output)
+
+- Architecture detected:
+- Dependency check result:
+- Tests run:
+- Lint/build checks run:
+- Failures and fixes:
+- Final pass status:
