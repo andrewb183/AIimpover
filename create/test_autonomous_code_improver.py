@@ -1,9 +1,7 @@
 from pathlib import Path
-
 from create.autonomous_code_improver import CodeImprover, improve_workspace_files
-
-
 def test_improve_file_dry_run_does_not_write(tmp_path):
+    """Auto-generated docstring."""
     source = tmp_path / "sample.py"
     source.write_text("value = 1   \n\nprint(value)\n", encoding="utf-8")
 
@@ -14,8 +12,8 @@ def test_improve_file_dry_run_does_not_write(tmp_path):
     assert source.read_text(encoding="utf-8") == "value = 1   \n\nprint(value)\n"
     assert result["changes_count"] >= 1
 
-
 def test_improve_file_writes_backup_before_mutation(tmp_path):
+    """Auto-generated docstring."""
     source = tmp_path / "backup_sample.py"
     source.write_text("value = 1   \n", encoding="utf-8")
 
@@ -34,8 +32,8 @@ def test_improve_file_writes_backup_before_mutation(tmp_path):
     assert backup_dir.exists()
     assert source.read_text(encoding="utf-8").endswith("\n")
 
-
 def test_improve_workspace_files_honors_exclusions_and_limits(tmp_path):
+    """Auto-generated docstring."""
     keep = tmp_path / "keep.py"
     skip = tmp_path / "__pycache__" / "skip.py"
     skip.parent.mkdir(parents=True, exist_ok=True)

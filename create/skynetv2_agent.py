@@ -3213,7 +3213,7 @@ def load_workspace_policy():
     policy.setdefault("autonomous_validation_coverage_source", ["create"])
     policy.setdefault("autonomous_negative_test_enabled", True)
     policy.setdefault("autonomous_negative_matrix_enabled", True)
-    policy.setdefault("autonomous_ui_review_max_files", 6)
+    policy.setdefault("autonomous_ui_review_max_files", 12)
     policy.setdefault("autonomous_ui_max_consecutive_failures", 25)
     policy.setdefault("auto_tune_enabled", True)
     policy.setdefault("swarm_threshold_min", 1)
@@ -3249,7 +3249,7 @@ def load_workspace_policy():
     policy.setdefault("continue_after_goal_met", True)
     policy.setdefault("local_input_control_enabled", True)
     policy.setdefault("local_input_fail_on_missing_display", False)
-    policy.setdefault("local_input_max_actions_per_command", 50000)
+    policy.setdefault("local_input_max_actions_per_command", 600000)
     policy.setdefault("local_input_safety_pause_ms", 120)
     policy.setdefault("local_input_takeover_popup_enabled", True)
     policy.setdefault("local_input_takeover_countdown_sec", 3)
@@ -3291,8 +3291,10 @@ def load_workspace_policy():
     policy.setdefault("workspace_runtime_checks_max_files", 2000)
     policy.setdefault("code_improvement_enabled", True)
     policy.setdefault("code_improvement_interval_sec", 600)
-    policy.setdefault("code_improvement_target_files", 2)
+    policy.setdefault("code_improvement_target_files", 8)
+    policy.setdefault("code_improvement_visible_passes", 3)
     policy.setdefault("code_improvement_web_queries_enabled", True)
+    policy.setdefault("workspace_review_snapshot_ttl_sec", 180)
     policy.setdefault(
         "error_learning_markers",
         ["Traceback", "Exception", "Error", "ModuleNotFoundError", "panic", "fatal", "segfault"],
@@ -7556,7 +7558,7 @@ def _select_workspace_review_files(policy: dict, max_count: int | None = None) -
     """Pick existing workspace files for UI review/open-close actions.
     This prevents stale/non-existent file paths from halting takeover cycles.
     """
-    limit = int(max_count or policy.get("autonomous_ui_review_max_files", 6) or 6)
+    limit = int(max_count or policy.get("autonomous_ui_review_max_files", 12) or 12)
     limit = max(1, min(50, limit))
     allowed_suffixes = {
         ".py",
@@ -7572,10 +7574,27 @@ def _select_workspace_review_files(policy: dict, max_count: int | None = None) -
     seen: set[str] = set()
 
     # Prioritize rewrite-eligible workspace roots.
+    priority_names = {
+        "skynetv2_agent.py",
+        "autonomous_code_improver.py",
+        "nlp_code_trainer.py",
+        "skynetv1_agent.py",
+        "test_autonomous_code_improver.py",
+        "test_rewrite_transforms.py",
+        "test_improver_unit.py",
+    }
     for root in _workspace_root_paths(policy):
         if not root.exists() or not root.is_dir():
             continue
-        for file_path in root.glob("**/*"):
+        candidate_paths = list(root.glob("**/*"))
+        candidate_paths.sort(
+            key=lambda p: (
+                0 if p.name in priority_names else 1,
+                0 if p.suffix.lower() == ".py" else 1,
+                len(str(p)),
+            )
+        )
+        for file_path in candidate_paths:
             if len(selected) >= limit:
                 break
             if not file_path.is_file():
@@ -7622,7 +7641,11 @@ def _launch_or_focus_vscode_workspace(policy: dict) -> dict:
     return launch
 
 
-def _build_vscode_file_review_actions(file_paths: list[str], search_term: str = "def ") -> list[dict]:
+def _build_vscode_file_review_actions(
+    file_paths: list[str],
+    search_term: str = "def ",
+    repeat_passes: int = 2,
+) -> list[dict]:
     """Build open/view/find/close actions for each file path in VSCode.
     
     CRITICAL FIX: Use Ctrl+P (Quick Open) instead of Ctrl+O to avoid file dialog corruption.
@@ -7630,6 +7653,8 @@ def _build_vscode_file_review_actions(file_paths: list[str], search_term: str = 
     Ctrl+P uses VSCode's built-in quick open which handles paths more reliably.
     """
     actions: list[dict] = []
+    search_terms = [search_term, "class ", "import "]
+    repeat_passes = max(1, int(repeat_passes or 1))
     for fp in file_paths:
         if not _validate_file_exists(fp):
             continue
@@ -7656,33 +7681,52 @@ def _build_vscode_file_review_actions(file_paths: list[str], search_term: str = 
             # Use Ctrl+P (Quick Open) instead of Ctrl+O (OS file dialog)
             {"type": "key", "key": "ctrl+p"},
             {"type": "sleep", "seconds": 0.35},
-            # Type the relative path in small chunks to avoid xdotool buffer overflow
-            {"type": "type", "text": normalized_path[:40], "delay_ms": 100},
-            {"type": "sleep", "seconds": 0.20},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.55},
-            # Navigate to beginning of file
-            {"type": "key", "key": "ctrl+Home"},
-            {"type": "sleep", "seconds": 0.15},
-            # Page down to see more content
-            {"type": "key", "key": "Page_Down"},
-            {"type": "sleep", "seconds": 0.15},
-            # Open Find dialog
-            {"type": "key", "key": "ctrl+f"},
-            {"type": "sleep", "seconds": 0.25},
-            # Type search term
-            {"type": "type", "text": search_term, "delay_ms": 85},
-            {"type": "sleep", "seconds": 0.15},
-            # Press Enter to jump to first match
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.15},
-            # Close Find dialog
-            {"type": "key", "key": "Escape"},
-            {"type": "sleep", "seconds": 0.15},
-            # Close the file tab
-            {"type": "key", "key": "ctrl+w"},
-            {"type": "sleep", "seconds": 0.25},
         ]
+        for chunk in _chunk_text_for_typing(normalized_path, chunk_size=28):
+            file_actions.extend(
+                [
+                    {"type": "type", "text": chunk, "delay_ms": 90},
+                    {"type": "sleep", "seconds": 0.10},
+                ]
+            )
+        file_actions.extend(
+            [
+                {"type": "key", "key": "Return"},
+                {"type": "sleep", "seconds": 0.55},
+                {"type": "key", "key": "ctrl+Home"},
+                {"type": "sleep", "seconds": 0.12},
+            ]
+        )
+        for _ in range(repeat_passes):
+            for term in search_terms:
+                file_actions.extend(
+                    [
+                        {"type": "key", "key": "ctrl+f"},
+                        {"type": "sleep", "seconds": 0.15},
+                        {"type": "type", "text": term, "delay_ms": 75},
+                        {"type": "sleep", "seconds": 0.12},
+                        {"type": "key", "key": "Return"},
+                        {"type": "sleep", "seconds": 0.12},
+                        {"type": "key", "key": "Escape"},
+                        {"type": "sleep", "seconds": 0.12},
+                    ]
+                )
+            file_actions.extend(
+                [
+                    {"type": "key", "key": "Page_Down"},
+                    {"type": "sleep", "seconds": 0.14},
+                    {"type": "key", "key": "Page_Up"},
+                    {"type": "sleep", "seconds": 0.14},
+                    {"type": "move", "x": 220, "y": 180},
+                    {"type": "sleep", "seconds": 0.08},
+                ]
+            )
+        file_actions.extend(
+            [
+                {"type": "key", "key": "ctrl+w"},
+                {"type": "sleep", "seconds": 0.22},
+            ]
+        )
         actions.extend(file_actions)
     
     return actions
@@ -10050,6 +10094,67 @@ def trigger_auto_apply_rewrites():
 
 _last_autonomous_ui_work_at: float = 0.0
 _last_ai_os_autowrite_at: float = 0.0
+_workspace_review_snapshot_cache: dict[str, Any] = {
+    "generated_at": 0.0,
+    "cache_key": "",
+    "selected_files": [],
+    "workspace_analysis": {},
+}
+
+
+def _workspace_review_cache_key(policy: dict) -> str:
+    return "|".join(
+        [
+            str(policy.get("code_improvement_target_files", 8)),
+            str(policy.get("autonomous_ui_review_max_files", 12)),
+            str(policy.get("rewrite_scan_full_workspace", True)),
+            str(policy.get("workspace_paths", [])),
+        ]
+    )
+
+
+def _chunk_text_for_typing(text: str, chunk_size: int = 32) -> list[str]:
+    value = str(text or "")
+    size = max(8, int(chunk_size or 32))
+    return [value[i:i + size] for i in range(0, len(value), size)] or [""]
+
+
+def _get_workspace_review_snapshot(policy: dict, force_refresh: bool = False) -> dict:
+    """Return cached workspace targets and analysis to keep recurring cycles fast."""
+    ttl_sec = max(30, int(policy.get("workspace_review_snapshot_ttl_sec", 180) or 180))
+    now_ts = time.time()
+    cache_key = _workspace_review_cache_key(policy)
+    cached = dict(_workspace_review_snapshot_cache)
+    if not force_refresh and cached.get("cache_key") == cache_key and (now_ts - float(cached.get("generated_at", 0.0) or 0.0)) < ttl_sec:
+        return {
+            "selected_files": list(cached.get("selected_files", [])),
+            "workspace_analysis": dict(cached.get("workspace_analysis", {})),
+            "cache_hit": True,
+        }
+
+    selected_files = _select_workspace_review_files(
+        policy,
+        max_count=max(1, int(policy.get("code_improvement_target_files", 8) or 8)),
+    )
+    workspace_analysis = {}
+    try:
+        workspace_analysis = analyze_workspace_comprehensive(WORKSPACE_ROOT)
+    except Exception as exc:
+        workspace_analysis = {"status": "error", "reason": str(exc)[:200]}
+
+    _workspace_review_snapshot_cache.update(
+        {
+            "generated_at": now_ts,
+            "cache_key": cache_key,
+            "selected_files": list(selected_files),
+            "workspace_analysis": dict(workspace_analysis),
+        }
+    )
+    return {
+        "selected_files": selected_files,
+        "workspace_analysis": workspace_analysis,
+        "cache_hit": False,
+    }
 
 
 def _maybe_run_periodic_ui_work(policy: dict) -> dict:
@@ -10072,18 +10177,11 @@ def _maybe_run_periodic_ui_work(policy: dict) -> dict:
     if min_interval_sec > 0 and (now_ts - _last_autonomous_ui_work_at) < min_interval_sec:
         return {"status": "throttled", "wait_sec": round(min_interval_sec - (now_ts - _last_autonomous_ui_work_at), 2)}
 
-    selected_files = _select_workspace_review_files(
-        policy,
-        max_count=max(1, int(policy.get("code_improvement_target_files", 2) or 2)),
-    )
+    snapshot = _get_workspace_review_snapshot(policy)
+    selected_files = list(snapshot.get("selected_files", []))
     if not selected_files:
         return {"status": "no_targets"}
-
-    workspace_analysis = {}
-    try:
-        workspace_analysis = analyze_workspace_comprehensive(WORKSPACE_ROOT)
-    except Exception as exc:
-        workspace_analysis = {"status": "error", "reason": str(exc)[:200]}
+    workspace_analysis = dict(snapshot.get("workspace_analysis", {}))
 
     workspace_root = WORKSPACE_ROOT.resolve()
     priority_files = [
@@ -10120,7 +10218,11 @@ def _maybe_run_periodic_ui_work(policy: dict) -> dict:
             {"type": "sleep", "seconds": 0.25},
         ]
         visible_actions.extend(
-            _build_vscode_file_review_actions(selected_files[: min(4, len(selected_files))], search_term="def ")
+            _build_vscode_file_review_actions(
+                selected_files[: min(10, len(selected_files))],
+                search_term="def ",
+                repeat_passes=max(2, int(policy.get("code_improvement_visible_passes", 3) or 3)),
+            )
         )
         try:
             ui_review = _execute_local_ui_actions(visible_actions, ui_review_policy)
@@ -10188,6 +10290,7 @@ def _maybe_run_periodic_ui_work(policy: dict) -> dict:
         "mode": "visible_ui_review_and_code_improvement",
         "targets": [str(path) for path in normalized_targets[: max(1, len(selected_files))]],
         "selected_files": selected_files,
+        "snapshot_cache_hit": bool(snapshot.get("cache_hit", False)),
         "ui_review": ui_review,
         "shell_checks": shell_checks,
         "web_guidance": {
@@ -10219,6 +10322,7 @@ def _maybe_run_periodic_ui_work(policy: dict) -> dict:
                 "status": result.get("status"),
                 "targets": result.get("targets", []),
                 "selected_files": result.get("selected_files", []),
+                "snapshot_cache_hit": bool(result.get("snapshot_cache_hit", False)),
                 "ui_review": result.get("ui_review", {}),
                 "improved_files": improved_files,
                 "total_improvements": total_improvements,
