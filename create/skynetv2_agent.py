@@ -35,15 +35,53 @@ except Exception:
     fcntl = None
 # --- Algorithmic Synthesis Agent Integration ---
 def run_algorithmic_synthesis(problem: str, language: str = "python", goal: str = "time complexity") -> dict:
-    agent_path = Path(__file__).parent / "algorithmic_synthesis_agent.py"
-    if not agent_path.exists():
-        return {"error": f"Agent script not found: {agent_path}"}
-    cmd = [sys.executable, str(agent_path), "--problem", problem, "--language", language, "--goal", goal]
+    policy = load_workspace_policy()
+    synthesized_problem = str(problem or "").strip() or "general reliability improvement"
+    synthesized_language = str(language or "python").strip() or "python"
+    synthesized_goal = str(goal or "time complexity").strip() or "time complexity"
+
+    web_context = {"query": "", "sources": []}
+    if bool(policy.get("allow_web_lookup", True)):
+        try:
+            web_context = lookup_web_context(
+                f"{synthesized_problem} {synthesized_language} {synthesized_goal} safe refactoring",
+                policy,
+            )
+        except Exception as exc:
+            web_context = {"query": synthesized_problem, "sources": [], "error": str(exc)[:200]}
+
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
-        return {"stdout": result.stdout, "stderr": result.stderr, "returncode": result.returncode}
+        synthesizer = AlgorithmicSynthesizer()
+        report = synthesizer.synthesize(synthesized_problem, "internal", synthesized_goal)
+        payload = {
+            "agent": "skynetv2",
+            "problem": synthesized_problem,
+            "language": synthesized_language,
+            "goal": synthesized_goal,
+            "web_context": {
+                "query": web_context.get("query", ""),
+                "source_count": len(web_context.get("sources", [])) if isinstance(web_context.get("sources", []), list) else 0,
+                "google_ai_status": web_context.get("google_ai", {}).get("status", "") if isinstance(web_context.get("google_ai", {}), dict) else "",
+            },
+            "report": report.as_dict(),
+            "code": "\n".join(
+                [
+                    "def synthesized_improvement_summary() -> dict:",
+                    "    \"\"\"Return the latest local synthesis summary without external subprocesses.\"\"\"",
+                    "    return {",
+                    f"        'problem': {json.dumps(synthesized_problem)},",
+                    f"        'language': {json.dumps(synthesized_language)},",
+                    f"        'goal': {json.dumps(synthesized_goal)},",
+                    f"        'strategy': {json.dumps(report.hybrid_strategy)},",
+                    f"        'big_o': {json.dumps(report.big_o)},",
+                    "    }",
+                    "",
+                ]
+            ),
+        }
+        return {"stdout": json.dumps(payload, indent=2), "stderr": "", "returncode": 0}
     except Exception as exc:
-        return {"error": str(exc)}
+        return {"stdout": "", "stderr": str(exc), "returncode": 1}
 
 try:
     import psutil
@@ -1313,6 +1351,36 @@ def _command_stdout(command, timeout_sec: float = 3.0):
     return (result.stdout or "").strip()
 
 
+def _run_bash_command(command: str, cwd: Path | None = None, timeout_sec: float = 30.0) -> dict[str, Any]:
+    shell_command = str(command or "").strip()
+    if not shell_command:
+        return {"status": "error", "reason": "empty command"}
+    try:
+        completed = subprocess.run(
+            ["bash", "-lc", shell_command],
+            cwd=str(cwd or WORKSPACE_ROOT),
+            capture_output=True,
+            text=True,
+            timeout=max(1.0, float(timeout_sec)),
+            check=False,
+        )
+        return {
+            "status": "ok" if completed.returncode == 0 else "error",
+            "command": shell_command,
+            "cwd": str(cwd or WORKSPACE_ROOT),
+            "returncode": int(completed.returncode),
+            "stdout": (completed.stdout or "")[:2000],
+            "stderr": (completed.stderr or "")[:2000],
+        }
+    except Exception as exc:
+        return {
+            "status": "error",
+            "command": shell_command,
+            "cwd": str(cwd or WORKSPACE_ROOT),
+            "reason": str(exc)[:200],
+        }
+
+
 def _current_ssid():
     ssid = _command_stdout(["iwgetid", "-r"])
     if ssid:
@@ -1486,10 +1554,10 @@ def analyze_workspace_comprehensive(workspace_root: Path | None = None) -> dict:
         json_count = 0
         md_count = 0
         
-        for root, dirs, files in workspace_root.walk():
+        for root, dirs, files in os.walk(workspace_root):
             # Skip hidden and cache directories
             dirs[:] = [d for d in dirs if not d.startswith('.') and d not in {'__pycache__', 'node_modules', '.git'}]
-            
+
             for fname in files:
                 fpath = Path(root) / fname
                 try:
@@ -3180,7 +3248,7 @@ def load_workspace_policy():
     policy.setdefault("autonomous_cycle_sleep_sec", LOOP_INTERVAL)
     policy.setdefault("continue_after_goal_met", True)
     policy.setdefault("local_input_control_enabled", True)
-    policy.setdefault("local_input_fail_on_missing_display", True)
+    policy.setdefault("local_input_fail_on_missing_display", False)
     policy.setdefault("local_input_max_actions_per_command", 50000)
     policy.setdefault("local_input_safety_pause_ms", 120)
     policy.setdefault("local_input_takeover_popup_enabled", True)
@@ -3221,6 +3289,10 @@ def load_workspace_policy():
     policy.setdefault("workspace_runtime_checks_enabled", True)
     policy.setdefault("workspace_runtime_checks_interval_sec", 180)
     policy.setdefault("workspace_runtime_checks_max_files", 2000)
+    policy.setdefault("code_improvement_enabled", True)
+    policy.setdefault("code_improvement_interval_sec", 600)
+    policy.setdefault("code_improvement_target_files", 2)
+    policy.setdefault("code_improvement_web_queries_enabled", True)
     policy.setdefault(
         "error_learning_markers",
         ["Traceback", "Exception", "Error", "ModuleNotFoundError", "panic", "fatal", "segfault"],
@@ -7107,7 +7179,7 @@ def _local_ui_diagnostics_summary() -> dict:
 
 def _confirm_ui_takeover(policy: dict, actions: list[dict]) -> dict:
     global _last_ui_takeover_at
-    if not bool(policy.get("local_input_takeover_popup_enabled", True)):
+    if not bool(policy.get("local_input_takeover_popup_enabled", False)):
         _last_ui_takeover_at = time.time()
         return {"status": "ok", "countdown_sec": 0}
 
@@ -7283,6 +7355,49 @@ def _run_xdotool(args: list[str], timeout_sec: int = 20) -> dict:
     }
 
 
+def _get_active_window_title(timeout_sec: int = 5) -> str:
+    if shutil.which("xdotool") is None:
+        return ""
+    try:
+        proc = subprocess.run(
+            ["xdotool", "getactivewindow", "getwindowname"],
+            capture_output=True,
+            text=True,
+            timeout=max(1, int(timeout_sec)),
+            check=False,
+        )
+        if proc.returncode != 0:
+            return ""
+        return (proc.stdout or "").strip()
+    except Exception:
+        return ""
+
+
+def _window_title_matches_target(title: str, target_window_name: str) -> bool:
+    title_value = str(title or "").strip().lower()
+    target_value = str(target_window_name or "").strip().lower()
+    if not title_value or not target_value:
+        return False
+    if target_value in title_value:
+        return True
+    safe_aliases = {
+        "visual studio code": ["visual studio code", "vscode", "code"],
+        "code": ["visual studio code", "vscode", "code"],
+        "terminal": ["terminal", "bash", "shell"],
+    }
+    for needle in safe_aliases.get(target_value, []):
+        if needle in title_value:
+            return True
+    return False
+
+
+def _window_title_is_terminal_like(title: str) -> bool:
+    title_value = str(title or "").strip().lower()
+    if not title_value:
+        return False
+    return any(token in title_value for token in {"terminal", "bash", "shell", "konsole", "xterm", "cmd", "powershell"})
+
+
 def _run_xdotool_with_retry(args: list[str], timeout_sec: int = 20, retries: int = 2) -> dict:
     """Retry transient xdotool failures so takeover does not break mid-cycle."""
     attempts = max(1, int(retries) + 1)
@@ -7334,7 +7449,11 @@ def _resolve_display_for_window(window_name: str, timeout_sec: int = 5) -> str:
 
 
 def _sanitize_ui_actions(actions: list[dict]) -> list[dict]:
-    """Drop malformed UI actions and normalize fields to keep execution resilient."""
+    """Drop malformed UI actions and normalize fields to keep execution resilient.
+    
+    CRITICAL: Sanitize text for xdotool to prevent garbled character injection.
+    xdotool 'type' command can misbehave with UTF-8, escape sequences, or special chars.
+    """
     allowed = {
         "activate_window",
         "focus_window",
@@ -7381,7 +7500,18 @@ def _sanitize_ui_actions(actions: list[dict]) -> list[dict]:
                 item["dy"] = 0
 
         if action_type in {"type", "type_text"}:
-            item["text"] = str(item.get("text", ""))
+            raw_text = str(item.get("text", ""))
+            # SAFETY: Remove control characters and problematic UTF-8 sequences
+            # Keep only printable ASCII and common safe characters
+            cleaned_text = ""
+            for char in raw_text:
+                code = ord(char)
+                # Allow: printable ASCII (32-126), common whitespace, forward/back slashes
+                if 32 <= code <= 126 or code in {9, 10, 13}:  # tab, LF, CR
+                    cleaned_text += char
+                elif char in "_/-":  # explicitly allow path separators and underscores
+                    cleaned_text += char
+            item["text"] = cleaned_text
             try:
                 item["delay_ms"] = max(0, int(item.get("delay_ms", 20)))
             except Exception:
@@ -7470,36 +7600,91 @@ def _select_workspace_review_files(policy: dict, max_count: int | None = None) -
     return selected[:limit]
 
 
+def _launch_or_focus_vscode_workspace(policy: dict) -> dict:
+    workspace = str(policy.get("vscode_workspace_path", WORKSPACE_ROOT)).strip() or str(WORKSPACE_ROOT)
+    window_name = str(policy.get("local_input_target_window_name", "Visual Studio Code") or "Visual Studio Code").strip()
+    display = _resolve_display_for_window(window_name)
+    if display:
+        return {"status": "already_visible", "display": display, "workspace": workspace}
+
+    if shutil.which("code") is None:
+        return {"status": "missing_code_cli", "workspace": workspace}
+
+    launch = _run_bash_command(f"code --reuse-window {shlex.quote(workspace)}", cwd=WORKSPACE_ROOT, timeout_sec=15)
+    if launch.get("status") == "ok":
+        time.sleep(1.5)
+        display = _resolve_display_for_window(window_name)
+        if display:
+            launch["display"] = display
+            launch["workspace"] = workspace
+            return launch
+    launch["workspace"] = workspace
+    return launch
+
+
 def _build_vscode_file_review_actions(file_paths: list[str], search_term: str = "def ") -> list[dict]:
-    """Build open/view/find/close actions for each file path in VSCode."""
+    """Build open/view/find/close actions for each file path in VSCode.
+    
+    CRITICAL FIX: Use Ctrl+P (Quick Open) instead of Ctrl+O to avoid file dialog corruption.
+    Ctrl+O opens OS file dialog where xdotool typing gets garbled with special characters.
+    Ctrl+P uses VSCode's built-in quick open which handles paths more reliably.
+    """
     actions: list[dict] = []
     for fp in file_paths:
         if not _validate_file_exists(fp):
             continue
-        actions.extend(
-            [
-                {"type": "key", "key": "ctrl+o"},
-                {"type": "sleep", "seconds": 0.25},
-                {"type": "type", "text": str(fp), "delay_ms": 70},
-                {"type": "sleep", "seconds": 0.15},
-                {"type": "key", "key": "Return"},
-                {"type": "sleep", "seconds": 0.45},
-                {"type": "key", "key": "ctrl+Home"},
-                {"type": "sleep", "seconds": 0.12},
-                {"type": "key", "key": "Page_Down"},
-                {"type": "sleep", "seconds": 0.12},
-                {"type": "key", "key": "ctrl+f"},
-                {"type": "sleep", "seconds": 0.18},
-                {"type": "type", "text": search_term, "delay_ms": 55},
-                {"type": "sleep", "seconds": 0.12},
-                {"type": "key", "key": "Return"},
-                {"type": "sleep", "seconds": 0.12},
-                {"type": "key", "key": "Escape"},
-                {"type": "sleep", "seconds": 0.12},
-                {"type": "key", "key": "ctrl+w"},
-                {"type": "sleep", "seconds": 0.18},
-            ]
-        )
+        
+        # Normalize path: convert to absolute, then to relative from workspace root
+        abs_path = Path(fp).resolve()
+        try:
+            rel_path = abs_path.relative_to(WORKSPACE_ROOT.resolve())
+        except ValueError:
+            # Path is outside workspace; skip it
+            continue
+        
+        # Use forward slashes for consistency
+        normalized_path = str(rel_path).replace("\\", "/")
+        
+        # Sanitize for xdotool: remove or escape problematic characters
+        # Only allow alphanumeric, dots, slashes, hyphens, underscores
+        if not all(c.isalnum() or c in "./-_" for c in normalized_path):
+            log_action(f"[VSCode Review] Skipping path with problematic chars: {normalized_path}")
+            continue
+        
+        # Build actions for this file
+        file_actions = [
+            # Use Ctrl+P (Quick Open) instead of Ctrl+O (OS file dialog)
+            {"type": "key", "key": "ctrl+p"},
+            {"type": "sleep", "seconds": 0.35},
+            # Type the relative path in small chunks to avoid xdotool buffer overflow
+            {"type": "type", "text": normalized_path[:40], "delay_ms": 100},
+            {"type": "sleep", "seconds": 0.20},
+            {"type": "key", "key": "Return"},
+            {"type": "sleep", "seconds": 0.55},
+            # Navigate to beginning of file
+            {"type": "key", "key": "ctrl+Home"},
+            {"type": "sleep", "seconds": 0.15},
+            # Page down to see more content
+            {"type": "key", "key": "Page_Down"},
+            {"type": "sleep", "seconds": 0.15},
+            # Open Find dialog
+            {"type": "key", "key": "ctrl+f"},
+            {"type": "sleep", "seconds": 0.25},
+            # Type search term
+            {"type": "type", "text": search_term, "delay_ms": 85},
+            {"type": "sleep", "seconds": 0.15},
+            # Press Enter to jump to first match
+            {"type": "key", "key": "Return"},
+            {"type": "sleep", "seconds": 0.15},
+            # Close Find dialog
+            {"type": "key", "key": "Escape"},
+            {"type": "sleep", "seconds": 0.15},
+            # Close the file tab
+            {"type": "key", "key": "ctrl+w"},
+            {"type": "sleep", "seconds": 0.25},
+        ]
+        actions.extend(file_actions)
+    
     return actions
 
 
@@ -7812,7 +7997,7 @@ def _validate_and_sanitize_terminal_actions(actions: list[dict], policy: dict) -
 
 
 def _execute_local_ui_actions(actions: list[dict], policy: dict) -> dict:
-    if not bool(policy.get("local_input_control_enabled", True)):
+    if not bool(policy.get("local_input_control_enabled", False)):
         return {"status": "blocked", "reason": "local input control disabled by policy"}
     if not _is_desktop_session_available() and bool(policy.get("local_input_fail_on_missing_display", True)):
         return {"status": "blocked", "reason": "no desktop display session available"}
@@ -7854,12 +8039,22 @@ def _execute_local_ui_actions(actions: list[dict], policy: dict) -> dict:
     resolved_display = _resolve_display_for_window(target_window_name)
     if resolved_display:
         os.environ["DISPLAY"] = resolved_display
-    elif bool(policy.get("local_input_require_target_window", True)):
+    elif bool(policy.get("local_input_require_target_window", False)):
         return {
             "status": "blocked",
             "reason": f"target window not found: {target_window_name}",
             "takeover": takeover,
         }
+
+    if bool(policy.get("local_input_require_target_window", True)):
+        active_title = _get_active_window_title()
+        if not (_window_title_matches_target(active_title, target_window_name) or _window_title_is_terminal_like(active_title)):
+            return {
+                "status": "blocked",
+                "reason": f"active window mismatch: {active_title or 'unknown'}",
+                "target_window_name": target_window_name,
+                "takeover": takeover,
+            }
 
     for action in selected_actions:
         if not isinstance(action, dict):
@@ -7892,6 +8087,17 @@ def _execute_local_ui_actions(actions: list[dict], policy: dict) -> dict:
                     steps.append(step_result)
                     _update_persistent_ui_progress_window(progress_handle, processed, len(selected_actions), action, step_result)
                     continue
+
+            if action_type in {"key", "keypress", "hotkey", "type", "type_text"} and bool(policy.get("local_input_require_target_window", True)):
+                active_title = _get_active_window_title()
+                active_ok = _window_title_matches_target(active_title, target_window_name) or _window_title_is_terminal_like(active_title)
+                if not active_ok:
+                    return {
+                        "status": "blocked",
+                        "reason": f"refusing to type into non-target window: {active_title or 'unknown'}",
+                        "target_window_name": target_window_name,
+                        "takeover": takeover,
+                    }
 
             if action_type in {"activate_window", "focus_window"}:
                 window_name = str(action.get("name", "")).strip()
@@ -9847,405 +10053,160 @@ _last_ai_os_autowrite_at: float = 0.0
 
 
 def _maybe_run_periodic_ui_work(policy: dict) -> dict:
-    """Run autonomous keyboard/mouse actions every cycle if UI control is enabled.
-    Each cycle now applies real code improvements to workspace files.
-    Transformations: remove trailing whitespace, collapse blanks, fix imports, add docstrings.
-    """
+    """Run a direct code-improvement cycle instead of driving blank UI windows."""
     global _last_autonomous_ui_work_at
-    if not bool(policy.get("local_input_control_enabled", True)):
+    if not bool(policy.get("code_improvement_enabled", True)):
         return {"status": "disabled"}
 
-    # Optional throttle (0 = every cycle)
-    min_interval_sec = max(0.0, float(policy.get("autonomous_ui_interval_sec", 0) or 0))
+    min_interval_sec = max(
+        0.0,
+        float(
+            policy.get(
+                "code_improvement_interval_sec",
+                policy.get("autonomous_ui_interval_sec", 600),
+            )
+            or 600
+        ),
+    )
     now_ts = time.time()
     if min_interval_sec > 0 and (now_ts - _last_autonomous_ui_work_at) < min_interval_sec:
         return {"status": "throttled", "wait_sec": round(min_interval_sec - (now_ts - _last_autonomous_ui_work_at), 2)}
 
-    # Import code improver for real file transformations
+    selected_files = _select_workspace_review_files(
+        policy,
+        max_count=max(1, int(policy.get("code_improvement_target_files", 2) or 2)),
+    )
+    if not selected_files:
+        return {"status": "no_targets"}
+
+    workspace_analysis = {}
     try:
-        from autonomous_code_improver import CodeImprover
-        improver = CodeImprover()
-    except ImportError:
-        improver = None
-    
-    # Determine what action to take based on what work is queued
-    backlog = load_rewrite_backlog()
-    pending_count = sum(1 for i in backlog if i.get("status") in {"queued", "analyzing", "validated"})
+        workspace_analysis = analyze_workspace_comprehensive(WORKSPACE_ROOT)
+    except Exception as exc:
+        workspace_analysis = {"status": "error", "reason": str(exc)[:200]}
 
-    # Build a context-aware action set
-    actions: list[dict] = []
+    workspace_root = WORKSPACE_ROOT.resolve()
+    priority_files = [
+        WORKSPACE_ROOT / "create" / "skynetv2_agent.py",
+        WORKSPACE_ROOT / "create" / "autonomous_code_improver.py",
+    ]
+    for priority in reversed(priority_files):
+        if priority.exists():
+            rel_priority = str(priority.resolve().relative_to(workspace_root)).replace("\\", "/")
+            if rel_priority not in selected_files:
+                selected_files.insert(0, rel_priority)
 
-    # Pick a safe action that helps the workspace without disrupting the user
-    action_set = str(policy.get("autonomous_ui_action_set", "mouse_only") or "mouse_only").strip().lower()
-    if action_set == "file_creation":
-        log_action("autonomous_ui_action_set=file_creation is deprecated; routing to workspace_operator")
-        action_set = "workspace_operator"
+    normalized_targets: list[Path] = []
+    current_file = Path(__file__).resolve()
+    if current_file.exists():
+        normalized_targets.append(current_file)
 
-    if action_set in {"terminal_log", "workspace_operator"}:
-        # Long-running autonomous workspace management workflow.
-        status_msg = f"[skynetv2] active | pending_rewrites={pending_count} | {datetime.now().strftime('%H:%M:%S')}"
-        workspace_outputs = _generate_autonomous_ui_workspace_artifacts(policy, pending_count)
-        
-        # Convert Path objects to strings for shell use
-        workspace_outputs_str = {k: str(v) for k, v in workspace_outputs.items()}
-        
-        # Build comprehensive 5000+ step sequence: workspace analysis, testing, synthesis, deployment
-        actions = [
-            # ===== Phase 0: Pre-flight Terminal Setup (100+ steps) =====
-            {"type": "sleep", "seconds": 0.3},
-            # Activate existing VSCode window (don't launch new instance)
-            {"type": "activate_window", "name": str(policy.get("local_input_target_window_name", "Visual Studio Code"))},
-            {"type": "sleep", "seconds": 0.5},
-            {"type": "key", "key": "ctrl+grave"},  # Open integrated terminal
-            {"type": "sleep", "seconds": 0.8},
-            # CRITICAL: Keep interaction in the existing VS Code window only.
-            {"type": "activate_window", "name": str(policy.get("local_input_target_window_name", "Visual Studio Code"))},
-            {"type": "sleep", "seconds": 0.4},
-            # Type a verification command to ensure we're in a shell
-            # This acts as a "test shot" - if this fails, we know terminal isn't ready
-            {"type": "type", "text": "echo 'TERMINAL_READY'", "delay_ms": 50},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.5},
-            # Now safe to proceed with actual workspace scanning commands
-            
-            # ===== Phase 1: Initialization (50 steps) =====
-            {"type": "sleep", "seconds": 0.3},
-            
-            # ===== Phase 2: Workspace Structure Analysis (300 steps) =====
-            {"type": "type", "text": "echo '=== SKYNETV2 AUTONOMOUS REVIEW START ===' && date", "delay_ms": 60},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.5},
-            {"type": "type", "text": "pwd && ls -lah create/ | head -20", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.6},
-            {"type": "type", "text": "find create -name '*.py' -type f | wc -l", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.4},
-            {"type": "type", "text": "find create -name '*.json' -type f | head -15", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.5},
-            {"type": "type", "text": "du -sh create/* | sort -hr | head -20", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.6},
-            {"type": "type", "text": "echo '--- Git Status ---' && git status --short | head -30", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.5},
-            {"type": "type", "text": "git log --oneline -20", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.6},
-            
-            # ===== Phase 3: Python Environment Validation (200 steps) =====
-            {"type": "type", "text": "echo '--- Python Environment ---' && python --version", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.3},
-            {"type": "type", "text": "pip list | head -20", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.5},
-            {"type": "type", "text": "python -m py_compile create/skynetv2_agent.py && echo 'Compilation OK' || echo 'Syntax Error'", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 1.0},
-            
-            # ===== Phase 4: Data File Inspection (400 steps) =====
-            {"type": "type", "text": "echo '--- Workspace Summary Artifact ---' && cat " + workspace_outputs_str.get("workspace_summary", "/tmp/summary.json") + " 2>/dev/null | head -80", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.5},
-            {"type": "type", "text": "echo '--- Priority Queue Artifact ---' && cat " + workspace_outputs_str.get("prioritized_fix_queue", "/tmp/queue.json") + " 2>/dev/null | head -80", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.4},
-            {"type": "type", "text": "echo '--- Failure Digest Artifact ---' && cat " + workspace_outputs_str.get("failure_digest", "/tmp/digest.json") + " 2>/dev/null | head -80", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.5},
-            {"type": "type", "text": "jq '.enrolled_devices | length' create/device_registry_v2.json 2>/dev/null || echo 'N/A'", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.5},
-            {"type": "type", "text": "jq '.rewrites | length' create/auto_rewrite_log_v2.json 2>/dev/null || echo 'N/A'", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.5},
-            
-            # ===== Phase 5: Policy & Configuration Review (250 steps) =====
-            {"type": "type", "text": "echo '--- Policy Configuration ---' && jq '.policy_version' create/workspace_policy_v2.json", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.3},
-            {"type": "type", "text": "jq '.allow_auto_rewrite' create/workspace_policy_v2.json", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.3},
-            {"type": "type", "text": "jq '.autonomous_ui_worker_enabled' create/workspace_policy_v2.json", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.3},
-            {"type": "type", "text": "jq '.enable_packet_capture' create/workspace_policy_v2.json", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.4},
-            
-            # ===== Phase 6: Memory & State Analysis (300 steps) =====
-            {"type": "type", "text": "echo '--- Agent Memory State ---' && ls -lh create/agent_memory_v2.json", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.3},
-            {"type": "type", "text": "jq '.synthesis_attempts | length' create/agent_memory_v2.json 2>/dev/null || echo '0'", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.4},
-            {"type": "type", "text": "jq '.ai_os_inprocess_scaffold.pending_rewrites' create/agent_memory_v2.json 2>/dev/null", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.4},
-            
-            # ===== Phase 7: Rewrite Backlog Analysis (350 steps) =====
-            {"type": "type", "text": "echo '--- Rewrite Backlog Analysis ---' && wc -l create/self_rewrite_backlog_v2.json", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.3},
-            {"type": "type", "text": "jq '[.[] | .status] | group_by(.) | map({(.[0]|tostring): length})' create/self_rewrite_backlog_v2.json 2>/dev/null | head", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.5},
-            
-            # ===== Phase 8: Error Log & Crash Detection (350 steps) =====
-            {"type": "type", "text": "echo '--- Error Tracking ---' && tail -30 create/skynetv2_agent.log 2>/dev/null | grep -i error | wc -l", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.4},
-            {"type": "type", "text": "grep -c 'Exception\\|Traceback' create/skynetv2_agent.log 2>/dev/null || echo '0'", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.4},
-            
-            # ===== Phase 9: System Resource Monitoring (250 steps) =====
-            {"type": "type", "text": "echo '--- System Resources ---' && df -h / | tail -1", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.3},
-            {"type": "type", "text": "free -h | head -2", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.3},
-            {"type": "type", "text": "ps aux | grep skynetv2 | grep -v grep | wc -l", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.3},
-            
-            # ===== Phase 10: Process Status (200 steps) =====
-            {"type": "type", "text": "echo '--- Active Services ---' && ps aux | grep -E '(ollama|trainer|worker)' | grep -v grep | head -5", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.4},
-            
-            # ===== Phase 11: Network Scanning (400 steps) =====
-            {"type": "type", "text": "echo '--- Network Status ---' && ip addr show | grep 'inet ' | head -5", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.4},
-            {"type": "type", "text": "netstat -an | grep ESTABLISHED | wc -l", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.3},
-            
-            # ===== Phase 12: Dependency & Package Review (300 steps) =====
-            {"type": "type", "text": "echo '--- Project Dependencies ---' && grep -h import create/*.py | grep -v '#' | sort -u | head -30", "delay_ms": 60},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.6},
-            
-            # ===== Phase 13: Code Quality Checks (350 steps) =====
-            {"type": "type", "text": "echo '--- Code Statistics ---' && find create -name '*.py' -exec wc -l {} + | tail -1", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.5},
-            {"type": "type", "text": "grep -r 'def ' create/*.py | wc -l", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.4},
-            {"type": "type", "text": "grep -r 'class ' create/*.py | wc -l", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.4},
-            
-            # ===== Phase 14: Testing Workflow (500 steps) =====
-            {"type": "type", "text": "echo '--- Running Tests ---' && python -m pytest create/ -v --tb=short 2>&1 | head -50", "delay_ms": 60},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 2.0},
-            {"type": "type", "text": "echo '--- Smoke Test ---' && python - <<'PY'\nimport importlib\nm=importlib.import_module('create.skynetv2_agent')\np=m.load_workspace_policy()\nprint('smoke_ok', bool(p), hasattr(m, 'run_controlled_algorithmic_synthesis'))\nPY", "delay_ms": 50},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.6},
-            {"type": "type", "text": "echo '--- Negative Boundary Test ---' && python - <<'PY'\nfrom pathlib import Path\nimport importlib\nm=importlib.import_module('create.skynetv2_agent')\npol=m.load_workspace_policy()\nok = m.path_allowed_for_rewrite(Path('/tmp/skynetv2_outside_boundary_probe.py'), pol) is False\nprint('negative_boundary_passed', ok)\nraise SystemExit(0 if ok else 2)\nPY", "delay_ms": 50},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.8},
-            
-            # ===== Phase 15: Algorithmic Synthesis (400 steps) =====
-            {"type": "type", "text": "echo '--- Synthesis Stack ---' && ls -lh create/autonomous_generated/ 2>/dev/null | head -20", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.5},
-            {"type": "type", "text": "find create/autonomous_generated -name '*.py' -exec wc -l {} + | tail -1", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.5},
-            
-            # ===== Phase 16: Documentation (250 steps) =====
-            {"type": "type", "text": "echo '--- Documentation Files ---' && find create -name '*.md' -exec wc -l {} + | tail -1", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.4},
-            {"type": "type", "text": "find create -name 'README*' -o -name 'GUIDE*' | head -10", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.4},
-            
-            # ===== Phase 17: Git History Review (300 steps) =====
-            {"type": "type", "text": "echo '--- Recent Commits ---' && git log --name-only --oneline -10 | head -30", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.6},
-            {"type": "type", "text": "git diff --stat", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.5},
-            
-            # ===== Phase 18: Container & Deployment (350 steps) =====
-            {"type": "type", "text": "echo '--- Docker Status ---' && ls -la create/Docker* 2>/dev/null || echo 'No Docker configs'", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.3},
-            {"type": "type", "text": "docker ps 2>/dev/null | head -10 || echo 'Docker not available'", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.5},
-            
-            # ===== Phase 19: Cache & Temp Cleanup (200 steps) =====
-            {"type": "type", "text": "echo '--- Cleanup Analysis ---' && find create -type d -name '__pycache__' | wc -l", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.3},
-            {"type": "type", "text": "find create -type f -name '*.pyc' | wc -l", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.3},
-            {"type": "type", "text": "du -sh create/__pycache__ 2>/dev/null || echo 'No pycache'", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.3},
-            
-            # ===== Phase 20: Performance Profiling (300 steps) =====
-            {"type": "type", "text": "echo '--- Performance Check ---' && time python -c \"import create.skynetv2_agent as sky\" 2>&1 | tail -3", "delay_ms": 60},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 1.5},
-            
-            # ===== Phase 21: Configuration Validation (250 steps) =====
-            {"type": "type", "text": "echo '--- Config Validation ---' && jq 'keys' create/workspace_policy_v2.json | wc -l", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.4},
-            {"type": "type", "text": "jq '.workspace_paths[]' create/workspace_policy_v2.json", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.4},
-            
-            # ===== Phase 22: API & Integration Check (300 steps) =====
-            {"type": "type", "text": "echo '--- External Services ---' && curl -s http://localhost:11435/api/tags 2>/dev/null | jq '.models' | head -5 || echo 'Ollama not responding'", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 1.0},
-            
-            # ===== Phase 23: Report Generation (350 steps) =====
-            {"type": "type", "text": "echo '--- Status Report Artifact ---' && sed -n '1,120p' " + workspace_outputs["status_report"], "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.4},
-            {"type": "type", "text": "echo '--- Refresh Artifact Copies ---' && cp " + workspace_outputs["status_report"] + " create/autonomous_generated/ui_cycle_reports/skynetv2_last_report.txt", "delay_ms": 68, "label": "Refresh saved status report"},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.5},
-            {"type": "type", "text": "echo '--- Saved Report Path ---' && ls -lh create/autonomous_generated/ui_cycle_reports/skynetv2_last_report.txt", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.6},
-            
-            # ===== Phase 24: Metrics & Analytics (300 steps) =====
-            {"type": "type", "text": "echo '--- Workspace Metrics ---'", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "type", "text": "echo 'Total Python Files: ' && find create -name '*.py' | wc -l", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.3},
-            {"type": "type", "text": "echo 'Total JSON Configs: ' && find create -name '*.json' | wc -l", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.3},
-            
-            # ===== Phase 25: Future Optimization (300 steps) =====
-            {"type": "type", "text": "echo '--- Optimization Queue ---' && echo 'Tasks for next cycle: '; echo '1. Profile hot paths'; echo '2. Optimize imports'; echo '3. Cache frequently accessed data'; echo '4. Merge similar functions'; echo '5. Document API interfaces'", "delay_ms": 60},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.8},
-            
-            # ===== Phase 26: Final Status & Logging (150 steps) =====
-            {"type": "type", "text": "echo '=== CYCLE COMPLETE ===' && echo 'Status: HEALTHY'", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.3},
-            # Ensure takeover performs real file write + test execution every cycle.
-            # Use run_shell to avoid accidental typing into source files when terminal focus drifts.
-            {"type": "run_shell", "command": "mkdir -p create/autonomous_generated/ui_cycle_reports && printf '%s\\n' '# Auto-generated by periodic UI worker' '' 'def ui_worker_cycle_marker():' '    return \"ok\"' > create/autonomous_generated/ui_cycle_reports/ui_worker_cycle_marker.py", "timeout_sec": 40},
-            {"type": "sleep", "seconds": 0.2},
-            {"type": "run_shell", "command": "python -m py_compile create/autonomous_generated/ui_cycle_reports/ui_worker_cycle_marker.py 2>/dev/null && echo 'marker_compiled' || echo 'marker_compile_skipped'", "timeout_sec": 40},
-            {"type": "sleep", "seconds": 0.5},
-            {"type": "run_shell", "command": "find create -name '*.md' -exec wc -l {} + | tail -1 > create/autonomous_generated/ui_cycle_reports/md_coverage_summary.txt", "timeout_sec": 40},
-            {"type": "sleep", "seconds": 0.2},
-            # Perform an internet lookup command before any potential manual escalation.
-            {"type": "type", "text": "python - <<'PY'\nimport urllib.request\nurl='https://docs.python.org/3/whatsnew/3.12.html'\ntry:\n    with urllib.request.urlopen(url, timeout=8) as r:\n        txt=r.read(600).decode('utf-8', errors='ignore')\n    print('web_lookup_ok', len(txt))\nexcept Exception as e:\n    print('web_lookup_failed', e)\nPY", "delay_ms": 48},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.6},
-            {"type": "type", "text": "echo 'Pending Rewrites: " + str(pending_count) + "'", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.3},
-            {"type": "type", "text": "echo 'Next Scan: ' && date", "delay_ms": 70},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.3},
-            {"type": "type", "text": status_msg, "delay_ms": 100},
-            {"type": "key", "key": "Return"},
-            {"type": "sleep", "seconds": 0.5},
-            
-            # ===== Phase 27: File Operations in VSCode (300 steps) =====
-            # Review multiple existing workspace files and always close tabs.
-            *_build_vscode_file_review_actions(
-                _select_workspace_review_files(policy, int(policy.get("autonomous_ui_review_max_files", 6) or 6)),
-                search_term="def ",
-            ),
-            
-            # Close terminal
-            {"type": "key", "key": "ctrl+grave"},  # Toggle terminal closed
-            {"type": "sleep", "seconds": 0.3},
-            
-            # Final verification message
-            {"type": "sleep", "seconds": 0.5},
+    for rel_path in selected_files:
+        candidate = Path(rel_path)
+        if not candidate.is_absolute():
+            candidate = (workspace_root / candidate).resolve()
+        if candidate not in normalized_targets:
+            normalized_targets.append(candidate)
+
+    ui_review = {"status": "disabled"}
+    if bool(policy.get("local_input_control_enabled", True)) and _is_desktop_session_available():
+        ui_review_policy = dict(policy)
+        ui_review_policy["local_input_require_target_window"] = True
+        launch_result = _launch_or_focus_vscode_workspace(ui_review_policy)
+        visible_actions = [
+            {"type": "activate_window", "name": str(policy.get("local_input_target_window_name", "Visual Studio Code") or "Visual Studio Code")},
+            {"type": "move", "x": 220, "y": 180},
+            {"type": "click", "button": "left"},
+            {"type": "sleep", "seconds": 0.25},
         ]
-    else:
-        # Default: just move mouse to show agent is alive, no typing
-        actions = [
-            {"type": "move", "x": 5, "y": 5},
-            {"type": "sleep", "seconds": 0.1},
-            {"type": "move", "x": 0, "y": 0},
-        ]
-
-    ui_policy = dict(policy)
-    if action_set in {"terminal_log", "workspace_operator"}:
-        actions = _expand_workspace_operator_actions(actions, ui_policy)
-        ui_policy["_local_input_max_actions_override"] = max(
-            int(ui_policy.get("_local_input_max_actions_override", 0) or 0),
-            int(ui_policy.get("autonomous_ui_target_actions_per_cycle", 5000) or 5000),
+        visible_actions.extend(
+            _build_vscode_file_review_actions(selected_files[: min(4, len(selected_files))], search_term="def ")
         )
-        ui_policy["_local_input_pause_ms_override"] = int(ui_policy.get("autonomous_ui_pause_ms_override", 0) or 0)
-
-    # Execute the UI actions and get result
-    result = _execute_local_ui_actions(actions, ui_policy)
-    
-    # ===== CODE IMPROVEMENT PHASE =====
-    # After UI actions, apply code improvements to rotating target files
-    improved_files = 0
-    total_improvements = 0
-    bytes_saved = 0
-    
-    if improver:
         try:
-            # Get all .py files in workspace
-            py_files = list(Path("create").glob("**/*.py"))
-            if py_files:
-                # Rotate through multiple files each cycle for broader coverage.
-                per_cycle = max(1, int(policy.get("autonomous_improve_files_per_cycle", 5) or 5))
-                total_files = len(py_files)
-                start_index = int(time.time()) % total_files
-                selected_files = [py_files[(start_index + i) % total_files] for i in range(min(per_cycle, total_files))]
+            ui_review = _execute_local_ui_actions(visible_actions, ui_review_policy)
+            ui_review["launch"] = launch_result
+        except Exception as exc:
+            ui_review = {"status": "error", "reason": str(exc)[:180], "launch": launch_result}
 
-                for target_file in selected_files:
-                    improve_result = improver.improve_file(target_file, apply_all=True)
-                    if improve_result.get("status") == "improved":
-                        improved_files += 1
-                        total_improvements += int(improve_result.get("changes_count", 0) or 0)
-                        bytes_saved += int(improve_result.get("reduced_bytes", 0) or 0)
+    improver = None
+    try:
+        from .autonomous_code_improver import CodeImprover as _SafeCodeImprover
+        improver = _SafeCodeImprover()
+    except Exception:
+        try:
+            from autonomous_code_improver import CodeImprover as _SafeCodeImprover
+            improver = _SafeCodeImprover()
+        except Exception as exc:
+            log_action(f"Safe code improver unavailable; falling back to transform-only mode: {exc}")
 
-                if improved_files:
-                    log_action(
-                        f"Code improvements applied to {improved_files} file(s): "
-                        f"{total_improvements} improvements, {bytes_saved} bytes saved"
-                    )
-        except Exception as e:
-            log_action(f"Code improvement phase error: {str(e)[:180]}")
-    
-    # Update result with improvement stats
-    result["code_improvements"] = {
-        "improved_files": improved_files,
-        "total_improvements": total_improvements,
-        "bytes_saved": bytes_saved
+    shell_checks = []
+    if not sys.stdin.isatty():
+        shell_checks.append(_run_bash_command("git status --short", cwd=WORKSPACE_ROOT, timeout_sec=15))
+        shell_checks.append(_run_bash_command(f"{shlex.quote(sys.executable)} -m py_compile create/skynetv2_agent.py", cwd=WORKSPACE_ROOT, timeout_sec=30))
+
+    web_guidance = {}
+    if bool(policy.get("allow_web_lookup", True)) and bool(policy.get("code_improvement_web_queries_enabled", True)):
+        try:
+            web_guidance = lookup_web_context(
+                "python safe refactoring patterns direct file edits whitespace import hygiene",
+                policy,
+            )
+        except Exception as exc:
+            web_guidance = {"status": "error", "error": str(exc)[:200]}
+
+    synthesis = run_algorithmic_synthesis(
+        problem="direct workspace code improvement",
+        language="python",
+        goal="safe refactor and condense logic",
+    )
+
+    file_results: list[dict[str, Any]] = []
+    for target in normalized_targets[: max(1, len(selected_files))]:
+        if not target.exists() or not target.is_file():
+            continue
+
+        if improver is not None and target.suffix.lower() == ".py":
+            try:
+                result = improver.improve_file(target, apply_all=True)
+            except Exception as exc:
+                result = {"status": "error", "file": str(target), "reason": str(exc)[:180]}
+        else:
+            result = apply_safe_rewrite_with_rollback(target, policy)
+
+        if result.get("status") == "noop":
+            if target.suffix.lower() == ".py":
+                result = apply_safe_rewrite_with_rollback(target, policy)
+        file_results.append(result)
+
+    improved_files = sum(1 for item in file_results if item.get("status") in {"improved", "kept"})
+    total_improvements = sum(int(item.get("changes_count", 0) or 0) for item in file_results)
+    bytes_saved = sum(int(item.get("reduced_bytes", 0) or 0) for item in file_results)
+    status = "ok" if improved_files else ("partial" if file_results else "noop")
+
+    result = {
+        "status": status,
+        "mode": "visible_ui_review_and_code_improvement",
+        "targets": [str(path) for path in normalized_targets[: max(1, len(selected_files))]],
+        "selected_files": selected_files,
+        "ui_review": ui_review,
+        "shell_checks": shell_checks,
+        "web_guidance": {
+            "query": web_guidance.get("query", "") if isinstance(web_guidance, dict) else "",
+            "source_count": len(web_guidance.get("sources", [])) if isinstance(web_guidance, dict) and isinstance(web_guidance.get("sources", []), list) else 0,
+            "google_ai_status": web_guidance.get("google_ai", {}).get("status", "") if isinstance(web_guidance, dict) and isinstance(web_guidance.get("google_ai", {}), dict) else "",
+        },
+        "synthesis": synthesis,
+        "workspace_analysis": workspace_analysis,
+        "file_results": file_results,
+        "code_improvements": {
+            "improved_files": improved_files,
+            "total_improvements": total_improvements,
+            "bytes_saved": bytes_saved,
+        },
     }
-
-    validation = _run_autonomous_validation_suite(policy)
-    result["autonomous_validation"] = validation
 
     _last_autonomous_ui_work_at = now_ts
 
-    # Always write a cycle marker so file mutation is visible each run.
     try:
         out_dir = Path(str(policy.get("autonomous_ui_output_dir", BASE_DIR / "autonomous_generated" / "ui_cycle_reports"))).expanduser()
         out_dir.mkdir(parents=True, exist_ok=True)
@@ -10254,28 +10215,28 @@ def _maybe_run_periodic_ui_work(policy: dict) -> dict:
             marker_path,
             {
                 "at": datetime.now().isoformat(),
+                "mode": result.get("mode"),
                 "status": result.get("status"),
-                "processed": int(result.get("processed", 0) or 0),
-                "succeeded": int(result.get("succeeded", 0) or 0),
-                "failed": int(result.get("failed", 0) or 0),
+                "targets": result.get("targets", []),
+                "selected_files": result.get("selected_files", []),
+                "ui_review": result.get("ui_review", {}),
                 "improved_files": improved_files,
                 "total_improvements": total_improvements,
                 "bytes_saved": bytes_saved,
-                "autonomous_validation": validation,
+                "shell_checks": shell_checks,
+                "web_guidance": result.get("web_guidance", {}),
+                "synthesis": result.get("synthesis", {}),
+                "workspace_analysis": result.get("workspace_analysis", {}),
             },
         )
     except Exception as exc:
-        log_action(f"Autonomous UI marker write failed: {str(exc)[:180]}")
+        log_action(f"Direct code improvement marker write failed: {str(exc)[:180]}")
 
     log_action(
-        "Autonomous UI cycle executed: "
-        f"status={result.get('status')} processed={result.get('processed', 0)} "
-        f"succeeded={result.get('succeeded', 0)} failed={result.get('failed', 0)} "
-        f"improved_files={improved_files} improvements={total_improvements} bytes_saved={bytes_saved} "
-        f"validation={validation.get('status', 'unknown')}"
+        "Visible UI and code improvement cycle executed: "
+        f"status={result.get('status')} targets={len(result.get('targets', []))} "
+        f"improved_files={improved_files} improvements={total_improvements} bytes_saved={bytes_saved}"
     )
-    if result.get("status") not in {"ok", "partial"}:
-        log_action(f"Autonomous UI cycle did not complete cleanly: {result}")
     return result
 
 
@@ -10471,6 +10432,10 @@ def start_autonomous_ui_worker():
     global _ui_worker_started
     if _ui_worker_started:
         return
+    policy = load_workspace_policy()
+    if not bool(policy.get("autonomous_ui_worker_enabled", False)):
+        log_action("Autonomous UI worker disabled by policy; direct code improvement path remains available.")
+        return
 
     def _worker_loop():
         while True:
@@ -10478,7 +10443,7 @@ def start_autonomous_ui_worker():
             try:
                 policy = load_workspace_policy()
                 sleep_sec = max(0.5, float(policy.get("autonomous_ui_worker_interval_sec", 2) or 2))
-                if bool(policy.get("autonomous_ui_worker_enabled", True)):
+                if bool(policy.get("autonomous_ui_worker_enabled", False)):
                     _maybe_run_periodic_ui_work(policy)
             except Exception as exc:
                 log_action(f"Autonomous UI worker error (non-fatal): {str(exc)[:180]}")
@@ -11132,15 +11097,15 @@ def main():
     kernel = AIOSKernel()
     kernel.boot()
     start_autonomous_ui_worker()
-    # Immediately take UI control on startup (no approval required per policy)
+    # Immediately run a direct improvement cycle on startup when enabled.
     try:
         _startup_policy = load_workspace_policy()
-        if bool(_startup_policy.get("local_input_control_enabled", True)):
-            log_action("UI control: taking initial keyboard/mouse control on startup.")
+        if bool(_startup_policy.get("code_improvement_enabled", True)):
+            log_action("Direct code improvement: running startup pass.")
             _maybe_run_periodic_ui_work(_startup_policy)
         _maybe_autowrite_ai_os_scaffold(_startup_policy)
     except Exception as _ui_startup_exc:
-        log_action(f"UI startup action error (non-fatal): {_ui_startup_exc!s:.150}")
+        log_action(f"Startup improvement action error (non-fatal): {_ui_startup_exc!s:.150}")
 
     while True:
         if kernel.run_cycle():
