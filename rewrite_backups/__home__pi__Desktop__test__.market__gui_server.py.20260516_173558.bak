@@ -1,0 +1,1649 @@
+#!/usr/bin/env python3
+from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
+from pathlib import Path
+from datetime import date
+import json
+import urllib.parse
+import urllib.request
+import re
+import threading
+import time
+import uuid
+import subprocess
+import os
+import asyncio
+from typing import Any
+
+from browser_jobs import (
+    acknowledge_manual_review,
+    add_scheduled_job,
+    analytics_summary,
+    append_artifact as append_browser_artifact,
+    cancel_job as cancel_browser_job,
+    claim_due_scheduled_jobs,
+    cleanup_old_jobs,
+    create_job as create_browser_job,
+    get_job as get_browser_job,
+    list_jobs as list_browser_jobs,
+    request_resume as request_browser_resume,
+    supported_actions as supported_browser_actions,
+)
+from browser_orchestrator import create_multi_site_jobs, get_orchestration_overview
+from browser_account_templates import (
+    discover_account_template,
+    fill_from_account_template,
+    list_account_templates,
+)
+from browser_inbox import (
+    append_inbox_message,
+    poll_imap_inbox,
+    scan_site_messages,
+    send_email_reply,
+    send_site_reply,
+)
+
+PORT = 8765
+WS_PORT = 8766
+ROOT = Path(__file__).resolve().parent
+STATE_PATH = ROOT / "process_state.json"
+WORKSPACE_ROOT = ROOT.parent
+NFS_SHARED_DIR = WORKSPACE_ROOT / "nfs_shared"
+SHARED_DIR = WORKSPACE_ROOT / "shared"
+ACCOUNTS_PATH = (NFS_SHARED_DIR if NFS_SHARED_DIR.exists() else SHARED_DIR) / "market_login_accounts.json"
+UPWORK_SEED_LINKS = [
+    "https://www.upwork.com/freelance-jobs/apply/Python-Web-Scraper-Airtable-Integration-Public-Pages-Login-Required_~022038639191878275312/",
+    "https://www.upwork.com/freelance-jobs/apply/Figma-React-Landing-Page-Development_~021886061251669552442/",
+    "https://www.upwork.com/freelance-jobs/apply/Order-Processing-Automation-Semi-Structured-PDF-CSV-JSON_~021884301772601198161/",
+    "https://www.upwork.com/freelance-jobs/apply/RAG-Chatbot-Development-Knowledge-Base-Chatbot_~022038643403966845236/",
+]
+AUTO_MODE_DEFAULT = {
+    "enabled": True,
+    "interval_minutes": 20,
+    "max_age_hours": 24,
+    "auto_submit_assist": True,
+    "auto_reply_enabled": True,
+    "auto_reply_delay_minutes": 5,
+    "auto_send_low_risk": True,
+    "long_cycle_enabled": True,
+    "long_cycle_days": 5,
+    "long_cycle_last_run_epoch": 0,
+    "popout_on_start": True,
+    "last_run_epoch": 0,
+    "auto_reply_last_run_epoch": 0,
+}
+STATE_LOCK = threading.Lock()
+WEBSOCKET_ENABLED = False
+
+def read_state():
+    with STATE_LOCK:
+        with STATE_PATH.open("r", encoding="utf-8") as f:
+            return json.load(f)
+
+def write_state(data):
+    with STATE_LOCK:
+        with STATE_PATH.open("w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
+            f.write("\n")
+
+def read_accounts():
+    if not ACCOUNTS_PATH.exists():
+        return {"upwork": {}, "freelancer": {}}
+    with ACCOUNTS_PATH.open("r", encoding="utf-8") as f:
+        return json.load(f)
+
+def write_accounts(data):
+    ACCOUNTS_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with ACCOUNTS_PATH.open("w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+        f.write("\n")
+    ACCOUNTS_PATH.chmod(0o600)
+
+def job_next_action(status):
+    mapping = {
+        "READY_TO_SUBMIT": "Open listing and submit proposal",
+        "SUBMITTED": "Wait for client reply and request funded milestone",
+        "CLIENT_REPLIED": "Answer clarifications and push funded milestone",
+        "AWARDED_PENDING_ESCROW": "Wait for milestone deposit/funding",
+        "VERIFIED_WON": "Ready for controlled delegation",
+        "DELEGATED": "Monitor implementation progress",
+        "BUILDING": "Build in progress",
+        "TESTING": "Running tests and preparing delivery docs",
+        "COMPLETED": "Collect review and archive delivery",
+        "BLOCKED": "Resolve blocker before continuing",
+    }
+    return mapping.get(status, "Review and update next action")
+
+def iso_today():
+    return str(date.today())
+
+def ensure_auto_mode_defaults(cycle: dict) -> dict:
+    auto = cycle.setdefault("auto_mode", {})
+    for key, value in AUTO_MODE_DEFAULT.items():
+        auto.setdefault(key, value)
+    return auto
+
+def ensure_inbox_defaults(cycle: dict) -> dict:
+    inbox = cycle.setdefault("inbox", {})
+    inbox.setdefault("messages", [])
+    inbox.setdefault("site_targets", [])
+    inbox.setdefault("imap_config", {
+        "enabled": False,
+        "host": "",
+        "user": "",
+        "password": "",
+        "folder": "INBOX",
+        "limit": 20,
+    })
+    return inbox
+
+def is_project_related_message(text):
+    s = (text or "").lower()
+    keys = [
+        "build",
+        "project",
+        "feature",
+        "add",
+        "change",
+        "fix",
+        "api",
+        "backend",
+        "frontend",
+        "dashboard",
+        "auth",
+        "integration",
+        "deadline",
+        "scope",
+        "deploy",
+        "test",
+        "bug",
+        "database",
+        "payment",
+    ]
+    return any(k in s for k in keys)
+
+def extract_project_notes(text):
+    lines = re.split(r"[\n\.\!\?]+", text or "")
+    keep = []
+    triggers = ("need", "must", "please", "add", "change", "include", "build", "update", "fix")
+    for raw in lines:
+        t = raw.strip()
+        if not t:
+            continue
+        low = t.lower()
+        if any(x in low for x in triggers):
+            keep.append(t)
+    # Fallback to first sentence if nothing matched.
+    if not keep and (text or "").strip():
+        keep = [re.split(r"[\.!?]", text.strip())[0].strip()]
+    return keep[:5]
+
+def build_chat_reply(job, text, project_related):
+    job_title = (job or {}).get("title", "your project")
+    if project_related:
+        return (
+            f"Thanks for the update on {job_title}. I captured your requested project changes and "
+            "will include them in the active build plan. I will send an implementation update after the next checkpoint."
+        )
+    return (
+        "Thanks for the message. I have this noted and will keep you posted with the next project update. "
+        "If you want a build change, share the exact feature or behavior and I will add it to scope."
+    )
+
+def append_chat_message(state, job_id, sender, text):
+    cycle = state.setdefault("cycle", {})
+    chat = cycle.setdefault("chat", {})
+    messages = chat.setdefault("messages", [])
+
+    jobs = state.setdefault("jobs", {})
+    job = jobs.get(job_id, {})
+
+    project_related = is_project_related_message(text)
+    notes = extract_project_notes(text) if project_related else []
+    draft_reply = build_chat_reply(job, text, project_related)
+
+    msg = {
+        "id": f"MSG-{uuid.uuid4().hex[:10]}",
+        "job_id": job_id,
+        "sender": sender,
+        "text": text,
+        "project_related": project_related,
+        "project_notes": notes,
+        "draft_reply": draft_reply,
+        "replied": False,
+        "auto_replied": False,
+        "created_on": iso_today(),
+        "created_epoch": int(time.time()),
+    }
+    messages.append(msg)
+    # Keep only latest 200 messages to bound state size.
+    chat["messages"] = messages[-200:]
+
+    if job_id in jobs and sender == "client":
+        j = jobs[job_id]
+        j["last_client_message"] = text
+        j["last_update"] = iso_today()
+        if project_related:
+            existing = j.setdefault("build_context", [])
+            for n in notes:
+                if n not in existing:
+                    existing.append(n)
+            j["next_action"] = "Incorporate latest client project requirements into build and respond"
+        if j.get("status") == "SUBMITTED":
+            j["status"] = "CLIENT_REPLIED"
+            j["next_action"] = "Answer client and confirm updated scope + funded milestone"
+
+    state["last_updated"] = iso_today()
+    return msg
+
+def upwork_fallback_links(queries=None):
+    if queries is None:
+        queries = [
+            "python web scraper",
+            "react figma landing page",
+            "csv to json migration",
+            "ai chatbot support",
+        ]
+
+    links = []
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+        "Accept-Language": "en-US,en;q=0.9",
+    }
+    for query in queries:
+        q = f"site:upwork.com/freelance-jobs/apply {query}"
+        url = "https://duckduckgo.com/html/?q=" + urllib.parse.quote(q)
+        req = urllib.request.Request(url, headers=headers)
+        html = urllib.request.urlopen(req, timeout=20).read().decode("utf-8", "ignore")
+        encs = re.findall(r"uddg=([^\"&]+)", html)
+        for enc in encs:
+            u = urllib.parse.unquote(enc)
+            if "upwork.com/freelance-jobs/apply" in u and u not in links:
+                links.append(u)
+        if len(links) >= 8:
+            break
+
+    return links[:8]
+
+def normalize_upwork_constraints(existing_constraints):
+    return [
+        x
+        for x in existing_constraints
+        if not x.startswith("Direct Upwork endpoints blocked;")
+    ]
+
+def strip_html(text):
+    text = re.sub(r"<[^>]+>", " ", text)
+    text = re.sub(r"\s+", " ", text)
+    return text.strip()
+
+def parse_age_hours(snippet):
+    s = (snippet or "").lower()
+    if "just now" in s or "moments ago" in s:
+        return 0.0
+    m = re.search(r"(\d+)\s*(minute|minutes|min)\s+ago", s)
+    if m:
+        return int(m.group(1)) / 60.0
+    m = re.search(r"(\d+)\s*(hour|hours|hr|hrs)\s+ago", s)
+    if m:
+        return float(int(m.group(1)))
+    if "today" in s:
+        return 12.0
+    if "yesterday" in s:
+        return 25.0
+    m = re.search(r"(\d+)\s*(day|days)\s+ago", s)
+    if m:
+        return float(int(m.group(1)) * 24)
+    return None
+
+def ddg_search(query):
+    url = "https://duckduckgo.com/html/?q=" + urllib.parse.quote(query)
+    req = urllib.request.Request(
+        url,
+        headers={
+            "User-Agent": "Mozilla/5.0",
+            "Accept-Language": "en-US,en;q=0.9",
+        },
+    )
+    html = urllib.request.urlopen(req, timeout=20).read().decode("utf-8", "ignore")
+    encoded_urls = re.findall(r"uddg=([^\"&]+)", html)
+    snippets = [strip_html(s) for s in re.findall(r'class="result__snippet">(.*?)</a>', html, re.S)]
+    results = []
+    for i, enc in enumerate(encoded_urls):
+        u = urllib.parse.unquote(enc)
+        snippet = snippets[i] if i < len(snippets) else ""
+        results.append({"url": u, "snippet": snippet})
+    return results
+
+def score_freelancer_candidate(url, snippet, age_hours):
+    score = 70
+    if age_hours is not None:
+        score += max(0, int(12 - age_hours / 2.0))
+    s = (url + " " + snippet).lower()
+    keywords = ["backend", "api", "payment", "form", "react", "python", "automation", "scraping"]
+    score += sum(1 for k in keywords if k in s)
+    return min(score, 99)
+
+def title_from_url(url):
+    tail = url.rstrip("/").split("/")[-1]
+    tail = tail.replace("details", "").strip("-")
+    if not tail:
+        return "Freelancer Project"
+    words = re.split(r"[-_]+", tail)
+    return " ".join(w.capitalize() for w in words if w)
+
+def freelancer_listing_links(limit=12):
+    req = urllib.request.Request(
+        "https://www.freelancer.com/jobs/",
+        headers={"User-Agent": "Mozilla/5.0", "Accept-Language": "en-US,en;q=0.9"},
+    )
+    html = urllib.request.urlopen(req, timeout=20).read().decode("utf-8", "ignore")
+    rel = re.findall(r"/projects/[^\"'\s<>]+", html)
+    links = []
+    for r in rel:
+        u = "https://www.freelancer.com" + r
+        if u not in links:
+            links.append(u)
+        if len(links) >= limit:
+            break
+    return links
+
+def discover_freelancer_recent(max_age_hours=24):
+    queries = [
+        "site:freelancer.com/projects backend development",
+        "site:freelancer.com/projects payment form",
+        "site:freelancer.com/projects react dashboard",
+        "site:freelancer.com/projects python automation",
+        "site:freelancer.com/projects api integration",
+        "site:freelancer.com/projects web scraping",
+        "site:freelancer.com/projects bug bounty",
+        "site:freelancer.com/projects penetration testing",
+    ]
+    out = []
+    seen = set()
+    for q in queries:
+        for r in ddg_search(q):
+            url = r.get("url", "")
+            if "freelancer.com/projects" not in url:
+                continue
+            if url in seen:
+                continue
+            age_hours = parse_age_hours(r.get("snippet", ""))
+            if age_hours is None or age_hours > max_age_hours:
+                continue
+            seen.add(url)
+            out.append(
+                {
+                    "platform": "Freelancer",
+                    "title": title_from_url(url),
+                    "url": url,
+                    "score": score_freelancer_candidate(url, r.get("snippet", ""), age_hours),
+                    "age_hours": age_hours,
+                }
+            )
+            if len(out) >= 12:
+                break
+        if len(out) >= 12:
+            break
+    # Fallback: if strict recency parsing found nothing, use direct listings and mark recency as unverified.
+    if not out:
+        for u in freelancer_listing_links(limit=10):
+            out.append(
+                {
+                    "platform": "Freelancer",
+                    "title": title_from_url(u),
+                    "url": u,
+                    "score": score_freelancer_candidate(u, "", 8.0),
+                    "age_hours": 8.0,
+                    "recency_unverified": True,
+                }
+            )
+
+    out.sort(key=lambda x: x["score"], reverse=True)
+    return out
+
+def upsert_discovered_jobs(state, discovered):
+    jobs = state.setdefault("jobs", {})
+    ranked = state.setdefault("ranked_queue", [])
+    id_by_url = {v.get("url"): k for k, v in jobs.items() if v.get("url")}
+    next_num = 8
+    existing_auto = [k for k in jobs.keys() if k.startswith("MX")]
+    if existing_auto:
+        nums = [int(re.sub(r"\D", "", k) or "0") for k in existing_auto]
+        next_num = max(nums) + 1
+
+    discovered_ids = []
+    for d in discovered:
+        job_id = id_by_url.get(d["url"])
+        if not job_id:
+            job_id = f"MX{next_num}"
+            next_num += 1
+            jobs[job_id] = {
+                "platform": d["platform"],
+                "title": d["title"],
+                "url": d["url"],
+                "status": "READY_TO_SUBMIT",
+                "escrow_status": "MILESTONE_REQUIRED",
+                "verified_won": False,
+                "last_update": str(date.today()),
+                "next_action": "Open listing and submit proposal (fresh <24h lead)",
+            }
+        jobs[job_id]["last_update"] = str(date.today())
+        jobs[job_id]["score"] = d["score"]
+        jobs[job_id]["fresh_hours"] = round(d["age_hours"], 1)
+        if d.get("recency_unverified"):
+            jobs[job_id]["next_action"] = "Open listing and submit proposal (freshness inferred; verify posted time on page)"
+        discovered_ids.append((job_id, d["score"]))
+
+    # Put fresh leads at top while preserving existing tracked jobs below.
+    existing_order = [i.get("id") for i in ranked if i.get("id")]
+    fresh_sorted = [jid for jid, _ in sorted(discovered_ids, key=lambda x: x[1], reverse=True)]
+    new_order = []
+    for jid in fresh_sorted + existing_order:
+        if jid not in new_order:
+            new_order.append(jid)
+
+    state["ranked_queue"] = [
+        {"id": jid, "score": int(jobs.get(jid, {}).get("score", 60)), "order": idx + 1}
+        for idx, jid in enumerate(new_order)
+    ]
+
+def run_discovery_cycle(state):
+    cycle = state.setdefault("cycle", {})
+    auto = ensure_auto_mode_defaults(cycle)
+    discovered = discover_freelancer_recent(max_age_hours=int(auto.get("max_age_hours", 24)))
+    upsert_discovered_jobs(state, discovered)
+
+    sources = set(cycle.get("sources", []))
+    sources.update({"Freelancer", "DuckDuckGo Site Index", "Upwork", "GitHub Bounties", "HackerOne", "Bugcrowd"})
+    cycle["sources"] = sorted(sources)
+    cycle["discovered_count"] = len(discovered)
+    cycle["state"] = "SCORED" if discovered else cycle.get("state", "DISCOVERED")
+    state["last_updated"] = iso_today()
+
+def auto_discovery_tick(force=False):
+    state = read_state()
+    cycle = state.setdefault("cycle", {})
+    auto = ensure_auto_mode_defaults(cycle)
+    now = int(time.time())
+    interval = int(auto.get("interval_minutes", 20)) * 60
+    if not force and (not auto.get("enabled", False)):
+        return False, "auto mode disabled"
+    if not force and (now - int(auto.get("last_run_epoch", 0)) < interval):
+        return False, "interval not reached"
+
+    run_discovery_cycle(state)
+    auto["last_run_epoch"] = now
+    write_state(state)
+    return True, "discovery refreshed"
+
+def auto_reply_tick(force=False):
+    state = read_state()
+    cycle = state.setdefault("cycle", {})
+    auto = ensure_auto_mode_defaults(cycle)
+    now = int(time.time())
+
+    if not force and not auto.get("auto_reply_enabled", False):
+        return False, "auto reply disabled"
+
+    delay_seconds = max(60, int(auto.get("auto_reply_delay_minutes", 5)) * 60)
+    messages = cycle.setdefault("chat", {}).setdefault("messages", [])
+    replied_count = 0
+
+    for m in messages:
+        if m.get("sender") != "client":
+            continue
+        if m.get("replied"):
+            continue
+        created_epoch = int(m.get("created_epoch") or 0)
+        if not force and created_epoch and (now - created_epoch < delay_seconds):
+            continue
+
+        m["replied"] = True
+        m["auto_replied"] = True
+        m["reply_text"] = m.get("draft_reply", "")
+        m["replied_on"] = iso_today()
+        m["replied_epoch"] = now
+        replied_count += 1
+
+        job_id = m.get("job_id")
+        jobs = state.setdefault("jobs", {})
+        if job_id in jobs:
+            jobs[job_id]["last_update"] = iso_today()
+            jobs[job_id]["last_reply"] = m["reply_text"]
+            if jobs[job_id].get("status") == "CLIENT_REPLIED":
+                jobs[job_id]["next_action"] = "Continue build with latest client requirements and send checkpoint update"
+
+    # Hybrid auto-reply policy for unified inbox messages.
+    inbox = cycle.setdefault("inbox", {})
+    inbox_messages = inbox.setdefault("messages", [])
+    auto_send_low_risk = bool(auto.get("auto_send_low_risk", True))
+    for m in inbox_messages:
+        if m.get("sent"):
+            continue
+        if m.get("status") in {"approval_required", "sending"} and not force:
+            continue
+        created_epoch = int(m.get("created_epoch") or now)
+        if not force and created_epoch and (now - created_epoch < delay_seconds):
+            continue
+
+        risk = str(m.get("risk_level") or "medium").lower()
+        source = str(m.get("source") or "")
+        subject = str(m.get("subject") or "")
+        sender = str(m.get("sender") or "")
+        reply_text = str(m.get("reply_text") or m.get("suggested_reply") or "").strip()
+
+        if not reply_text:
+            m["status"] = "approval_required"
+            m["approval_required"] = True
+            m["updated_at"] = iso_today()
+            continue
+
+        if risk != "low" or not auto_send_low_risk:
+            m["status"] = "approval_required"
+            m["approval_required"] = True
+            m["updated_at"] = iso_today()
+            continue
+
+        sent_ok = False
+        err = ""
+        if source == "email":
+            sent_ok, err = send_email_reply(
+                to_email=sender,
+                subject=f"Re: {subject}" if subject else "Re: your message",
+                body=reply_text,
+            )
+        elif source.startswith("site"):
+            md = m.get("metadata") if isinstance(m.get("metadata"), dict) else {}
+            sent_ok, err = send_site_reply(
+                site=str(md.get("site") or "site"),
+                url=str(md.get("url") or ""),
+                reply_text=reply_text,
+                reply_selector=str(md.get("reply_selector") or ""),
+                submit_selector=str(md.get("submit_selector") or "") or None,
+                headless=True,
+            )
+        else:
+            sent_ok = True
+
+        if sent_ok:
+            m["sent"] = True
+            m["status"] = "sent"
+            m["auto_replied"] = True
+            m["sent_at"] = iso_today()
+            replied_count += 1
+        else:
+            m["status"] = "approval_required"
+            m["approval_required"] = True
+            m["last_error"] = err or "send_failed"
+        m["updated_at"] = iso_today()
+
+    auto["auto_reply_last_run_epoch"] = now
+    if replied_count:
+        state["last_updated"] = iso_today()
+        write_state(state)
+        return True, f"auto replied to {replied_count} message(s)"
+
+    if force:
+        write_state(state)
+        return True, "no pending unreplied messages"
+    return False, "no eligible messages yet"
+
+def run_long_cycle(force=False):
+    state = read_state()
+    cycle = state.setdefault("cycle", {})
+    auto = ensure_auto_mode_defaults(cycle)
+    inbox_cfg = ensure_inbox_defaults(cycle)
+    now = int(time.time())
+
+    if not force and not bool(auto.get("long_cycle_enabled", True)):
+        return False, "long cycle disabled"
+
+    interval_seconds = max(1, int(auto.get("long_cycle_days", 5))) * 86400
+    if not force and (now - int(auto.get("long_cycle_last_run_epoch", 0)) < interval_seconds):
+        return False, "long cycle interval not reached"
+
+    summary: dict[str, Any] = {
+        "started_epoch": now,
+        "tasks": {},
+    }
+
+    # 1) Market refresh
+    d_ok, d_msg = auto_discovery_tick(force=True)
+    summary["tasks"]["market_discovery"] = {"ok": d_ok, "message": d_msg}
+
+    # 2) Browser cleanup/archive
+    cleanup = cleanup_old_jobs(max_age_hours=72 * 5, max_artifacts_per_job=20)
+    summary["tasks"]["browser_cleanup"] = cleanup
+
+    # 3) Email inbox poll + ingest
+    imap_cfg_raw = inbox_cfg.get("imap_config")
+    imap_cfg: dict[str, Any] = imap_cfg_raw if isinstance(imap_cfg_raw, dict) else {}
+    email_rows = poll_imap_inbox(limit=int(imap_cfg.get("limit", 20) or 20), config=imap_cfg)
+    ingested = 0
+    for row in email_rows:
+        append_inbox_message(
+            state,
+            source="email",
+            sender=str(row.get("sender") or ""),
+            subject=str(row.get("subject") or ""),
+            body=str(row.get("body") or ""),
+            metadata={"channel": "imap"},
+        )
+        ingested += 1
+    summary["tasks"]["email_ingest"] = {"fetched": len(email_rows), "ingested": ingested}
+
+    # 4) Site inbox scans using configured targets.
+    site_targets_raw = inbox_cfg.get("site_targets")
+    site_targets: list[Any] = site_targets_raw if isinstance(site_targets_raw, list) else []
+    site_total = 0
+    for target in site_targets:
+        if not isinstance(target, dict):
+            continue
+        try:
+            rows = scan_site_messages(
+                site=str(target.get("site") or "site"),
+                url=str(target.get("url") or ""),
+                message_selector=str(target.get("message_selector") or ""),
+                sender_selector=str(target.get("sender_selector") or "") or None,
+                subject_selector=str(target.get("subject_selector") or "") or None,
+                limit=int(target.get("limit", 10)),
+                headless=bool(target.get("headless", True)),
+            )
+            for row in rows:
+                append_inbox_message(
+                    state,
+                    source=f"site:{target.get('site', 'site')}",
+                    sender=str(row.get("sender") or ""),
+                    subject=str(row.get("subject") or ""),
+                    body=str(row.get("body") or ""),
+                    metadata={
+                        "site": str(target.get("site") or "site"),
+                        "url": str(target.get("url") or ""),
+                        "reply_selector": str(target.get("reply_selector") or ""),
+                        "submit_selector": str(target.get("submit_selector") or ""),
+                    },
+                )
+            site_total += len(rows)
+        except Exception:
+            pass
+    summary["tasks"]["site_ingest"] = {"ingested": site_total, "targets": len(site_targets)}
+
+    # 5) Hybrid reply pass.
+    r_ok, r_msg = auto_reply_tick(force=True)
+    summary["tasks"]["hybrid_auto_reply"] = {"ok": r_ok, "message": r_msg}
+
+    auto["long_cycle_last_run_epoch"] = now
+    cycle["last_long_cycle_summary"] = summary
+    state["last_updated"] = iso_today()
+    write_state(state)
+
+    return True, "long cycle completed"
+
+def auto_loop():
+    while True:
+        try:
+            auto_discovery_tick(force=False)
+            auto_reply_tick(force=False)
+            run_long_cycle(force=False)
+
+            # Scheduled browser jobs and periodic state cleanup.
+            for job_id in claim_due_scheduled_jobs(limit=25):
+                spawn_browser_job(job_id, resume=False)
+
+            cleanup_old_jobs(max_age_hours=72, max_artifacts_per_job=20)
+        except Exception:
+            pass
+        time.sleep(30)
+
+def browser_snapshot_payload():
+    return {
+        "jobs": list_browser_jobs(),
+        "analytics": analytics_summary(),
+        "orchestrations": get_orchestration_overview(),
+        "ts": int(time.time()),
+    }
+
+async def _websocket_client_loop(websocket):
+    while True:
+        await websocket.send(json.dumps(browser_snapshot_payload()))
+        await asyncio.sleep(2)
+
+def websocket_loop():
+    global WEBSOCKET_ENABLED
+    try:
+        import websockets
+    except Exception:
+        print("WebSocket server disabled: websockets package not installed")
+        WEBSOCKET_ENABLED = False
+        return
+
+    async def runner():
+        async with websockets.serve(_websocket_client_loop, "0.0.0.0", WS_PORT):
+            await asyncio.Future()
+
+    WEBSOCKET_ENABLED = True
+    print(f"Browser WebSocket stream running at ws://0.0.0.0:{WS_PORT}/ws")
+    asyncio.run(runner())
+
+def spawn_browser_job(job_id, *, resume=False):
+    script = ROOT / "browser_operator.py"
+    log_path = ROOT / f"browser_job_{job_id}.log"
+    command = ["python3", str(script), "--job-id", job_id, "--email", "skynetreport1@gmail.com"]
+    try:
+        job = get_browser_job(job_id)
+    except Exception:
+        job = {}
+    exec_cfg_obj = job.get("execution")
+    exec_cfg = exec_cfg_obj if isinstance(exec_cfg_obj, dict) else {}
+    command.extend([
+        "--max-retries",
+        str(int(exec_cfg.get("max_retries", 1))),
+        "--retry-backoff-seconds",
+        str(float(exec_cfg.get("backoff_seconds", 2.0))),
+    ])
+    if resume:
+        command.append("--resume")
+    with open(log_path, "a", encoding="utf-8") as log_f:
+        subprocess.Popen(
+            command,
+            stdout=log_f,
+            stderr=log_f,
+            cwd=str(ROOT),
+        )
+    append_browser_artifact(job_id, "logs", str(log_path))
+    return log_path
+
+class NoCacheHandler(SimpleHTTPRequestHandler):
+    def end_headers(self):
+        self.send_header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
+        self.send_header("Pragma", "no-cache")
+        self.send_header("Expires", "0")
+        super().end_headers()
+
+    def _send_json(self, payload, status=200):
+        body = json.dumps(payload).encode("utf-8")
+        self.send_response(status)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def do_GET(self):
+        if self.path == "/api/inbox/config":
+            try:
+                state = read_state()
+                cycle = state.setdefault("cycle", {})
+                inbox = ensure_inbox_defaults(cycle)
+                self._send_json({
+                    "imap_config": inbox.get("imap_config", {}),
+                    "site_targets": inbox.get("site_targets", []),
+                })
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return
+
+        if self.path == "/api/inbox/messages":
+            try:
+                state = read_state()
+                cycle = state.setdefault("cycle", {})
+                inbox = ensure_inbox_defaults(cycle)
+                self._send_json({"messages": inbox.get("messages", [])})
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return
+
+        if self.path == "/api/browser-accounts/templates":
+            try:
+                self._send_json({"templates": list_account_templates()})
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return
+
+        if self.path == "/api/browser-websocket-info":
+            self._send_json(
+                {
+                    "enabled": WEBSOCKET_ENABLED,
+                    "port": WS_PORT,
+                    "path": "/ws",
+                    "url": f"ws://127.0.0.1:{WS_PORT}/ws",
+                }
+            )
+            return
+
+        if self.path == "/api/browser-analytics":
+            try:
+                self._send_json({"analytics": analytics_summary()})
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return
+
+        if self.path == "/api/browser-orchestrations":
+            try:
+                self._send_json({"orchestrations": get_orchestration_overview()})
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return
+
+        if self.path == "/api/browser-stream":
+            try:
+                self.send_response(200)
+                self.send_header("Content-Type", "text/event-stream")
+                self.send_header("Cache-Control", "no-cache")
+                self.send_header("Connection", "keep-alive")
+                self.end_headers()
+                for _ in range(15):
+                    payload = {
+                        "jobs": list_browser_jobs(),
+                        "analytics": analytics_summary(),
+                        "ts": int(time.time()),
+                    }
+                    data = json.dumps(payload)
+                    self.wfile.write(f"data: {data}\n\n".encode("utf-8"))
+                    self.wfile.flush()
+                    time.sleep(2)
+            except Exception:
+                pass
+            return
+
+        if self.path == "/api/state":
+            try:
+                self._send_json(read_state())
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return
+
+        if self.path == "/api/auto-mode":
+            try:
+                state = read_state()
+                auto = ensure_auto_mode_defaults(state.setdefault("cycle", {}))
+                self._send_json({"auto_mode": auto})
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return
+
+        if self.path == "/api/accounts":
+            try:
+                self._send_json({
+                    "accounts": read_accounts(),
+                    "storage_path": str(ACCOUNTS_PATH),
+                })
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return
+
+        if self.path == "/api/browser-actions":
+            try:
+                self._send_json({"actions": supported_browser_actions()})
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return
+
+        if self.path == "/api/browser-jobs":
+            try:
+                self._send_json({"jobs": list_browser_jobs()})
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return
+
+        browser_prefix = "/api/browser-jobs/"
+        if self.path.startswith(browser_prefix):
+            job_id = self.path[len(browser_prefix):]
+            if job_id.endswith("/artifacts"):
+                job_id = job_id[:-len("/artifacts")]
+                try:
+                    job = get_browser_job(job_id)
+                    self._send_json({"job_id": job_id, "artifacts": job.get("artifacts", {})})
+                except KeyError as exc:
+                    self._send_json({"error": str(exc)}, status=404)
+                except Exception as exc:
+                    self._send_json({"error": str(exc)}, status=500)
+                return
+            try:
+                self._send_json(get_browser_job(job_id))
+            except KeyError as exc:
+                self._send_json({"error": str(exc)}, status=404)
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return
+
+        super().do_GET()
+
+    def _handle_browser_post_routes(self) -> bool:
+        if self.path == "/api/browser-accounts/discover":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                payload = json.loads(self.rfile.read(length) or b"{}")
+                site = str(payload.get("site") or payload.get("target_site") or "").strip()
+                url = str(payload.get("url") or payload.get("start_url") or "").strip()
+                mode = str(payload.get("mode") or "create").strip()
+                if not site or not url:
+                    self._send_json({"error": "site and url are required"}, status=400)
+                    return True
+                result = discover_account_template(
+                    site=site,
+                    url=url,
+                    mode=mode,
+                    headless=bool(payload.get("headless", False)),
+                    wait_seconds=float(payload.get("wait_seconds", 1.5)),
+                    csv_path=payload.get("csv_path"),
+                    sql_path=payload.get("sql_path"),
+                )
+                self._send_json({"ok": True, "result": result}, status=201)
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return True
+
+        if self.path == "/api/browser-accounts/fill":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                payload = json.loads(self.rfile.read(length) or b"{}")
+                site = str(payload.get("site") or payload.get("target_site") or "").strip()
+                url = str(payload.get("url") or payload.get("start_url") or "").strip()
+                mode = str(payload.get("mode") or "create").strip()
+                if not site or not url:
+                    self._send_json({"error": "site and url are required"}, status=400)
+                    return True
+                result = fill_from_account_template(
+                    site=site,
+                    url=url,
+                    mode=mode,
+                    headless=bool(payload.get("headless", False)),
+                    csv_path=payload.get("csv_path"),
+                    submit=bool(payload.get("submit", False)),
+                )
+                self._send_json({"ok": True, "result": result})
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return True
+
+        if self.path == "/api/browser-jobs/batch":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                payload = json.loads(self.rfile.read(length) or b"{}")
+                jobs_payload = payload.get("jobs") if isinstance(payload.get("jobs"), list) else []
+                auto_run = bool(payload.get("auto_run", False))
+                out = []
+                for item in jobs_payload:
+                    if not isinstance(item, dict):
+                        continue
+                    job = create_browser_job(item)
+                    row = {"id": job["id"], "status": job["status"]}
+                    if auto_run:
+                        row["log"] = str(spawn_browser_job(job["id"], resume=False))
+                    out.append(row)
+                self._send_json({"ok": True, "count": len(out), "jobs": out}, status=201)
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return True
+
+        if self.path == "/api/browser-jobs/schedule":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                payload = json.loads(self.rfile.read(length) or b"{}")
+                job = add_scheduled_job(payload)
+                self._send_json({"ok": True, "job": job}, status=201)
+            except ValueError as exc:
+                self._send_json({"error": str(exc)}, status=400)
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return True
+
+        if self.path == "/api/browser-orchestrations":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                payload = json.loads(self.rfile.read(length) or b"{}")
+                result = create_multi_site_jobs(payload)
+                auto_run = bool(payload.get("auto_run", False))
+                logs = []
+                if auto_run:
+                    for job_id in result.get("children", []):
+                        logs.append({"id": job_id, "log": str(spawn_browser_job(job_id, resume=False))})
+                self._send_json({"ok": True, "result": result, "logs": logs}, status=201)
+            except ValueError as exc:
+                self._send_json({"error": str(exc)}, status=400)
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return True
+
+        if self.path == "/api/browser-cleanup":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                payload = json.loads(self.rfile.read(length) or b"{}")
+                result = cleanup_old_jobs(
+                    max_age_hours=int(payload.get("max_age_hours", 72)),
+                    max_artifacts_per_job=int(payload.get("max_artifacts_per_job", 20)),
+                )
+                self._send_json({"ok": True, "cleanup": result})
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return True
+
+        if self.path == "/api/browser-webhook":
+            try:
+                secret = os.getenv("BROWSER_WEBHOOK_TOKEN", "")
+                incoming = self.headers.get("X-Webhook-Token", "")
+                if secret and incoming != secret:
+                    self._send_json({"error": "Invalid webhook token"}, status=403)
+                    return True
+                length = int(self.headers.get("Content-Length", "0"))
+                payload = json.loads(self.rfile.read(length) or b"{}")
+                mode = str(payload.get("mode") or "single").strip().lower()
+                if mode == "multi":
+                    result = create_multi_site_jobs(payload)
+                    self._send_json({"ok": True, "mode": "multi", "result": result}, status=202)
+                    return True
+
+                job = create_browser_job(payload)
+                auto_run = bool(payload.get("auto_run", True))
+                response = {"ok": True, "mode": "single", "job": job}
+                if auto_run:
+                    response["log"] = str(spawn_browser_job(job["id"], resume=False))
+                self._send_json(response, status=202)
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return True
+
+        if self.path == "/api/browser-jobs":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                payload = json.loads(self.rfile.read(length) or b"{}")
+                job = create_browser_job(payload)
+                response = {"ok": True, "job": job}
+                if payload.get("auto_run"):
+                    log_path = spawn_browser_job(job["id"], resume=False)
+                    response["log"] = str(log_path)
+                self._send_json(response, status=201)
+            except ValueError as exc:
+                self._send_json({"error": str(exc)}, status=400)
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return True
+
+        browser_prefix = "/api/browser-jobs/"
+        if self.path.startswith(browser_prefix):
+            remainder = self.path[len(browser_prefix):]
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                payload = json.loads(self.rfile.read(length) or b"{}")
+            except Exception:
+                payload = {}
+
+            if remainder.endswith("/run"):
+                job_id = remainder[:-len("/run")]
+                try:
+                    log_path = spawn_browser_job(job_id, resume=False)
+                    self._send_json({"ok": True, "job_id": job_id, "status": "OPENING_BROWSER", "log": str(log_path)})
+                except KeyError as exc:
+                    self._send_json({"error": str(exc)}, status=404)
+                except Exception as exc:
+                    self._send_json({"error": str(exc)}, status=500)
+                return True
+
+            if remainder.endswith("/acknowledge"):
+                job_id = remainder[:-len("/acknowledge")]
+                try:
+                    job = acknowledge_manual_review(job_id)
+                    self._send_json({"ok": True, "job": job})
+                except KeyError as exc:
+                    self._send_json({"error": str(exc)}, status=404)
+                except Exception as exc:
+                    self._send_json({"error": str(exc)}, status=500)
+                return True
+
+            if remainder.endswith("/resume"):
+                job_id = remainder[:-len("/resume")]
+                try:
+                    request_browser_resume(job_id)
+                    log_path = spawn_browser_job(job_id, resume=True)
+                    self._send_json({"ok": True, "job_id": job_id, "status": "RESUME_REQUESTED", "log": str(log_path)})
+                except KeyError as exc:
+                    self._send_json({"error": str(exc)}, status=404)
+                except ValueError as exc:
+                    self._send_json({"error": str(exc)}, status=400)
+                except Exception as exc:
+                    self._send_json({"error": str(exc)}, status=500)
+                return True
+
+            if remainder.endswith("/cancel"):
+                job_id = remainder[:-len("/cancel")]
+                try:
+                    job = cancel_browser_job(job_id)
+                    self._send_json({"ok": True, "job": job})
+                except KeyError as exc:
+                    self._send_json({"error": str(exc)}, status=404)
+                except Exception as exc:
+                    self._send_json({"error": str(exc)}, status=500)
+                return True
+
+        return False
+
+    def _handle_workflow_post_routes(self) -> bool:
+        prefix = "/api/jobs/"
+        suffix = "/submit"
+        if self.path.startswith(prefix) and self.path.endswith(suffix):
+            job_id = self.path[len(prefix):-len(suffix)]
+            try:
+                state = read_state()
+                jobs = state.get("jobs", {})
+                if job_id not in jobs:
+                    self._send_json({"error": f"Unknown job id: {job_id}"}, status=404)
+                    return True
+
+                job = jobs[job_id]
+                cycle = state.setdefault("cycle", {})
+
+                if (cycle.get("auto_submit_enabled") is True
+                        and job.get("platform", "").lower() == "freelancer"):
+                    job["status"] = "CLICK_IN_PROGRESS"
+                    job["last_update"] = iso_today()
+                    state["last_updated"] = iso_today()
+                    write_state(state)
+
+                    script = ROOT / "playwright_submit.py"
+                    log_path = ROOT / f"submit_{job_id}.log"
+                    with open(log_path, "a") as log_f:
+                        subprocess.Popen(
+                            ["python3", str(script), "--job-id", job_id],
+                            stdout=log_f,
+                            stderr=log_f,
+                            cwd=str(ROOT),
+                        )
+
+                    self._send_json({
+                        "ok": True,
+                        "job_id": job_id,
+                        "status": "CLICK_IN_PROGRESS",
+                        "log": str(log_path),
+                    })
+                    return True
+
+                job["status"] = "SUBMITTED"
+                job["last_update"] = iso_today()
+                job["next_action"] = "Wait for client reply and request funded milestone"
+                state["last_updated"] = iso_today()
+                cycle["state"] = "SUBMITTED"
+
+                write_state(state)
+                self._send_json({"ok": True, "job_id": job_id, "status": "SUBMITTED"})
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return True
+
+        if self.path == "/api/accounts":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                payload = json.loads(self.rfile.read(length) or b"{}")
+                accounts = {
+                    "upwork": {
+                        "username": str(payload.get("upwork", {}).get("username", "")).strip(),
+                        "password": str(payload.get("upwork", {}).get("password", "")),
+                    },
+                    "freelancer": {
+                        "username": str(payload.get("freelancer", {}).get("username", "")).strip(),
+                        "password": str(payload.get("freelancer", {}).get("password", "")),
+                    },
+                    "updated": str(date.today()),
+                }
+                write_accounts(accounts)
+                self._send_json({"ok": True, "storage_path": str(ACCOUNTS_PATH)})
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return True
+
+        suffix_status = "/status"
+        if self.path.startswith(prefix) and self.path.endswith(suffix_status):
+            job_id = self.path[len(prefix):-len(suffix_status)]
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                payload = json.loads(self.rfile.read(length) or b"{}")
+                status = str(payload.get("status", "")).strip().upper()
+                allowed = {
+                    "READY_TO_SUBMIT",
+                    "SUBMITTED",
+                    "CLIENT_REPLIED",
+                    "AWARDED_PENDING_ESCROW",
+                    "VERIFIED_WON",
+                    "DELEGATED",
+                    "BUILDING",
+                    "TESTING",
+                    "COMPLETED",
+                    "BLOCKED",
+                }
+                if status not in allowed:
+                    self._send_json({"error": f"Unsupported status: {status}"}, status=400)
+                    return True
+
+                state = read_state()
+                jobs = state.get("jobs", {})
+                if job_id not in jobs:
+                    self._send_json({"error": f"Unknown job id: {job_id}"}, status=404)
+                    return True
+
+                job = jobs[job_id]
+                job["status"] = status
+                job["last_update"] = iso_today()
+                job["next_action"] = job_next_action(status)
+
+                if status == "VERIFIED_WON" and job.get("escrow_status") in {"FUNDED", "DEPOSITED", "N/A"}:
+                    job["verified_won"] = True
+
+                state["last_updated"] = iso_today()
+                state.setdefault("cycle", {})["state"] = status
+
+                write_state(state)
+                self._send_json({"ok": True, "job_id": job_id, "status": status})
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return True
+
+        suffix_escrow = "/escrow"
+        if self.path.startswith(prefix) and self.path.endswith(suffix_escrow):
+            job_id = self.path[len(prefix):-len(suffix_escrow)]
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                payload = json.loads(self.rfile.read(length) or b"{}")
+                escrow_status = str(payload.get("escrow_status", "")).strip().upper()
+                allowed = {"MILESTONE_REQUIRED", "PENDING", "FUNDED", "DEPOSITED", "N/A"}
+                if escrow_status not in allowed:
+                    self._send_json({"error": f"Unsupported escrow status: {escrow_status}"}, status=400)
+                    return True
+
+                state = read_state()
+                jobs = state.get("jobs", {})
+                if job_id not in jobs:
+                    self._send_json({"error": f"Unknown job id: {job_id}"}, status=404)
+                    return True
+
+                job = jobs[job_id]
+                job["escrow_status"] = escrow_status
+                job["last_update"] = iso_today()
+                if escrow_status in {"FUNDED", "DEPOSITED"} and job.get("status") == "VERIFIED_WON":
+                    job["verified_won"] = True
+
+                state["last_updated"] = iso_today()
+                write_state(state)
+                self._send_json({"ok": True, "job_id": job_id, "escrow_status": escrow_status})
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return True
+
+        if self.path == "/api/upwork/fallback":
+            try:
+                state = read_state()
+                links = upwork_fallback_links()
+                accounts = read_accounts()
+                upwork_user = str(accounts.get("upwork", {}).get("username", "")).strip()
+
+                if not links:
+                    links = state.get("cycle", {}).get("upwork_fallback_links", [])
+                if not links:
+                    links = UPWORK_SEED_LINKS
+
+                constraints = state.setdefault("cycle", {}).setdefault("source_constraints", [])
+                constraints = normalize_upwork_constraints(constraints)
+
+                account_note = "account connected" if upwork_user else "no account connected"
+                if links == UPWORK_SEED_LINKS:
+                    constraints.append(
+                        f"Direct Upwork endpoints blocked; {account_note}; fallback using cached Upwork links ({len(links)} links available)"
+                    )
+                else:
+                    constraints.append(
+                        f"Direct Upwork endpoints blocked; {account_note}; fallback discovery active via search index ({len(links)} links found)"
+                    )
+                state["cycle"]["source_constraints"] = constraints
+
+                state["cycle"]["upwork_fallback_links"] = links
+                state["last_updated"] = iso_today()
+                write_state(state)
+                self._send_json({"ok": True, "links_found": len(links), "links": links})
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return True
+
+        if self.path == "/api/chat/inbound":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                payload = json.loads(self.rfile.read(length) or b"{}")
+                job_id = str(payload.get("job_id", "")).strip()
+                text = str(payload.get("text", "")).strip()
+                if not job_id or not text:
+                    self._send_json({"error": "job_id and text are required"}, status=400)
+                    return True
+
+                state = read_state()
+                jobs = state.get("jobs", {})
+                if job_id not in jobs:
+                    self._send_json({"error": f"Unknown job id: {job_id}"}, status=404)
+                    return True
+
+                msg = append_chat_message(state, job_id, "client", text)
+                write_state(state)
+                self._send_json({"ok": True, "message": msg})
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return True
+
+        if self.path == "/api/chat/respond":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                payload = json.loads(self.rfile.read(length) or b"{}")
+                message_id = str(payload.get("message_id", "")).strip()
+                response_text = str(payload.get("response_text", "")).strip()
+                if not message_id:
+                    self._send_json({"error": "message_id is required"}, status=400)
+                    return True
+
+                state = read_state()
+                chat = state.setdefault("cycle", {}).setdefault("chat", {})
+                messages = chat.setdefault("messages", [])
+                target = None
+                for m in messages:
+                    if m.get("id") == message_id:
+                        target = m
+                        break
+
+                if not target:
+                    self._send_json({"error": f"Unknown message id: {message_id}"}, status=404)
+                    return True
+
+                target["replied"] = True
+                target["auto_replied"] = False
+                target["reply_text"] = response_text or target.get("draft_reply", "")
+                target["replied_on"] = iso_today()
+                target["replied_epoch"] = int(time.time())
+
+                job_id = target.get("job_id")
+                jobs = state.setdefault("jobs", {})
+                if job_id in jobs:
+                    jobs[job_id]["last_update"] = iso_today()
+                    jobs[job_id]["last_reply"] = target["reply_text"]
+                    if jobs[job_id].get("status") == "CLIENT_REPLIED":
+                        jobs[job_id]["next_action"] = "Continue build with latest client requirements and send checkpoint update"
+
+                state["last_updated"] = iso_today()
+                write_state(state)
+                self._send_json({"ok": True, "message_id": message_id})
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return True
+
+        if self.path == "/api/chat/auto-reply/run-now":
+            try:
+                ok, message = auto_reply_tick(force=True)
+                self._send_json({"ok": ok, "message": message})
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return True
+
+        if self.path == "/api/discovery/run-now":
+            try:
+                ok, message = auto_discovery_tick(force=True)
+                self._send_json({"ok": ok, "message": message})
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return True
+
+        if self.path == "/api/auto-mode":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                payload = json.loads(self.rfile.read(length) or b"{}")
+                state = read_state()
+                auto = ensure_auto_mode_defaults(state.setdefault("cycle", {}))
+
+                if "enabled" in payload:
+                    auto["enabled"] = bool(payload["enabled"])
+                if "interval_minutes" in payload:
+                    auto["interval_minutes"] = max(5, int(payload["interval_minutes"]))
+                if "max_age_hours" in payload:
+                    auto["max_age_hours"] = max(1, int(payload["max_age_hours"]))
+                if "auto_submit_assist" in payload:
+                    auto["auto_submit_assist"] = bool(payload["auto_submit_assist"])
+                if "auto_reply_enabled" in payload:
+                    auto["auto_reply_enabled"] = bool(payload["auto_reply_enabled"])
+                if "auto_reply_delay_minutes" in payload:
+                    auto["auto_reply_delay_minutes"] = max(1, int(payload["auto_reply_delay_minutes"]))
+                if "auto_send_low_risk" in payload:
+                    auto["auto_send_low_risk"] = bool(payload["auto_send_low_risk"])
+                if "long_cycle_enabled" in payload:
+                    auto["long_cycle_enabled"] = bool(payload["long_cycle_enabled"])
+                if "long_cycle_days" in payload:
+                    auto["long_cycle_days"] = max(1, int(payload["long_cycle_days"]))
+                if "popout_on_start" in payload:
+                    auto["popout_on_start"] = bool(payload["popout_on_start"])
+
+                state["last_updated"] = iso_today()
+                write_state(state)
+                self._send_json({"ok": True, "auto_mode": auto})
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return True
+
+        return False
+
+    def do_POST(self):
+        if self.path == "/api/inbox/config":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                payload = json.loads(self.rfile.read(length) or b"{}")
+                state = read_state()
+                cycle = state.setdefault("cycle", {})
+                inbox = ensure_inbox_defaults(cycle)
+
+                if "imap_config" in payload and isinstance(payload.get("imap_config"), dict):
+                    incoming = payload.get("imap_config", {})
+                    cfg = inbox.get("imap_config", {})
+                    cfg["enabled"] = bool(incoming.get("enabled", cfg.get("enabled", False)))
+                    cfg["host"] = str(incoming.get("host", cfg.get("host", ""))).strip()
+                    cfg["user"] = str(incoming.get("user", cfg.get("user", ""))).strip()
+                    cfg["password"] = str(incoming.get("password", cfg.get("password", "")))
+                    cfg["folder"] = str(incoming.get("folder", cfg.get("folder", "INBOX"))).strip() or "INBOX"
+                    cfg["limit"] = max(1, min(100, int(incoming.get("limit", cfg.get("limit", 20)))))
+                    inbox["imap_config"] = cfg
+
+                if "site_targets" in payload and isinstance(payload.get("site_targets"), list):
+                    normalized = []
+                    for item in payload.get("site_targets", []):
+                        if not isinstance(item, dict):
+                            continue
+                        normalized.append({
+                            "site": str(item.get("site") or "").strip(),
+                            "url": str(item.get("url") or "").strip(),
+                            "message_selector": str(item.get("message_selector") or "").strip(),
+                            "sender_selector": str(item.get("sender_selector") or "").strip(),
+                            "subject_selector": str(item.get("subject_selector") or "").strip(),
+                            "reply_selector": str(item.get("reply_selector") or "").strip(),
+                            "submit_selector": str(item.get("submit_selector") or "").strip(),
+                            "limit": max(1, min(100, int(item.get("limit", 10) or 10))),
+                            "headless": bool(item.get("headless", True)),
+                        })
+                    inbox["site_targets"] = normalized
+
+                state["last_updated"] = iso_today()
+                write_state(state)
+                self._send_json({
+                    "ok": True,
+                    "imap_config": inbox.get("imap_config", {}),
+                    "site_targets": inbox.get("site_targets", []),
+                })
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return
+
+        if self.path == "/api/long-cycle/run-now":
+            try:
+                ok, message = run_long_cycle(force=True)
+                state = read_state()
+                summary = state.setdefault("cycle", {}).get("last_long_cycle_summary", {})
+                self._send_json({"ok": ok, "message": message, "summary": summary})
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return
+
+        if self.path == "/api/inbox/ingest":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                payload = json.loads(self.rfile.read(length) or b"{}")
+                source = str(payload.get("source") or "dashboard")
+                sender = str(payload.get("sender") or "")
+                subject = str(payload.get("subject") or "")
+                body = str(payload.get("body") or "")
+                if not body:
+                    self._send_json({"error": "body is required"}, status=400)
+                    return
+                state = read_state()
+                msg = append_inbox_message(
+                    state,
+                    source=source,
+                    sender=sender,
+                    subject=subject,
+                    body=body,
+                    metadata=payload.get("metadata") if isinstance(payload.get("metadata"), dict) else {},
+                )
+                write_state(state)
+                self._send_json({"ok": True, "message": msg}, status=201)
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return
+
+        if self.path == "/api/inbox/poll-email":
+            try:
+                state = read_state()
+                cycle = state.setdefault("cycle", {})
+                inbox = ensure_inbox_defaults(cycle)
+                raw_imap_cfg = inbox.get("imap_config")
+                imap_cfg = raw_imap_cfg if isinstance(raw_imap_cfg, dict) else {}
+                rows = poll_imap_inbox(limit=int(imap_cfg.get("limit", 20)), config=imap_cfg)
+                state = read_state()
+                out = []
+                for row in rows:
+                    out.append(
+                        append_inbox_message(
+                            state,
+                            source="email",
+                            sender=str(row.get("sender") or ""),
+                            subject=str(row.get("subject") or ""),
+                            body=str(row.get("body") or ""),
+                            metadata={"channel": "imap"},
+                        )
+                    )
+                write_state(state)
+                self._send_json({"ok": True, "fetched": len(rows), "ingested": len(out)})
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return
+
+        if self.path == "/api/inbox/site-scan":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                payload = json.loads(self.rfile.read(length) or b"{}")
+                rows = scan_site_messages(
+                    site=str(payload.get("site") or "site"),
+                    url=str(payload.get("url") or ""),
+                    message_selector=str(payload.get("message_selector") or ""),
+                    sender_selector=str(payload.get("sender_selector") or "") or None,
+                    subject_selector=str(payload.get("subject_selector") or "") or None,
+                    limit=int(payload.get("limit", 10)),
+                    headless=bool(payload.get("headless", True)),
+                )
+                state = read_state()
+                ingested = 0
+                for row in rows:
+                    append_inbox_message(
+                        state,
+                        source=f"site:{payload.get('site', 'site')}",
+                        sender=str(row.get("sender") or ""),
+                        subject=str(row.get("subject") or ""),
+                        body=str(row.get("body") or ""),
+                        metadata={
+                            "site": str(payload.get("site") or "site"),
+                            "url": str(payload.get("url") or ""),
+                            "reply_selector": str(payload.get("reply_selector") or ""),
+                            "submit_selector": str(payload.get("submit_selector") or ""),
+                        },
+                    )
+                    ingested += 1
+                write_state(state)
+                self._send_json({"ok": True, "scanned": len(rows), "ingested": ingested})
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return
+
+        if self.path == "/api/inbox/respond":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                payload = json.loads(self.rfile.read(length) or b"{}")
+                message_id = str(payload.get("message_id") or "").strip()
+                response_text = str(payload.get("response_text") or "").strip()
+                if not message_id:
+                    self._send_json({"error": "message_id is required"}, status=400)
+                    return
+
+                state = read_state()
+                inbox = state.setdefault("cycle", {}).setdefault("inbox", {})
+                messages = inbox.setdefault("messages", [])
+                target = None
+                for m in messages:
+                    if m.get("id") == message_id:
+                        target = m
+                        break
+                if not target:
+                    self._send_json({"error": f"Unknown message id: {message_id}"}, status=404)
+                    return
+
+                source = str(target.get("source") or "")
+                reply_text = response_text or str(target.get("suggested_reply") or "")
+                ok = False
+                err = ""
+                if source == "email":
+                    ok, err = send_email_reply(
+                        to_email=str(target.get("sender") or ""),
+                        subject=f"Re: {target.get('subject') or 'your message'}",
+                        body=reply_text,
+                    )
+                elif source.startswith("site"):
+                    md = target.get("metadata") if isinstance(target.get("metadata"), dict) else {}
+                    ok, err = send_site_reply(
+                        site=str(md.get("site") or "site"),
+                        url=str(md.get("url") or ""),
+                        reply_text=reply_text,
+                        reply_selector=str(md.get("reply_selector") or ""),
+                        submit_selector=str(md.get("submit_selector") or "") or None,
+                        headless=False,
+                    )
+                else:
+                    ok = True
+
+                if ok:
+                    target["sent"] = True
+                    target["status"] = "sent"
+                    target["reply_text"] = reply_text
+                    target["sent_at"] = iso_today()
+                else:
+                    target["status"] = "approval_required"
+                    target["last_error"] = err or "send_failed"
+                target["updated_at"] = iso_today()
+
+                state["last_updated"] = iso_today()
+                write_state(state)
+                self._send_json({"ok": ok, "message_id": message_id, "error": err})
+            except Exception as exc:
+                self._send_json({"error": str(exc)}, status=500)
+            return
+
+        if self._handle_browser_post_routes():
+            return
+        if self._handle_workflow_post_routes():
+            return
+
+        self._send_json({"error": "Unsupported endpoint"}, status=404)
+
+if __name__ == "__main__":
+
+    os.chdir(ROOT)
+    threading.Thread(target=auto_loop, daemon=True).start()
+    threading.Thread(target=websocket_loop, daemon=True).start()
+    server = ThreadingHTTPServer(("0.0.0.0", PORT), NoCacheHandler)
+    print(f"Market GUI running at http://0.0.0.0:{PORT}/index.html")
+    print("Press Ctrl+C to stop")
+    server.serve_forever()
