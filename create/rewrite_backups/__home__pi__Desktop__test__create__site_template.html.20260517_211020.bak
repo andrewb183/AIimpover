@@ -1,0 +1,387 @@
+
+    <html>
+    <head>
+        <title>skynetv1 Daily Evolution</title>
+        <style>
+            :root {
+                --bg-start: #fef3c7;
+                --bg-end: #dbeafe;
+                --accent: #1d4ed8;
+                --card: rgba(255,255,255,0.90);
+                --ink: #172033;
+            }
+            body {
+                margin: 0;
+                font-family: Georgia, 'Times New Roman', serif;
+                color: var(--ink);
+                background:
+                    radial-gradient(circle at top left, rgba(255,255,255,0.8), transparent 34%),
+                    linear-gradient(135deg, var(--bg-start), var(--bg-end));
+            }
+            .page {
+                max-width: 1180px;
+                margin: 0 auto;
+                padding: 28px 18px 56px;
+            }
+            .hero {
+                background: linear-gradient(145deg, rgba(255,255,255,0.92), rgba(255,255,255,0.74));
+                border: 1px solid rgba(255,255,255,0.55);
+                border-radius: 24px;
+                padding: 30px;
+                box-shadow: 0 20px 50px rgba(23, 32, 51, 0.12);
+            }
+            .eyebrow {
+                letter-spacing: 0.2em;
+                text-transform: uppercase;
+                font-size: 12px;
+                color: var(--accent);
+            }
+            .hero h1 {
+                margin: 10px 0 12px;
+                font-size: clamp(2.2rem, 5vw, 4.8rem);
+                line-height: 0.95;
+            }
+            .hero p {
+                max-width: 760px;
+                font-size: 1.05rem;
+            }
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+                gap: 18px;
+                margin-top: 20px;
+            }
+            .tabs {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin: 18px 0 4px;
+            }
+            .tabs a {
+                text-decoration: none;
+                color: var(--ink);
+                background: rgba(255,255,255,0.72);
+                padding: 10px 14px;
+                border-radius: 999px;
+                font-weight: bold;
+            }
+            .card {
+                background: var(--card);
+                border-radius: 20px;
+                padding: 20px;
+                box-shadow: 0 14px 34px rgba(23, 32, 51, 0.09);
+            }
+            h2 {
+                margin-top: 0;
+                color: var(--accent);
+            }
+            ul {
+                padding-left: 18px;
+                margin-bottom: 0;
+            }
+            .badge {
+                display: inline-block;
+                padding: 6px 10px;
+                background: rgba(255,255,255,0.7);
+                border-radius: 999px;
+                margin-right: 8px;
+                margin-bottom: 8px;
+            }
+            label {
+                display: block;
+                font-weight: bold;
+                margin-bottom: 8px;
+            }
+            input, textarea {
+                width: 100%;
+                box-sizing: border-box;
+                padding: 10px 12px;
+                border: 1px solid rgba(23, 32, 51, 0.18);
+                border-radius: 12px;
+                margin-bottom: 10px;
+            }
+            textarea {
+                min-height: 110px;
+                resize: vertical;
+            }
+            button {
+                background: var(--accent);
+                color: white;
+                border: 0;
+                border-radius: 999px;
+                padding: 10px 18px;
+                cursor: pointer;
+            }
+            .story-blurb {
+                margin: 8px 0;
+                line-height: 1.45;
+            }
+            .save-item-btn {
+                margin-left: 10px;
+                background: var(--accent);
+                color: white;
+                border: 0;
+                border-radius: 999px;
+                padding: 8px 12px;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="page">
+            <section class="hero">
+                <div class="eyebrow">Daily Evolution</div>
+                <h1>Welcome to the skynetv1 Evolving Website</h1>
+                <p>The site refreshed itself on May 17, 2026 at 09:10 PM EDT. No new visitor feedback arrived today, so the site generated its own visual improvements for this refresh.</p>
+                <div class="badge">Auto-refresh at 1:00 AM EST</div>
+                <div class="badge">Feedback applied and archived</div>
+                <div class="badge">Learned rules: 4</div>
+                <div class="badge">Autonomous design fallback: on</div>
+            </section>
+            <nav class="tabs">
+                <a href="#changes">Changes</a>
+                <a href="#news">Top Stories</a>
+                <a href="#ideas">Design Ideas</a>
+                <a href="#video">Video Upgrades</a>
+                <a href="#adaptive-requests">Requests</a>
+                <a href="#feedback">Feedback</a>
+                <a href="#errors">Errors</a>
+            </nav>
+            <section class="grid">
+                <article class="card" id="changes">
+                    <h2>What Changed</h2>
+                    <ul><li>Midnight Refresh Test</li><li>Story Grid</li><li>News Deck</li><li>Don T Take In The Same</li><li>Add A New Section Called About</li><li>Navigation Upgrade</li><li>Anchor Redirect Smoke Test</li><li>Redirect Target Check</li><li>Member Messaging</li><li>Stock Market Deep Dive</li><li>Canada Video Briefing</li><li>Account Access Guide</li><li>Let S Add A Backend For</li><li>I Want To Take Anything On</li></ul>
+                </article>
+                <article class="card" id="feedback">
+                    <h2>Feedback Processed</h2>
+                    <p>No new feedback was submitted before this refresh.</p>
+                </article>
+                <article class="card" id="errors">
+                    <h2>Error Reports Reviewed</h2>
+                    <p>No new error reports were submitted before this refresh.</p>
+                </article>
+                <article class="card">
+                    <h2>Learned Self-Fix Rules</h2>
+                    <ul><li><strong>Auto fix for training_monitor</strong> - Training monitor now flags missing trainer PIDs for follow-up.</li><li><strong>Auto fix for self_healing:orchestration</strong> - A synthesized local remediation rule has been added for this issue.</li><li><strong>Auto fix for self_healing:orchestration</strong> - A learned remediation rule has been added for this issue.</li><li><strong>Auto fix for training_monitor</strong> - A synthesized local remediation rule has been added for this issue.</li></ul>
+                </article>
+                <article class="card">
+                    <h2>Autonomous Improvements</h2>
+                    <ul><li>Rebalanced spacing and card density for cleaner scanning.</li><li>Refreshed layout emphasis using learned self-fix signals and recent site history.</li><li>Rotated the visual rhythm so the site does not feel frozen day to day.</li></ul>
+                </article>
+                <article class="card">
+                    <h2>Implemented Overnight</h2>
+                    <ul><li><strong>Let's add a backend for admin to remove users and to see what is being used the most.</strong><div class="story-blurb">Created adaptive request page 'Let S Add A Backend For', Queued the request for downtime site integration</div></li><li><strong>i want to take anything on this site and make into an MP3 so i can listen to it on the go</strong><div class="story-blurb">Created adaptive request page 'I Want To Take Anything On', Queued the request for downtime site integration</div></li><li><strong>Let's add a backend for admin to remove users and to see what is being used the most.</strong><div class="story-blurb">Created adaptive request page 'Let S Add A Backend For', Queued the request for downtime site integration</div></li><li><strong>i want to take anything on this site and make into an MP3 so i can listen to it on the go</strong><div class="story-blurb">Created adaptive request page 'I Want To Take Anything On', Queued the request for downtime site integration</div></li><li><strong>Let's add a backend for admin to remove users and to see what is being used the most.</strong><div class="story-blurb">Promoted queued request 'Let S Add A Backend For' into site content, Added the request summary during downtime refresh</div></li><li><strong>i want to take anything on this site and make into an MP3 so i can listen to it on the go</strong><div class="story-blurb">Promoted queued request 'I Want To Take Anything On' into site content, Added the request summary during downtime refresh</div></li></ul>
+                </article>
+                <article class="card" id="adaptive-requests">
+                    <h2>Adaptive Request Pages</h2>
+                    <ul><li><a href="/requests/member-messaging">Member Messaging</a><div class='story-blurb'>I want to be able to send a message to another member on this site and for it to stay on this site</div></li><li><a href="/requests/stock-market-deep-dive">Stock Market Deep Dive</a><div class='story-blurb'>Can you give me more story on the stock market?</div></li><li><a href="/requests/canada-video-briefing">Canada Video Briefing</a><div class='story-blurb'>can we have a card that just gives video on what is happening in canada</div></li><li><a href="/requests/account-access-guide">Account Access Guide</a><div class='story-blurb'>so i just made an account, but were is the sign?</div></li><li><a href="/requests/let-s-add-a-backend-for">Let S Add A Backend For</a><div class='story-blurb'>Let's add a backend for admin to remove users and to see what is being used the most.</div></li><li><a href="/requests/i-want-to-take-anything-on">I Want To Take Anything On</a><div class='story-blurb'>i want to take anything on this site and make into an MP3 so i can listen to it on the go</div></li></ul>
+                </article>
+                <article class="card">
+                    <h2>Queued For Downtime</h2>
+                    <ul><li>No downtime-only requests are currently queued.</li></ul>
+                </article>
+                
+        <section class="card">
+            <h2>Free Sign-Up</h2>
+            <p>Create a lightweight profile on this browser so the site can remember what you save and recommend more of it.</p>
+            <form id="signup-form">
+                <label for="signup_name">Name</label>
+                <input id="signup_name" name="name" type="text" placeholder="Your name">
+                <label for="signup_email">Email</label>
+                <input id="signup_email" name="email" type="email" placeholder="name@example.com">
+                <button type="submit">Save profile</button>
+            </form>
+            <p id="signup-status"></p>
+        </section>
+        
+        <section class="card">
+            <h2>Save Things You Like</h2>
+            <p>Use these save buttons to keep stories and videos you want to come back to.</p>
+            <ul><li><a href="https://techcrunch.com/2026/05/17/apples-siri-revamp-could-include-auto-deleting-chats/" target="_blank" rel="noopener noreferrer">Apple’s Siri revamp could include auto-deleting chats</a> <button class="save-item-btn" data-kind="story" data-title="Apple’s Siri revamp could include auto-deleting chats" data-url="https://techcrunch.com/2026/05/17/apples-siri-revamp-could-include-auto-deleting-chats/" data-source="TechCrunch">Save</button></li><li><a href="https://techcrunch.com/2026/05/17/why-trust-is-a-big-question-at-the-elon-musk-openai-trial/" target="_blank" rel="noopener noreferrer">Why trust is a big question at the Elon Musk-OpenAI trial</a> <button class="save-item-btn" data-kind="story" data-title="Why trust is a big question at the Elon Musk-OpenAI trial" data-url="https://techcrunch.com/2026/05/17/why-trust-is-a-big-question-at-the-elon-musk-openai-trial/" data-source="TechCrunch">Save</button></li><li><a href="https://techcrunch.com/2026/05/17/if-youre-giving-a-commencement-speech-in-2026-maybe-dont-mention-ai/" target="_blank" rel="noopener noreferrer">If you’re giving a commencement speech in 2026, maybe don’t mention AI</a> <button class="save-item-btn" data-kind="story" data-title="If you’re giving a commencement speech in 2026, maybe don’t mention AI" data-url="https://techcrunch.com/2026/05/17/if-youre-giving-a-commencement-speech-in-2026-maybe-dont-mention-ai/" data-source="TechCrunch">Save</button></li><li><a href="https://techcrunch.com/2026/05/17/techcrunch-mobility-the-ai-skills-arms-race-is-coming-for-automotive/" target="_blank" rel="noopener noreferrer">TechCrunch Mobility: The AI skills arms race is coming for automotive</a> <button class="save-item-btn" data-kind="story" data-title="TechCrunch Mobility: The AI skills arms race is coming for automotive" data-url="https://techcrunch.com/2026/05/17/techcrunch-mobility-the-ai-skills-arms-race-is-coming-for-automotive/" data-source="TechCrunch">Save</button></li><li><a href="https://arstechnica.com/science/2026/05/a-revolutionary-cancer-treatment-could-transform-autoimmune-disease/" target="_blank" rel="noopener noreferrer">A revolutionary cancer treatment could transform autoimmune disease</a> <button class="save-item-btn" data-kind="story" data-title="A revolutionary cancer treatment could transform autoimmune disease" data-url="https://arstechnica.com/science/2026/05/a-revolutionary-cancer-treatment-could-transform-autoimmune-disease/" data-source="Ars Technica">Save</button></li><li><a href="https://www.youtube.com/watch?v=wxIUD4p8nqA" target="_blank" rel="noopener noreferrer">What are tech CEOs seeking in China with Trump? | DW News</a> <button class="save-item-btn" data-kind="video" data-title="What are tech CEOs seeking in China with Trump? | DW News" data-url="https://www.youtube.com/watch?v=wxIUD4p8nqA" data-source="DW News">Save</button></li><li><a href="https://www.youtube.com/watch?v=WVOahY1MSG8" target="_blank" rel="noopener noreferrer">Empty Waymo cars SWARM neighborhood, residents stunned #foxnews #news #shorts #cars #tech</a> <button class="save-item-btn" data-kind="video" data-title="Empty Waymo cars SWARM neighborhood, residents stunned #foxnews #news #shorts #cars #tech" data-url="https://www.youtube.com/watch?v=WVOahY1MSG8" data-source="Fox News">Save</button></li><li><a href="https://www.youtube.com/watch?v=0xT--PMCj7g" target="_blank" rel="noopener noreferrer">TECH FLEX: CEOs put US power on display in China</a> <button class="save-item-btn" data-kind="video" data-title="TECH FLEX: CEOs put US power on display in China" data-url="https://www.youtube.com/watch?v=0xT--PMCj7g" data-source="Fox News">Save</button></li><li><a href="https://www.youtube.com/watch?v=WcWffmAzlPw" target="_blank" rel="noopener noreferrer">Nvidia unveils new "revolutionary" AI tech</a> <button class="save-item-btn" data-kind="video" data-title="Nvidia unveils new "revolutionary" AI tech" data-url="https://www.youtube.com/watch?v=WcWffmAzlPw" data-source="CBS News">Save</button></li></ul>
+            <h3>Saved Items</h3>
+            <ul data-saved-items><li>No saved items yet.</li></ul>
+        </section>
+        
+        <section class="card">
+            <h2>Recommended for You</h2>
+            <p>Recommendations update from the stories and videos you save on this browser.</p>
+            <ul data-recommendations><li>Save a few items to personalize this list.</li></ul>
+        </section>
+        
+                <article class="card" id="ideas">
+                    <h2>Web Design Ideas</h2>
+                    <ul><li><a href="https://smashingmagazine.com/2026/05/data-backed-truths-user-experience-roi/" target="_blank" rel="noopener noreferrer">Ten Data-Backed Truths Of User Experience ROI</a> <em>(Smashing Magazine)</em></li><li><a href="https://smashingmagazine.com/2026/05/practical-interface-patterns-ai-transparency/" target="_blank" rel="noopener noreferrer">Practical Interface Patterns For AI Transparency (Part 2)</a> <em>(Smashing Magazine)</em></li><li><a href="https://smashingmagazine.com/2026/05/architecture-local-first-web-development/" target="_blank" rel="noopener noreferrer">The Architecture Of Local-First Web Development</a> <em>(Smashing Magazine)</em></li></ul>
+                </article>
+                <article class="card" id="news">
+                    <h2>Top 3 Story Briefs</h2>
+                    <ul><li><a href="https://techcrunch.com/2026/05/17/apples-siri-revamp-could-include-auto-deleting-chats/" target="_blank" rel="noopener noreferrer">Apple’s Siri revamp could include auto-deleting chats</a> <div class="story-blurb">Privacy will be a major theme when Apple unveils a new version of...</div><em>(TechCrunch)</em></li><li><a href="https://techcrunch.com/2026/05/17/why-trust-is-a-big-question-at-the-elon-musk-openai-trial/" target="_blank" rel="noopener noreferrer">Why trust is a big question at the Elon Musk-OpenAI trial</a> <div class="story-blurb">A big theme in the trial’s final days was whether OpenAI CEO Sam Altman is...</div><em>(TechCrunch)</em></li><li><a href="https://techcrunch.com/2026/05/17/if-youre-giving-a-commencement-speech-in-2026-maybe-dont-mention-ai/" target="_blank" rel="noopener noreferrer">If you’re giving a commencement speech in 2026, maybe don’t mention AI</a> <div class="story-blurb">It's tough to get graduating students excited about a future shaped by artificial...</div><em>(TechCrunch)</em></li></ul>
+                </article>
+                <article class="card">
+                    <h2>Top Tech Stories</h2>
+                    <ul><li><a href="https://techcrunch.com/2026/05/17/techcrunch-mobility-the-ai-skills-arms-race-is-coming-for-automotive/" target="_blank" rel="noopener noreferrer">TechCrunch Mobility: The AI skills arms race is coming for automotive</a> <em>(TechCrunch)</em></li><li><a href="https://arstechnica.com/science/2026/05/a-revolutionary-cancer-treatment-could-transform-autoimmune-disease/" target="_blank" rel="noopener noreferrer">A revolutionary cancer treatment could transform autoimmune disease</a> <em>(Ars Technica)</em></li><li><a href="https://arstechnica.com/tech-policy/2026/05/the-us-is-betting-on-ai-to-catch-insider-trading-in-prediction-markets/" target="_blank" rel="noopener noreferrer">The US is betting on AI to catch insider trading in prediction markets</a> <em>(Ars Technica)</em></li><li><a href="https://arstechnica.com/gadgets/2026/05/russia-pressures-university-students-to-become-wartime-drone-pilots/" target="_blank" rel="noopener noreferrer">Russia pressures university students to become wartime drone pilots</a> <em>(Ars Technica)</em></li><li><a href="https://arstechnica.com/tech-policy/2026/05/authors-fight-for-higher-payouts-from-anthropics-1-5b-copyright-settlement/" target="_blank" rel="noopener noreferrer">Anthropic’s $1.5B copyright settlement is getting messy as judge delays approval</a> <em>(Ars Technica)</em></li></ul>
+                </article>
+                <article class="card" id="video">
+                    <h2>Video-Inspired Upgrades</h2>
+                    <p><a href="https://www.youtube.com/watch?v=97irLVqYJCI" target="_blank" rel="noopener noreferrer">I Built a Self-Improving Agent Swarm. It Rewrote Its Own Code.</a> by Jaymin West</p>
+                    <h3>Concepts Pulled In</h3>
+                    <ul><li>self-improving agent swarm</li><li>parallel ownership of work</li><li>automatic code rewrite backlog</li><li>continuous system evolution</li></ul>
+                    <h3>Applied To This Codebase</h3>
+                    <ul><li>staged self-rewrite executor</li><li>daily autonomous site evolution</li><li>persistent module registry</li><li>feedback and error intake with learned rules</li></ul>
+                </article>
+                <article class="card">
+                    <h2>Tech YouTube Picks</h2>
+                    <ul><li><a href="https://www.youtube.com/watch?v=wxIUD4p8nqA" target="_blank" rel="noopener noreferrer">What are tech CEOs seeking in China with Trump? | DW News</a> by DW News<div class="story-blurb">Current tech-news coverage and commentary.</div></li><li><a href="https://www.youtube.com/watch?v=WVOahY1MSG8" target="_blank" rel="noopener noreferrer">Empty Waymo cars SWARM neighborhood, residents stunned #foxnews #news #shorts #cars #tech</a> by Fox News<div class="story-blurb">Current tech-news coverage and commentary.</div></li><li><a href="https://www.youtube.com/watch?v=0xT--PMCj7g" target="_blank" rel="noopener noreferrer">TECH FLEX: CEOs put US power on display in China</a> by Fox News<div class="story-blurb">Current tech-news coverage and commentary.</div></li><li><a href="https://www.youtube.com/watch?v=WcWffmAzlPw" target="_blank" rel="noopener noreferrer">Nvidia unveils new "revolutionary" AI tech</a> by CBS News<div class="story-blurb">Current tech-news coverage and commentary.</div></li></ul>
+                </article>
+                <article class="card">
+                    <h2>Send New Feedback</h2>
+                    <form method="post">
+                        <input type="hidden" name="entry_type" value="feedback">
+                        <label for="feedback_message">Feedback message</label>
+                        <textarea id="feedback_message" name="message" required></textarea>
+                        <label for="feedback_contact">Email or contact</label>
+                        <input id="feedback_contact" type="text" name="contact" placeholder="name@example.com">
+                        <button type="submit">Submit feedback</button>
+                    </form>
+                </article>
+                <article class="card">
+                    <h2>Report a New Error</h2>
+                    <form method="post">
+                        <input type="hidden" name="entry_type" value="error">
+                        <label for="error_message">What went wrong?</label>
+                        <textarea id="error_message" name="message" required></textarea>
+                        <label for="error_contact">Email or contact</label>
+                        <input id="error_contact" type="text" name="contact" placeholder="name@example.com">
+                        <button type="submit">Report error</button>
+                    </form>
+                </article>
+            </section>
+            
+    <script>
+    (() => {
+        const profileKey = "skynet_profile_v1";
+        const savedKey = "skynet_saved_items_v1";
+        const catalog = [{"kind": "story", "title": "Apple\u2019s Siri revamp could include auto-deleting chats", "url": "https://techcrunch.com/2026/05/17/apples-siri-revamp-could-include-auto-deleting-chats/", "source": "TechCrunch"}, {"kind": "story", "title": "Why trust is a big question at the Elon Musk-OpenAI trial", "url": "https://techcrunch.com/2026/05/17/why-trust-is-a-big-question-at-the-elon-musk-openai-trial/", "source": "TechCrunch"}, {"kind": "story", "title": "If you\u2019re giving a commencement speech in 2026, maybe don\u2019t mention AI", "url": "https://techcrunch.com/2026/05/17/if-youre-giving-a-commencement-speech-in-2026-maybe-dont-mention-ai/", "source": "TechCrunch"}, {"kind": "story", "title": "TechCrunch Mobility: The AI skills arms race is coming for automotive", "url": "https://techcrunch.com/2026/05/17/techcrunch-mobility-the-ai-skills-arms-race-is-coming-for-automotive/", "source": "TechCrunch"}, {"kind": "story", "title": "A revolutionary cancer treatment could transform autoimmune disease", "url": "https://arstechnica.com/science/2026/05/a-revolutionary-cancer-treatment-could-transform-autoimmune-disease/", "source": "Ars Technica"}, {"kind": "story", "title": "The US is betting on AI to catch insider trading in prediction markets", "url": "https://arstechnica.com/tech-policy/2026/05/the-us-is-betting-on-ai-to-catch-insider-trading-in-prediction-markets/", "source": "Ars Technica"}, {"kind": "story", "title": "Russia pressures university students to become wartime drone pilots", "url": "https://arstechnica.com/gadgets/2026/05/russia-pressures-university-students-to-become-wartime-drone-pilots/", "source": "Ars Technica"}, {"kind": "story", "title": "Anthropic\u2019s $1.5B copyright settlement is getting messy as judge delays approval", "url": "https://arstechnica.com/tech-policy/2026/05/authors-fight-for-higher-payouts-from-anthropics-1-5b-copyright-settlement/", "source": "Ars Technica"}, {"kind": "story", "title": "GenCAD", "url": "https://gencad.github.io/", "source": "Hacker News"}, {"kind": "story", "title": "Design posters showcasing your country's electrical grid", "url": "https://github.com/open-energy-transition/grid2poster", "source": "Hacker News"}, {"kind": "video", "title": "What are tech CEOs seeking in China with Trump? | DW News", "url": "https://www.youtube.com/watch?v=wxIUD4p8nqA", "source": "DW News"}, {"kind": "video", "title": "Empty Waymo cars SWARM neighborhood, residents stunned #foxnews #news #shorts #cars #tech", "url": "https://www.youtube.com/watch?v=WVOahY1MSG8", "source": "Fox News"}, {"kind": "video", "title": "TECH FLEX: CEOs put US power on display in China", "url": "https://www.youtube.com/watch?v=0xT--PMCj7g", "source": "Fox News"}, {"kind": "video", "title": "Nvidia unveils new \"revolutionary\" AI tech", "url": "https://www.youtube.com/watch?v=WcWffmAzlPw", "source": "CBS News"}, {"kind": "video", "title": "Google Laptop, OpenAI Phone, PS5 Drama & AI+ Controversy - Zehreele Tech News EP 24", "url": "https://www.youtube.com/watch?v=_EUU68RsX1I", "source": "Venom's Tech"}, {"kind": "video", "title": "Meet the AI powered robot assistant helping Germans shop", "url": "https://www.youtube.com/watch?v=_iEb54geLMk", "source": "Reuters"}, {"kind": "video", "title": "Tech Weekly: Nvidia pushes back on 'AI bubble', Microsoft celebrates | REUTERS", "url": "https://www.youtube.com/watch?v=GlBeCSW39ZQ", "source": "Reuters"}, {"kind": "video", "title": "Top Tech From CES 2026: Exoskeleton, Digital Nail Polish, More", "url": "https://www.youtube.com/watch?v=VHSYqY-YHpc", "source": "TODAY"}];
+
+        const read = (key, fallback) => {
+            try {
+                const raw = localStorage.getItem(key);
+                return raw ? JSON.parse(raw) : fallback;
+            } catch (error) {
+                return fallback;
+            }
+        };
+
+        const write = (key, value) => localStorage.setItem(key, JSON.stringify(value));
+
+        const renderProfile = () => {
+            const profile = read(profileKey, {});
+            const form = document.getElementById("signup-form");
+            const status = document.getElementById("signup-status");
+            if (form) {
+                form.name.value = profile.name || "";
+                form.email.value = profile.email || "";
+            }
+            if (status && profile.name) {
+                status.textContent = `Profile saved for ${profile.name}.`;
+            }
+        };
+
+        const renderSavedItems = () => {
+            const saved = read(savedKey, []);
+            document.querySelectorAll("[data-saved-items]").forEach((list) => {
+                if (!saved.length) {
+                    list.innerHTML = "<li>No saved items yet.</li>";
+                    return;
+                }
+                list.innerHTML = saved.map((item) =>
+                    `<li><a href="${item.url}" target="_blank" rel="noopener noreferrer">${item.title}</a> <em>(${item.kind})</em></li>`
+                ).join("");
+            });
+        };
+
+        const renderRecommendations = () => {
+            const saved = read(savedKey, []);
+            const savedUrls = new Set(saved.map((item) => item.url));
+            const keywords = new Set(
+                saved.flatMap((item) =>
+                    item.title.toLowerCase().split(/[^a-z0-9]+/).filter((word) => word.length > 4)
+                )
+            );
+            let recommendations = catalog
+                .filter((item) => !savedUrls.has(item.url))
+                .map((item) => {
+                    let score = 0;
+                    if (saved.some((savedItem) => savedItem.source === item.source)) {
+                        score += 2;
+                    }
+                    for (const word of keywords) {
+                        if (item.title.toLowerCase().includes(word)) {
+                            score += 1;
+                        }
+                    }
+                    return { ...item, score };
+                })
+                .sort((a, b) => b.score - a.score);
+
+            if (!saved.length) {
+                recommendations = recommendations.slice(0, 5);
+            } else {
+                recommendations = recommendations.filter((item) => item.score > 0).slice(0, 5);
+            }
+
+            document.querySelectorAll("[data-recommendations]").forEach((list) => {
+                if (!recommendations.length) {
+                    list.innerHTML = "<li>Save a few items to personalize this list.</li>";
+                    return;
+                }
+                list.innerHTML = recommendations.map((item) =>
+                    `<li><a href="${item.url}" target="_blank" rel="noopener noreferrer">${item.title}</a> <em>(${item.kind})</em></li>`
+                ).join("");
+            });
+        };
+
+        document.addEventListener("click", (event) => {
+            const button = event.target.closest(".save-item-btn");
+            if (!button) {
+                return;
+            }
+            const saved = read(savedKey, []);
+            const item = {
+                kind: button.dataset.kind,
+                title: button.dataset.title,
+                url: button.dataset.url,
+                source: button.dataset.source
+            };
+            if (!saved.some((savedItem) => savedItem.url === item.url)) {
+                saved.push(item);
+                write(savedKey, saved);
+            }
+            renderSavedItems();
+            renderRecommendations();
+        });
+
+        document.addEventListener("submit", (event) => {
+            const form = event.target;
+            if (!form || form.id !== "signup-form") {
+                return;
+            }
+            event.preventDefault();
+            write(profileKey, {
+                name: form.name.value.trim(),
+                email: form.email.value.trim()
+            });
+            renderProfile();
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderProfile();
+            renderSavedItems();
+            renderRecommendations();
+        });
+    })();
+    </script>
+    
+        </div>
+    </body>
+    </html>
+    
