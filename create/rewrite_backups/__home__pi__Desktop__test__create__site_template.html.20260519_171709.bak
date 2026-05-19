@@ -1,0 +1,448 @@
+
+    <html>
+    <head>
+        <title>skynetv1 Daily Evolution</title>
+        <style>
+            :root {
+                --bg-start: #fef3c7;
+                --bg-end: #dbeafe;
+                --accent: #1d4ed8;
+                --card: rgba(255,255,255,0.90);
+                --ink: #172033;
+            }
+            body {
+                margin: 0;
+                font-family: Georgia, 'Times New Roman', serif;
+                color: var(--ink);
+                background:
+                    radial-gradient(circle at top left, rgba(255,255,255,0.8), transparent 34%),
+                    linear-gradient(135deg, var(--bg-start), var(--bg-end));
+            }
+            .page {
+                max-width: 1180px;
+                margin: 0 auto;
+                padding: 28px 18px 56px;
+            }
+            .hero {
+                background: linear-gradient(145deg, rgba(255,255,255,0.92), rgba(255,255,255,0.74));
+                border: 1px solid rgba(255,255,255,0.55);
+                border-radius: 24px;
+                padding: 30px;
+                box-shadow: 0 20px 50px rgba(23, 32, 51, 0.12);
+            }
+            .eyebrow {
+                letter-spacing: 0.2em;
+                text-transform: uppercase;
+                font-size: 12px;
+                color: var(--accent);
+            }
+            .hero h1 {
+                margin: 10px 0 12px;
+                font-size: clamp(2.2rem, 5vw, 4.8rem);
+                line-height: 0.95;
+            }
+            .hero p {
+                max-width: 760px;
+                font-size: 1.05rem;
+            }
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+                gap: 18px;
+                margin-top: 20px;
+            }
+            .tabs {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin: 18px 0 4px;
+            }
+            .tabs a {
+                text-decoration: none;
+                color: var(--ink);
+                background: rgba(255,255,255,0.72);
+                padding: 10px 14px;
+                border-radius: 999px;
+                font-weight: bold;
+            }
+            .card {
+                background: var(--card);
+                border-radius: 20px;
+                padding: 20px;
+                box-shadow: 0 14px 34px rgba(23, 32, 51, 0.09);
+            }
+            h2 {
+                margin-top: 0;
+                color: var(--accent);
+            }
+            ul {
+                padding-left: 18px;
+                margin-bottom: 0;
+            }
+            .badge {
+                display: inline-block;
+                padding: 6px 10px;
+                background: rgba(255,255,255,0.7);
+                border-radius: 999px;
+                margin-right: 8px;
+                margin-bottom: 8px;
+            }
+            label {
+                display: block;
+                font-weight: bold;
+                margin-bottom: 8px;
+            }
+            input, textarea {
+                width: 100%;
+                box-sizing: border-box;
+                padding: 10px 12px;
+                border: 1px solid rgba(23, 32, 51, 0.18);
+                border-radius: 12px;
+                margin-bottom: 10px;
+            }
+            textarea {
+                min-height: 110px;
+                resize: vertical;
+            }
+            button {
+                background: var(--accent);
+                color: white;
+                border: 0;
+                border-radius: 999px;
+                padding: 10px 18px;
+                cursor: pointer;
+            }
+            .story-blurb {
+                margin: 8px 0;
+                line-height: 1.45;
+            }
+            .save-item-btn {
+                margin-left: 10px;
+                background: var(--accent);
+                color: white;
+                border: 0;
+                border-radius: 999px;
+                padding: 8px 12px;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="page">
+            <section class="hero">
+                <div class="eyebrow">Daily Evolution</div>
+                <h1>Welcome to the skynetv1 Evolving Website</h1>
+                <p>The site refreshed itself on May 19, 2026 at 05:03 PM EDT. No new visitor feedback arrived today, so the site generated its own visual improvements for this refresh.</p>
+                <div class="badge">Auto-refresh at 1:00 AM EST</div>
+                <div class="badge">Feedback applied and archived</div>
+                <div class="badge">Learned rules: 4</div>
+                <div class="badge">Autonomous design fallback: on</div>
+            </section>
+            <nav class="tabs">
+                <a href="#changes">Changes</a>
+                <a href="#news">Top Stories</a>
+                <a href="#ideas">Design Ideas</a>
+                <a href="#video">Video Upgrades</a>
+                <a href="#adaptive-requests">Requests</a>
+                <a href="#feedback">Feedback</a>
+                <a href="#errors">Errors</a>
+            </nav>
+            <section class="grid">
+                <article class="card" id="changes">
+                    <h2>What Changed</h2>
+                    <ul><li>Midnight Refresh Test</li><li>Story Grid</li><li>News Deck</li><li>Don T Take In The Same</li><li>Add A New Section Called About</li><li>Navigation Upgrade</li><li>Anchor Redirect Smoke Test</li><li>Redirect Target Check</li><li>Member Messaging</li><li>Stock Market Deep Dive</li><li>Canada Video Briefing</li><li>Account Access Guide</li><li>Let S Add A Backend For</li><li>I Want To Take Anything On</li></ul>
+                </article>
+                <article class="card" id="feedback">
+                    <h2>Feedback Processed</h2>
+                    <p>No new feedback was submitted before this refresh.</p>
+                </article>
+                <article class="card" id="errors">
+                    <h2>Error Reports Reviewed</h2>
+                    <p>No new error reports were submitted before this refresh.</p>
+                </article>
+                <article class="card">
+                    <h2>Learned Self-Fix Rules</h2>
+                    <ul><li><strong>Auto fix for training_monitor</strong> - Training monitor now flags missing trainer PIDs for follow-up.</li><li><strong>Auto fix for self_healing:orchestration</strong> - A synthesized local remediation rule has been added for this issue.</li><li><strong>Auto fix for self_healing:orchestration</strong> - A learned remediation rule has been added for this issue.</li><li><strong>Auto fix for training_monitor</strong> - A synthesized local remediation rule has been added for this issue.</li></ul>
+                </article>
+                <article class="card">
+                    <h2>Autonomous Improvements</h2>
+                    <ul><li>Rotated the visual rhythm so the site does not feel frozen day to day.</li><li>Refreshed layout emphasis using learned self-fix signals and recent site history.</li><li>Promoted stronger headline contrast and more focused sections.</li></ul>
+                </article>
+                <article class="card">
+                    <h2>Implemented Overnight</h2>
+                    <ul><li><strong>Let's add a backend for admin to remove users and to see what is being used the most.</strong><div class="story-blurb">Created adaptive request page 'Let S Add A Backend For', Queued the request for downtime site integration</div></li><li><strong>i want to take anything on this site and make into an MP3 so i can listen to it on the go</strong><div class="story-blurb">Created adaptive request page 'I Want To Take Anything On', Queued the request for downtime site integration</div></li><li><strong>Let's add a backend for admin to remove users and to see what is being used the most.</strong><div class="story-blurb">Created adaptive request page 'Let S Add A Backend For', Queued the request for downtime site integration</div></li><li><strong>i want to take anything on this site and make into an MP3 so i can listen to it on the go</strong><div class="story-blurb">Created adaptive request page 'I Want To Take Anything On', Queued the request for downtime site integration</div></li><li><strong>Let's add a backend for admin to remove users and to see what is being used the most.</strong><div class="story-blurb">Promoted queued request 'Let S Add A Backend For' into site content, Added the request summary during downtime refresh</div></li><li><strong>i want to take anything on this site and make into an MP3 so i can listen to it on the go</strong><div class="story-blurb">Promoted queued request 'I Want To Take Anything On' into site content, Added the request summary during downtime refresh</div></li></ul>
+                </article>
+                <article class="card" id="adaptive-requests">
+                    <h2>Adaptive Request Pages</h2>
+                    <ul><li><a href="/requests/member-messaging">Member Messaging</a><div class='story-blurb'>I want to be able to send a message to another member on this site and for it to stay on this site</div></li><li><a href="/requests/stock-market-deep-dive">Stock Market Deep Dive</a><div class='story-blurb'>Can you give me more story on the stock market?</div></li><li><a href="/requests/canada-video-briefing">Canada Video Briefing</a><div class='story-blurb'>can we have a card that just gives video on what is happening in canada</div></li><li><a href="/requests/account-access-guide">Account Access Guide</a><div class='story-blurb'>so i just made an account, but were is the sign?</div></li><li><a href="/requests/let-s-add-a-backend-for">Let S Add A Backend For</a><div class='story-blurb'>Let's add a backend for admin to remove users and to see what is being used the most.</div></li><li><a href="/requests/i-want-to-take-anything-on">I Want To Take Anything On</a><div class='story-blurb'>i want to take anything on this site and make into an MP3 so i can listen to it on the go</div></li></ul>
+                </article>
+                <article class="card">
+                    <h2>Queued For Downtime</h2>
+                    <ul><li>No downtime-only requests are currently queued.</li></ul>
+                </article>
+
+        <section class="card">
+            <h2>Free Sign-Up</h2>
+            <p>Create a lightweight profile on this browser so the site can remember what you save and recommend more of it.</p>
+            <form id="signup-form">
+                <label for="signup_name">Name</label>
+                <input id="signup_name" name="name" type="text" placeholder="Your name">
+                <label for="signup_email">Email</label>
+                <input id="signup_email" name="email" type="email" placeholder="name@example.com">
+                <button type="submit">Save profile</button>
+            </form>
+            <p id="signup-status"></p>
+        </section>
+
+        <section class="card">
+            <h2>Save Things You Like</h2>
+            <p>Use these save buttons to keep stories and videos you want to come back to.</p>
+            <ul><li><a href="https://techcrunch.com/2026/05/19/elon-musk-said-sam-altman-stole-a-non-profit-but-the-trial-showed-he-had-similar-aims/" target="_blank" rel="noopener noreferrer">Elon Musk said Sam Altman “stole” a non-profit — but the trial showed he had similar aims</a> <button class="save-item-btn" data-kind="story" data-title="Elon Musk said Sam Altman “stole” a non-profit — but the trial showed he had similar aims" data-url="https://techcrunch.com/2026/05/19/elon-musk-said-sam-altman-stole-a-non-profit-but-the-trial-showed-he-had-similar-aims/" data-source="TechCrunch">Save</button></li><li><a href="https://techcrunch.com/2026/05/19/google-takes-a-page-out-of-metas-book-announces-new-audio-powered-smart-glasses/" target="_blank" rel="noopener noreferrer">Google takes a page out of Meta’s book, announces new audio-powered smart glasses</a> <button class="save-item-btn" data-kind="story" data-title="Google takes a page out of Meta’s book, announces new audio-powered smart glasses" data-url="https://techcrunch.com/2026/05/19/google-takes-a-page-out-of-metas-book-announces-new-audio-powered-smart-glasses/" data-source="TechCrunch">Save</button></li><li><a href="https://techcrunch.com/2026/05/19/googles-genie-world-model-can-now-simulate-real-streets-with-street-view/" target="_blank" rel="noopener noreferrer">Google’s Genie world model can now simulate real streets with Street View</a> <button class="save-item-btn" data-kind="story" data-title="Google’s Genie world model can now simulate real streets with Street View" data-url="https://techcrunch.com/2026/05/19/googles-genie-world-model-can-now-simulate-real-streets-with-street-view/" data-source="TechCrunch">Save</button></li><li><a href="https://techcrunch.com/2026/05/19/with-gemini-3-5-flash-google-bets-its-next-ai-wave-on-agents-not-chatbots/" target="_blank" rel="noopener noreferrer">With Gemini 3.5 Flash, Google bets its next AI wave on agents, not chatbots</a> <button class="save-item-btn" data-kind="story" data-title="With Gemini 3.5 Flash, Google bets its next AI wave on agents, not chatbots" data-url="https://techcrunch.com/2026/05/19/with-gemini-3-5-flash-google-bets-its-next-ai-wave-on-agents-not-chatbots/" data-source="TechCrunch">Save</button></li><li><a href="https://arstechnica.com/science/2026/05/two-ai-based-science-assistants-succeed-with-drug-retargeting-tasks/" target="_blank" rel="noopener noreferrer">Two AI-based science assistants succeed with drug-retargeting tasks</a> <button class="save-item-btn" data-kind="story" data-title="Two AI-based science assistants succeed with drug-retargeting tasks" data-url="https://arstechnica.com/science/2026/05/two-ai-based-science-assistants-succeed-with-drug-retargeting-tasks/" data-source="Ars Technica">Save</button></li><li><a href="https://www.youtube.com/watch?v=wxIUD4p8nqA" target="_blank" rel="noopener noreferrer">What are tech CEOs seeking in China with Trump? | DW News</a> <button class="save-item-btn" data-kind="video" data-title="What are tech CEOs seeking in China with Trump? | DW News" data-url="https://www.youtube.com/watch?v=wxIUD4p8nqA" data-source="DW News">Save</button></li><li><a href="https://www.youtube.com/watch?v=pnLuiDLdqW0" target="_blank" rel="noopener noreferrer">Trump Discussed Nvidia Chips With Xi Jinping | Bloomberg Tech 5/15/2026</a> <button class="save-item-btn" data-kind="video" data-title="Trump Discussed Nvidia Chips With Xi Jinping | Bloomberg Tech 5/15/2026" data-url="https://www.youtube.com/watch?v=pnLuiDLdqW0" data-source="Bloomberg Technology">Save</button></li><li><a href="https://www.youtube.com/watch?v=WVOahY1MSG8" target="_blank" rel="noopener noreferrer">Empty Waymo cars SWARM neighborhood, residents stunned #foxnews #news #shorts #cars #tech</a> <button class="save-item-btn" data-kind="video" data-title="Empty Waymo cars SWARM neighborhood, residents stunned #foxnews #news #shorts #cars #tech" data-url="https://www.youtube.com/watch?v=WVOahY1MSG8" data-source="Fox News">Save</button></li><li><a href="https://www.youtube.com/watch?v=uMmISW6x38M" target="_blank" rel="noopener noreferrer">Drone technology in the spotlight | BBC News</a> <button class="save-item-btn" data-kind="video" data-title="Drone technology in the spotlight | BBC News" data-url="https://www.youtube.com/watch?v=uMmISW6x38M" data-source="BBC News">Save</button></li></ul>
+            <h3>Saved Items</h3>
+            <ul data-saved-items><li>No saved items yet.</li></ul>
+        </section>
+
+        <section class="card">
+            <h2>Recommended for You</h2>
+            <p>Recommendations update from the stories and videos you save on this browser.</p>
+            <ul data-recommendations><li>Save a few items to personalize this list.</li></ul>
+        </section>
+
+                <article class="card" id="ideas">
+                    <h2>Web Design Ideas</h2>
+                    <ul><li><a href="https://smashingmagazine.com/2026/05/data-backed-truths-user-experience-roi/" target="_blank" rel="noopener noreferrer">Ten Data-Backed Truths Of User Experience ROI</a> <em>(Smashing Magazine)</em></li><li><a href="https://smashingmagazine.com/2026/05/practical-interface-patterns-ai-transparency/" target="_blank" rel="noopener noreferrer">Practical Interface Patterns For AI Transparency (Part 2)</a> <em>(Smashing Magazine)</em></li><li><a href="https://smashingmagazine.com/2026/05/architecture-local-first-web-development/" target="_blank" rel="noopener noreferrer">The Architecture Of Local-First Web Development</a> <em>(Smashing Magazine)</em></li></ul>
+                </article>
+                <article class="card" id="news">
+                    <h2>Top 3 Story Briefs</h2>
+                    <ul><li><a href="https://techcrunch.com/2026/05/19/elon-musk-said-sam-altman-stole-a-non-profit-but-the-trial-showed-he-had-similar-aims/" target="_blank" rel="noopener noreferrer">Elon Musk said Sam Altman “stole” a non-profit — but the trial showed he had similar aims</a> <div class="story-blurb">“By the end of this week, you and Sam will be the most hated men in...</div><em>(TechCrunch)</em></li><li><a href="https://techcrunch.com/2026/05/19/google-takes-a-page-out-of-metas-book-announces-new-audio-powered-smart-glasses/" target="_blank" rel="noopener noreferrer">Google takes a page out of Meta’s book, announces new audio-powered smart glasses</a> <div class="story-blurb">Google is calling the new devices "audio glasses," in that users will be able to issue verbal commands to them and get things done via its ecosystem of apps and services, including...</div><em>(TechCrunch)</em></li><li><a href="https://techcrunch.com/2026/05/19/googles-genie-world-model-can-now-simulate-real-streets-with-street-view/" target="_blank" rel="noopener noreferrer">Google’s Genie world model can now simulate real streets with Street View</a> <div class="story-blurb">Google DeepMind is integrating Street View with Project Genie to create immersive, interactive world simulations for robotics, gaming, and travel, allowing users to explore environments, weather changes, and rare...</div><em>(TechCrunch)</em></li></ul>
+                </article>
+                <article class="card">
+                    <h2>Top Tech Stories</h2>
+                    <ul><li><a href="https://techcrunch.com/2026/05/19/with-gemini-3-5-flash-google-bets-its-next-ai-wave-on-agents-not-chatbots/" target="_blank" rel="noopener noreferrer">With Gemini 3.5 Flash, Google bets its next AI wave on agents, not chatbots</a> <em>(TechCrunch)</em></li><li><a href="https://arstechnica.com/science/2026/05/two-ai-based-science-assistants-succeed-with-drug-retargeting-tasks/" target="_blank" rel="noopener noreferrer">Two AI-based science assistants succeed with drug-retargeting tasks</a> <em>(Ars Technica)</em></li><li><a href="https://arstechnica.com/google/2026/05/googles-synthid-ai-watermarking-tech-is-being-adopted-by-openai-nvidia-and-more/" target="_blank" rel="noopener noreferrer">Google's SynthID AI watermarking tech is being adopted by OpenAI, Nvidia, and more</a> <em>(Ars Technica)</em></li><li><a href="https://arstechnica.com/information-technology/2026/05/in-stunning-display-of-stupid-secret-cisa-credentials-found-in-public-github-repo/" target="_blank" rel="noopener noreferrer">In stunning display of stupid, secret CISA credentials found in public GitHub repo</a> <em>(Ars Technica)</em></li><li><a href="https://arstechnica.com/health/2026/05/rfk-jr-forced-to-withdraw-charter-that-opened-cdc-panel-to-anti-vaccine-quacks/" target="_blank" rel="noopener noreferrer">RFK Jr. forced to withdraw charter that opened CDC panel to anti-vaccine quacks</a> <em>(Ars Technica)</em></li></ul>
+                </article>
+                <article class="card" id="video">
+                    <h2>Video-Inspired Upgrades</h2>
+                    <p><a href="https://www.youtube.com/watch?v=97irLVqYJCI" target="_blank" rel="noopener noreferrer">I Built a Self-Improving Agent Swarm. It Rewrote Its Own Code.</a> by Jaymin West</p>
+                    <h3>Concepts Pulled In</h3>
+                    <ul><li>self-improving agent swarm</li><li>parallel ownership of work</li><li>automatic code rewrite backlog</li><li>continuous system evolution</li></ul>
+                    <h3>Applied To This Codebase</h3>
+                    <ul><li>staged self-rewrite executor</li><li>daily autonomous site evolution</li><li>persistent module registry</li><li>feedback and error intake with learned rules</li></ul>
+                </article>
+                <article class="card">
+                    <h2>Tech YouTube Picks</h2>
+                    <ul><li><a href="https://www.youtube.com/watch?v=wxIUD4p8nqA" target="_blank" rel="noopener noreferrer">What are tech CEOs seeking in China with Trump? | DW News</a> by DW News<div class="story-blurb">Current tech-news coverage and commentary.</div></li><li><a href="https://www.youtube.com/watch?v=pnLuiDLdqW0" target="_blank" rel="noopener noreferrer">Trump Discussed Nvidia Chips With Xi Jinping | Bloomberg Tech 5/15/2026</a> by Bloomberg Technology<div class="story-blurb">Current tech-news coverage and commentary.</div></li><li><a href="https://www.youtube.com/watch?v=WVOahY1MSG8" target="_blank" rel="noopener noreferrer">Empty Waymo cars SWARM neighborhood, residents stunned #foxnews #news #shorts #cars #tech</a> by Fox News<div class="story-blurb">Current tech-news coverage and commentary.</div></li><li><a href="https://www.youtube.com/watch?v=uMmISW6x38M" target="_blank" rel="noopener noreferrer">Drone technology in the spotlight | BBC News</a> by BBC News<div class="story-blurb">Current tech-news coverage and commentary.</div></li></ul>
+                </article>
+                <article class="card">
+                    <h2>Send New Feedback</h2>
+                    <form method="post">
+                        <input type="hidden" name="entry_type" value="feedback">
+                        <label for="feedback_message">Feedback message</label>
+                        <textarea id="feedback_message" name="message" required></textarea>
+                        <label for="feedback_contact">Email or contact</label>
+                        <input id="feedback_contact" type="text" name="contact" placeholder="name@example.com">
+                        <button type="submit">Submit feedback</button>
+                    </form>
+                </article>
+                <article class="card">
+                    <h2>Report a New Error</h2>
+                    <form method="post">
+                        <input type="hidden" name="entry_type" value="error">
+                        <label for="error_message">What went wrong?</label>
+                        <textarea id="error_message" name="message" required></textarea>
+                        <label for="error_contact">Email or contact</label>
+                        <input id="error_contact" type="text" name="contact" placeholder="name@example.com">
+                        <button type="submit">Report error</button>
+                    </form>
+                </article>
+            </section>
+
+    <script>
+    (() => {
+        const profileKey = "skynet_profile_v1";
+        const savedKey = "skynet_saved_items_v1";
+        const catalog = [{"kind": "story", "title": "Elon Musk said Sam Altman \u201cstole\u201d a non-profit \u2014 but the trial showed he had similar aims", "url": "https://techcrunch.com/2026/05/19/elon-musk-said-sam-altman-stole-a-non-profit-but-the-trial-showed-he-had-similar-aims/", "source": "TechCrunch"}, {"kind": "story", "title": "Google takes a page out of Meta\u2019s book, announces new audio-powered smart glasses", "url": "https://techcrunch.com/2026/05/19/google-takes-a-page-out-of-metas-book-announces-new-audio-powered-smart-glasses/", "source": "TechCrunch"}, {"kind": "story", "title": "Google\u2019s Genie world model can now simulate real streets with Street View", "url": "https://techcrunch.com/2026/05/19/googles-genie-world-model-can-now-simulate-real-streets-with-street-view/", "source": "TechCrunch"}, {"kind": "story", "title": "With Gemini 3.5 Flash, Google bets its next AI wave on agents, not chatbots", "url": "https://techcrunch.com/2026/05/19/with-gemini-3-5-flash-google-bets-its-next-ai-wave-on-agents-not-chatbots/", "source": "TechCrunch"}, {"kind": "story", "title": "Two AI-based science assistants succeed with drug-retargeting tasks", "url": "https://arstechnica.com/science/2026/05/two-ai-based-science-assistants-succeed-with-drug-retargeting-tasks/", "source": "Ars Technica"}, {"kind": "story", "title": "Google's SynthID AI watermarking tech is being adopted by OpenAI, Nvidia, and more", "url": "https://arstechnica.com/google/2026/05/googles-synthid-ai-watermarking-tech-is-being-adopted-by-openai-nvidia-and-more/", "source": "Ars Technica"}, {"kind": "story", "title": "In stunning display of stupid, secret CISA credentials found in public GitHub repo", "url": "https://arstechnica.com/information-technology/2026/05/in-stunning-display-of-stupid-secret-cisa-credentials-found-in-public-github-repo/", "source": "Ars Technica"}, {"kind": "story", "title": "RFK Jr. forced to withdraw charter that opened CDC panel to anti-vaccine quacks", "url": "https://arstechnica.com/health/2026/05/rfk-jr-forced-to-withdraw-charter-that-opened-cdc-panel-to-anti-vaccine-quacks/", "source": "Ars Technica"}, {"kind": "story", "title": "Gemini 3.5 Flash", "url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-5/", "source": "Hacker News"}, {"kind": "story", "title": "I\u2019ve built a virtual museum with nearly every operating system you can think of", "url": "https://virtualosmuseum.org/", "source": "Hacker News"}, {"kind": "video", "title": "What are tech CEOs seeking in China with Trump? | DW News", "url": "https://www.youtube.com/watch?v=wxIUD4p8nqA", "source": "DW News"}, {"kind": "video", "title": "Trump Discussed Nvidia Chips With Xi Jinping | Bloomberg Tech 5/15/2026", "url": "https://www.youtube.com/watch?v=pnLuiDLdqW0", "source": "Bloomberg Technology"}, {"kind": "video", "title": "Empty Waymo cars SWARM neighborhood, residents stunned #foxnews #news #shorts #cars #tech", "url": "https://www.youtube.com/watch?v=WVOahY1MSG8", "source": "Fox News"}, {"kind": "video", "title": "Drone technology in the spotlight | BBC News", "url": "https://www.youtube.com/watch?v=uMmISW6x38M", "source": "BBC News"}, {"kind": "video", "title": "Top Tech From CES 2026: Exoskeleton, Digital Nail Polish, More", "url": "https://www.youtube.com/watch?v=VHSYqY-YHpc", "source": "TODAY"}, {"kind": "video", "title": "AI Triggers Mass Layoffs, Reshaping Future Of Tech Jobs In 2026? | Spotlight | N18G", "url": "https://www.youtube.com/watch?v=gLUC2WK4hsg", "source": "Firstpost"}, {"kind": "video", "title": "Apple Weighs Using Intel, Samsung Processors | Bloomberg Tech 5/5/2026", "url": "https://www.youtube.com/watch?v=hE5MH_RoMLQ", "source": "Bloomberg Technology"}, {"kind": "video", "title": "Why Apple\u2019s AI Strategy Matters More Than Ever", "url": "https://www.youtube.com/watch?v=M1WfaLA9NMs", "source": "CNBC"}];
+
+        const read = (key, fallback) => {
+            try {
+                const raw = localStorage.getItem(key);
+                return raw ? JSON.parse(raw) : fallback;
+            } catch (error) {
+                return fallback;
+            }
+        };
+
+        const write = (key, value) => localStorage.setItem(key, JSON.stringify(value));
+
+        const renderProfile = () => {
+            const profile = read(profileKey, {});
+            const form = document.getElementById("signup-form");
+            const status = document.getElementById("signup-status");
+            if (form) {
+                form.name.value = profile.name || "";
+                form.email.value = profile.email || "";
+            }
+            if (status && profile.name) {
+                status.textContent = `Profile saved for ${profile.name}.`;
+            }
+        };
+
+        const renderSavedItems = () => {
+            const saved = read(savedKey, []);
+            document.querySelectorAll("[data-saved-items]").forEach((list) => {
+                if (!saved.length) {
+                    list.innerHTML = "<li>No saved items yet.</li>";
+                    return;
+                }
+                list.innerHTML = saved.map((item) =>
+                    `<li><a href="${item.url}" target="_blank" rel="noopener noreferrer">${item.title}</a> <em>(${item.kind})</em></li>`
+                ).join("");
+            });
+        };
+
+        const renderRecommendations = () => {
+            const saved = read(savedKey, []);
+            const savedUrls = new Set(saved.map((item) => item.url));
+            const keywords = new Set(
+                saved.flatMap((item) =>
+                    item.title.toLowerCase().split(/[^a-z0-9]+/).filter((word) => word.length > 4)
+                )
+            );
+            let recommendations = catalog
+                .filter((item) => !savedUrls.has(item.url))
+                .map((item) => {
+                    let score = 0;
+                    if (saved.some((savedItem) => savedItem.source === item.source)) {
+                        score += 2;
+                    }
+                    for (const word of keywords) {
+                        if (item.title.toLowerCase().includes(word)) {
+                            score += 1;
+                        }
+                    }
+                    return { ...item, score };
+                })
+                .sort((a, b) => b.score - a.score);
+
+            if (!saved.length) {
+                recommendations = recommendations.slice(0, 5);
+            } else {
+                recommendations = recommendations.filter((item) => item.score > 0).slice(0, 5);
+            }
+
+            document.querySelectorAll("[data-recommendations]").forEach((list) => {
+                if (!recommendations.length) {
+                    list.innerHTML = "<li>Save a few items to personalize this list.</li>";
+                    return;
+                }
+                list.innerHTML = recommendations.map((item) =>
+                    `<li><a href="${item.url}" target="_blank" rel="noopener noreferrer">${item.title}</a> <em>(${item.kind})</em></li>`
+                ).join("");
+            });
+        };
+
+        document.addEventListener("click", (event) => {
+            const button = event.target.closest(".save-item-btn");
+            if (!button) {
+                return;
+            }
+            const saved = read(savedKey, []);
+            const item = {
+                kind: button.dataset.kind,
+                title: button.dataset.title,
+                url: button.dataset.url,
+                source: button.dataset.source
+            };
+            if (!saved.some((savedItem) => savedItem.url === item.url)) {
+                saved.push(item);
+                write(savedKey, saved);
+            }
+            renderSavedItems();
+            renderRecommendations();
+        });
+
+        document.addEventListener("submit", (event) => {
+            const form = event.target;
+            if (!form || form.id !== "signup-form") {
+                return;
+            }
+            event.preventDefault();
+            write(profileKey, {
+                name: form.name.value.trim(),
+                email: form.email.value.trim()
+            });
+            renderProfile();
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderProfile();
+            renderSavedItems();
+            renderRecommendations();
+        });
+    })();
+    </script>
+
+        </div>
+
+<!-- skynetv2-autonomous:20260519170604 -->
+<section class="card" id="skynetv2-autonomous-updates">
+  <h2>Autonomous Update</h2>
+  <p>Generated at 2026-05-19T17:06:04.928623 from live screen/page observations.</p>
+  <p>Detected cues: create, error, feedback, fix, request, update, website</p>
+  <p>Summary: skynetv1 Daily Evolution
+
+            :root {
+                --bg-start: #fef3c7;
+                --bg-end: #dbeafe;
+                --accent: #1d4ed8;
+                --card: rgba(255,255,255,0.90);
+                --ink: #17203</p>
+</section>
+
+<!-- skynetv2-autonomous:20260519170944 -->
+<section class="card" id="skynetv2-autonomous-updates">
+  <h2>Autonomous Update</h2>
+  <p>Generated at 2026-05-19T17:09:44.805546 from live screen/page observations.</p>
+  <p>Detected cues: create, error, feedback, fix, request, update, website</p>
+  <p>Summary: skynetv1 Daily Evolution
+
+            :root {
+                --bg-start: #fef3c7;
+                --bg-end: #dbeafe;
+                --accent: #1d4ed8;
+                --card: rgba(255,255,255,0.90);
+                --ink: #17203</p>
+</section>
+
+<!-- skynetv2-autonomous:20260519171328 -->
+<section class="card" id="skynetv2-autonomous-updates">
+  <h2>Autonomous Update</h2>
+  <p>Generated at 2026-05-19T17:13:28.773660 from live screen/page observations.</p>
+  <p>Detected cues: create, error, feedback, fix, request, update, website</p>
+  <p>Summary: skynetv1 Daily Evolution
+
+            :root {
+                --bg-start: #fef3c7;
+                --bg-end: #dbeafe;
+                --accent: #1d4ed8;
+                --card: rgba(255,255,255,0.90);
+                --ink: #17203</p>
+</section>
+
+
+<!-- skynetv2-autonomous:20260519171704 -->
+<section class="card" id="skynetv2-autonomous-updates">
+  <h2>Autonomous Update</h2>
+  <p>Generated at 2026-05-19T17:17:04.916475 from live screen/page observations.</p>
+  <p>Detected cues: create, error, feedback, fix, request, update, website</p>
+  <p>Summary: skynetv1 Daily Evolution 
+         
+            :root {
+                --bg-start: #fef3c7;
+                --bg-end: #dbeafe;
+                --accent: #1d4ed8;
+                --card: rgba(255,255,255,0.90);
+                --ink: #17203</p>
+</section>
+
+</body>
+    </html>
