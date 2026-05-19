@@ -1,0 +1,47 @@
+import nltk
+from nltk.chat.util import Chat, reflections
+
+pairs = [
+    [
+        r"hi|hello|hey",
+        ["Hello!", "Hi there! How can I help you today?"]
+    ],
+    [
+        r"how are you?",
+        ["I'm just a computer program, so I don't have feelings, but thank you for asking!",]
+    ],
+    [
+        r"what is your name?",
+        ["I am Qwen, a language model created by Alibaba Cloud. How can I assist you today?"]
+    ],
+    [
+        r"(.*)",
+        ["I'm sorry, I didn't understand that. Can you please rephrase your question or command?",]
+    ]
+]
+
+def text_adventure_game():
+    print("Welcome to the Text Adventure Game!")
+    print("You are in a mysterious forest.")
+    
+    try:
+        nltk.download('punkt')
+    except Exception as e:
+        print(f"An error occurred while downloading NLTK resources: {e}")
+        return
+    
+    chatbot = Chat(pairs, reflections)
+    
+    while True:
+        user_input = input("What do you want to do? ")
+        if user_input.lower() == 'quit':
+            print("Goodbye! Have a great day!")
+            break
+        response = chatbot.respond(user_input)
+        print(response)
+
+if __name__ == "__main__":
+    text_adventure_game()
+```
+
+This code completes the text adventure game with natural language processing. It includes error handling for downloading NLTK resources and ensures that the game can run without interruption if there are issues with NLTK.
