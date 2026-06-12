@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  outline:
+    image: outline:latest
+    volumes:
+      - /home/pi/Desktop/test:/workspace:rw
+      - /etc/swarm-config:/etc/swarm-config:ro
+      - /mnt/shared:/mnt/shared:rw
+      - /mnt/toshiba:/mnt/toshiba:rw
+      - /mnt/1tb:/mnt/1tb:rw
+      - /mnt/dataset_storage:/mnt/dataset_storage:rw
+    working_dir: /workspace/create
+    networks:
+      - codegen-net
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 3
+      placement:
+        constraints:
+          - node.hostname == pi
+
+networks:
+  codegen-net:
+    external: true

@@ -1,0 +1,22 @@
+FROM python:3.11-slim
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    CONFIG_PATH=/etc/swarm-config/config.json \
+    OLLAMA_QWEN_ENDPOINT=http://ollama-qwen:11435 \
+    OLLAMA_DEEPSEEK_ENDPOINT=http://ollama-deepseek:11437
+
+RUN apt-get update -qq \
+    && apt-get install -y --no-install-recommends bash ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /workspace/create
+
+RUN python -m pip install --no-cache-dir -q tqdm psutil requests redis psycopg2-binary ujson python-dotenv
+
+COPY mk14.py /workspace/create/mk14.py
+COPY worker2.py /workspace/create/worker2.py
+COPY config_loader.py /workspace/create/config_loader.py
+COPY path_manager.py /workspace/create/path_manager.py
+
+CMD ["bash", "-lc", "python /workspace/create/worker2.py"]

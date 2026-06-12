@@ -1,0 +1,44 @@
+{
+  "enrolled_devices": [
+    {
+      "fingerprint": "de8bbdeb2b0093d13a647300",
+      "ip": "192.168.1.153",
+      "mac": "ec:6c:9a:02:08:3d",
+      "source": "arp",
+      "enrolled_at": "2026-05-08T19:21:15.944913",
+      "last_heartbeat_at": "",
+      "status": "active"
+    },
+    {
+      "fingerprint": "0a1d994083a888f2af8c53c5",
+      "ip": "192.168.1.1",
+      "mac": "24:41:fe:78:57:49",
+      "source": "arp",
+      "enrolled_at": "2026-05-08T19:21:15.944913",
+      "last_heartbeat_at": "",
+      "status": "active"
+    }
+  ],
+  "events": [
+    {
+      "event": "scan_discovered_devices",
+      "count": 2,
+      "at": "2026-05-01T11:47:33.030356"
+    },
+    {
+      "event": "device_enrolled",
+      "fingerprint": "de8bbdeb2b0093d13a647300",
+      "at": "2026-05-08T19:21:15.944913",
+      "reviewed_by": "auto_cli"
+    },
+    {
+      "event": "device_enrolled",
+      "fingerprint": "0a1d994083a888f2af8c53c5",
+      "at": "2026-05-08T19:21:15.944913",
+      "reviewed_by": "auto_cli"
+    }
+  ],
+  "last_scan_at": "2026-05-01T11:47:33.030378",
+  "last_scan_reason": "approved_ssid_and_subnet_scan",
+  "ssid_network_history": {}
+}

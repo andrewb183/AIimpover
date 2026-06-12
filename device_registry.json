@@ -1,0 +1,12 @@
+{
+  "enrolled_devices": [],
+  "events": [
+    {
+      "event": "scan_discovered_devices",
+      "count": 2,
+      "at": "2026-05-01T11:47:33.030356"
+    }
+  ],
+  "last_scan_at": "2026-05-01T11:47:33.030378",
+  "last_scan_reason": "approved_ssid_and_subnet_scan"
+}

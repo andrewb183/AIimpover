@@ -1,0 +1,52 @@
+{
+  "timestamp": 1772846408.9203231,
+  "queue_size": 0,
+  "slow_queue_size": 0,
+  "workers": {
+    "0": {
+      "status": "idle",
+      "task": null,
+      "started_at": null,
+      "preferred_model": null,
+      "language": "javascript",
+      "last_completed": "interactive_text_adventure_game - Escalation L3 (v2) - Escalation L2 (v2) - Escalation L1 (v1) - Escalation L4 (v1)"
+    },
+    "1": {
+      "status": "idle",
+      "task": null,
+      "started_at": null,
+      "preferred_model": null,
+      "language": "rust",
+      "last_completed": "Image Manipulation CLI Tool [deepseek-r1]"
+    },
+    "2": {
+      "status": "idle",
+      "task": null,
+      "started_at": null,
+      "preferred_model": null,
+      "language": "go",
+      "last_completed": "EchoVerse - A Real-Time Multi-User Chat Application [skipped]"
+    },
+    "3": {
+      "status": "idle",
+      "task": null,
+      "started_at": null,
+      "preferred_model": null,
+      "language": "python",
+      "last_completed": null
+    },
+    "4": {
+      "status": "idle",
+      "task": null,
+      "started_at": null,
+      "preferred_model": null,
+      "language": "python",
+      "last_completed": null
+    }
+  },
+  "model_health": {
+    "qwen2.5-coder": false,
+    "deepseek-r1": false
+  },
+  "preferred_model": null
+}

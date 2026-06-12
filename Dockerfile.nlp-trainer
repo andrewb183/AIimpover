@@ -1,0 +1,61 @@
+ARG BASE_IMAGE=python:3.10-slim-bullseye
+FROM ${BASE_IMAGE}
+
+# Add OpenCL runtime (Mesa Clover) and minimal system dependencies
+ARG INSTALL_SYSTEM_DEPS=1
+RUN if [ "${INSTALL_SYSTEM_DEPS}" = "1" ]; then \
+      apt-get update && apt-get install -y --no-install-recommends \
+        git \
+        libgomp1 \
+        ocl-icd-libopencl1 clinfo mesa-opencl-icd \
+        && rm -rf /var/lib/apt/lists/*; \
+    fi
+
+WORKDIR /app
+
+# Install PyTorch from a configurable index. This allows CPU wheels by default
+# and lets the GPU node swap in a CUDA/ROCm wheel at build time if needed.
+ARG TORCH_VERSION=2.2.2
+ARG TORCH_INDEX_URL=https://download.pytorch.org/whl/cpu
+ARG INSTALL_TORCH=1
+RUN if [ "${INSTALL_TORCH}" = "1" ]; then \
+      pip install --no-cache-dir \
+        torch==${TORCH_VERSION} --index-url ${TORCH_INDEX_URL}; \
+    fi
+
+# Only packages actually imported by nlp_code_trainer.py
+RUN pip install --no-cache-dir \
+    'numpy<2' \
+    accelerate==0.27.2 \
+    transformers==4.36.0 \
+    psutil \
+    tqdm \
+    PyPDF2 \
+    python-docx
+
+
+# Copy NLP training scripts
+COPY nlp_code_trainer.py ./
+COPY batch_schedule_config.json ./
+COPY config_loader.py ./
+COPY mistakelearn.py ./
+COPY harding.py ./
+COPY AUTONOMOUS_AI_EVOLUTION_DOCS.txt ./
+
+# Ensure all NFS/network share roots are available as Docker volumes (documented for docker-compose)
+VOLUME ["/mnt/dataset_storage", "/mnt/shared", "/mnt/toshiba", "/mnt/webcode", "/app/implementation_outputs", "/app/implementations"]
+
+RUN mkdir -p /app/skynetv1
+
+
+ENV PYTHONUNBUFFERED=1
+ENV TRANSFORMERS_CACHE=/app/.cache/transformers
+ENV HF_HOME=/app/.cache/huggingface
+ENV USE_GPU=auto
+# HF_TOKEN should be passed at runtime via docker secret or env, not baked in
+
+
+HEALTHCHECK --interval=60s --timeout=15s --start-period=30s --retries=3 \
+    CMD python -c "import torch, transformers; print('OK')" || exit 1
+
+CMD ["python", "-u", "nlp_code_trainer.py"]

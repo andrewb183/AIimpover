@@ -1,0 +1,10 @@
+FROM python:3.11-slim
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
+WORKDIR /workspace/create
+
+COPY mk14.py /workspace/create/mk14.py
+
+CMD ["python", "/workspace/create/mk14.py"]
