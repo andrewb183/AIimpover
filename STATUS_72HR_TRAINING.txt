@@ -1,0 +1,112 @@
+╔════════════════════════════════════════════════════════════════╗
+║  72-HOUR TRAINING MODE - DEPLOYMENT SUCCESSFUL                 ║
+║  Started: Sat  7 Mar 07:42:15 EST 2026
+║  End Time: Tue 10 Mar 08:42:15 EDT 2026
+╚════════════════════════════════════════════════════════════════╝
+
+✅ ACTIVE SERVICES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. NLP Trainer GPU (raspberry node)
+   Status: Running and building dataset
+   Resources: GPU + 12GB RAM + 4 CPUs
+   Note: Currently processing training data (takes 10-30 min for initial setup)
+
+2. NLP Trainer CPU (manager/pi node)
+   Status: ✓ TRAINING ACTIVELY
+   Resources: CPU + 8GB RAM + 4 CPUs
+   Progress: Completed autoregressive split, continuing training
+
+3. Email Reporter (manager/pi node)
+   Status: ✓ Running
+   Purpose: Sends status reports to your email
+
+4. Dataset Puller (raspberry node)
+   Status: ✓ Running
+   Purpose: Continuously gathering new training data
+   Progress: Downloading repos and datasets
+
+5. Postgres & Redis
+   Status: ✓ Running (support services)
+
+⏸️  STOPPED SERVICES (To maximize training resources)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Web Dashboard (port 5000)
+- Portainer UI (ports 8000, 9000)
+- Outline (idea generator)
+- ML Workers (both nodes)
+
+📊 RESOURCE ALLOCATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Node: raspberry (GPU node)
+├─ GPU Trainer: 4 CPUs, 12GB RAM, GPU access
+├─ Dataset Puller: Minimal resources
+└─ Training Data: /mnt/shared/training_data_150gb
+
+Node: pi (Manager/CPU node)
+├─ CPU Trainer: 4 CPUs, 8GB RAM
+├─ Email Reporter: 0.25 CPUs, 512MB RAM
+└─ Postgres + Redis: 3 CPUs, 6GB RAM
+
+🔍 MONITORING COMMANDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Quick status check:
+  ./monitor_72hr_training.sh
+
+Watch CPU trainer logs:
+  docker service logs codegen_nlp-trainer-cpu -f --tail 50
+
+Watch GPU trainer logs:
+  docker service logs codegen_nlp-trainer-gpu -f --tail 50
+
+Check all services:
+  docker service ls
+
+View dataset puller progress:
+  docker service logs dataset-puller_dataset-puller-node2 -f
+
+📁 DATA LOCATIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Training Data: /mnt/shared/training_data_150gb (shared between nodes)
+GPU Model Output: /mnt/shared/models/skynetv1
+CPU Model Output: ./models/skynetv1
+Logs: docker service logs <service-name>
+
+🔄 AFTER 72 HOURS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+To restore normal operations:
+  ./restore_normal_ops.sh
+
+Or manually:
+  docker service scale codegen_web=1 codegen_portainer=1
+
+To re-enable other services if needed:
+  docker service scale codegen_outline=1
+  docker service scale codegen_ml_worker_manager=1
+  docker service scale codegen_ml_worker_raspberry=1
+
+📧 EMAIL REPORTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+You will continue receiving email reports with:
+- Training progress
+- System metrics
+- Model performance
+- Any errors or issues
+
+Recipient: andy.r.bltn@gmail.com
+
+⚠️  NOTES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+- GPU trainer may take 10-30 minutes for initial dataset processing
+- CPU trainer is already actively training
+- Both nodes are fully dedicated to training
+- Dataset puller continues to gather more training data
+- Email reporter ensures you stay informed
+- System will remain in this configuration for 72 hours
+
