@@ -1,0 +1,22 @@
+{
+  "timestamp": "2026-06-12T14:11:06.856577+00:00",
+  "recorded_at": "2026-06-12T14:11:06.856492+00:00",
+  "mode": "LIVE",
+  "state": "running",
+  "pairs_scanned": 150,
+  "trades_executed": 0,
+  "errors": 0,
+  "daily_realized_pnl": 0,
+  "daily_open_pnl": 0,
+  "total_equity_usd": 21.9910764224872,
+  "volatility_gate_hits": 82,
+  "spread_opportunities": 0,
+  "active_exchanges": [
+    "kraken",
+    "coinbase"
+  ],
+  "cycle_notes": "drawdown_pct=13.58; volatility_factor=0.40; zero_trade_streak=12; weekly_train_status=weekday_no_train; trend_model_fresh=True; trend_pairs_total=79; trend_fallback_hits=0; momentum_fallback_hits=0; dca_fallback_hits=0; backfill_complete=True; backfill_sundays_done=5; backfill_pairs_done=118",
+  "loss_cap_usd": 50.0,
+  "profit_target_usd": 500.0,
+  "sleep_seconds": 30
+}

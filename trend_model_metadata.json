@@ -1,0 +1,1639 @@
+{
+  "version": "1.0",
+  "trends_by_pair": {
+    "00/USD": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.4077,
+      "avg_pnl_pct": -0.2824,
+      "win_rate": 0.5412,
+      "samples": 898,
+      "buy_count": 486,
+      "sell_count": 412,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "00/USDC": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.4077,
+      "avg_pnl_pct": -0.2824,
+      "win_rate": 0.5412,
+      "samples": 898,
+      "buy_count": 486,
+      "sell_count": 412,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "1INCH/USD": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.4098,
+      "avg_pnl_pct": -0.2953,
+      "win_rate": 0.5423,
+      "samples": 898,
+      "buy_count": 487,
+      "sell_count": 411,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "1INCH/USDC": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.4098,
+      "avg_pnl_pct": -0.2953,
+      "win_rate": 0.5423,
+      "samples": 898,
+      "buy_count": 487,
+      "sell_count": 411,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "2Z/USD": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.4071,
+      "avg_pnl_pct": -0.3551,
+      "win_rate": 0.4738,
+      "samples": 669,
+      "buy_count": 317,
+      "sell_count": 352,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "2Z/USDC": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.4071,
+      "avg_pnl_pct": -0.3551,
+      "win_rate": 0.4738,
+      "samples": 669,
+      "buy_count": 317,
+      "sell_count": 352,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "A8/USD": {
+      "trend_direction": "down",
+      "trend_strength": 0.4316,
+      "avg_pnl_pct": -0.3211,
+      "win_rate": 0.4265,
+      "samples": 898,
+      "buy_count": 383,
+      "sell_count": 515,
+      "momentum_signal": "sell",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "A8/USDC": {
+      "trend_direction": "down",
+      "trend_strength": 0.4316,
+      "avg_pnl_pct": -0.3211,
+      "win_rate": 0.4265,
+      "samples": 898,
+      "buy_count": 383,
+      "sell_count": 515,
+      "momentum_signal": "sell",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "AAVE/USD": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.418,
+      "avg_pnl_pct": -0.3316,
+      "win_rate": 0.4511,
+      "samples": 900,
+      "buy_count": 406,
+      "sell_count": 494,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "AAVE/USDC": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.418,
+      "avg_pnl_pct": -0.3316,
+      "win_rate": 0.4511,
+      "samples": 900,
+      "buy_count": 406,
+      "sell_count": 494,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ABT/USD": {
+      "trend_direction": "down",
+      "trend_strength": 0.4512,
+      "avg_pnl_pct": -0.264,
+      "win_rate": 0.3826,
+      "samples": 899,
+      "buy_count": 344,
+      "sell_count": 555,
+      "momentum_signal": "sell",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ABT/USDC": {
+      "trend_direction": "down",
+      "trend_strength": 0.4512,
+      "avg_pnl_pct": -0.264,
+      "win_rate": 0.3826,
+      "samples": 899,
+      "buy_count": 344,
+      "sell_count": 555,
+      "momentum_signal": "sell",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ACH/USD": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.4027,
+      "avg_pnl_pct": -0.3054,
+      "win_rate": 0.4716,
+      "samples": 899,
+      "buy_count": 424,
+      "sell_count": 475,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ACH/USDC": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.4027,
+      "avg_pnl_pct": -0.3054,
+      "win_rate": 0.4716,
+      "samples": 899,
+      "buy_count": 424,
+      "sell_count": 475,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ACS/USD": {
+      "trend_direction": "down",
+      "trend_strength": 0.4423,
+      "avg_pnl_pct": -0.4877,
+      "win_rate": 0.441,
+      "samples": 898,
+      "buy_count": 396,
+      "sell_count": 502,
+      "momentum_signal": "sell",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ACS/USDC": {
+      "trend_direction": "down",
+      "trend_strength": 0.4423,
+      "avg_pnl_pct": -0.4877,
+      "win_rate": 0.441,
+      "samples": 898,
+      "buy_count": 396,
+      "sell_count": 502,
+      "momentum_signal": "sell",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ACX/USD": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.3971,
+      "avg_pnl_pct": -0.2953,
+      "win_rate": 0.4788,
+      "samples": 898,
+      "buy_count": 430,
+      "sell_count": 468,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ACX/USDC": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.3971,
+      "avg_pnl_pct": -0.2953,
+      "win_rate": 0.4788,
+      "samples": 898,
+      "buy_count": 430,
+      "sell_count": 468,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ADA/USD": {
+      "trend_direction": "down",
+      "trend_strength": 0.4282,
+      "avg_pnl_pct": -0.3335,
+      "win_rate": 0.4344,
+      "samples": 900,
+      "buy_count": 391,
+      "sell_count": 509,
+      "momentum_signal": "sell",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ADA/USDC": {
+      "trend_direction": "down",
+      "trend_strength": 0.4282,
+      "avg_pnl_pct": -0.3335,
+      "win_rate": 0.4344,
+      "samples": 900,
+      "buy_count": 391,
+      "sell_count": 509,
+      "momentum_signal": "sell",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ADA/USDT": {
+      "trend_direction": "down",
+      "trend_strength": 0.4371,
+      "avg_pnl_pct": -0.3372,
+      "win_rate": 0.4205,
+      "samples": 899,
+      "buy_count": 378,
+      "sell_count": 521,
+      "momentum_signal": "sell",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "AERGO/USD": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.3931,
+      "avg_pnl_pct": -0.195,
+      "win_rate": 0.4661,
+      "samples": 899,
+      "buy_count": 419,
+      "sell_count": 480,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "AERGO/USDC": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.3931,
+      "avg_pnl_pct": -0.195,
+      "win_rate": 0.4661,
+      "samples": 899,
+      "buy_count": 419,
+      "sell_count": 480,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "AERO/USD": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.3922,
+      "avg_pnl_pct": -0.0703,
+      "win_rate": 0.4433,
+      "samples": 900,
+      "buy_count": 399,
+      "sell_count": 501,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "AERO/USDC": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.3922,
+      "avg_pnl_pct": -0.0703,
+      "win_rate": 0.4433,
+      "samples": 900,
+      "buy_count": 399,
+      "sell_count": 501,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "AGLD/USD": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.3866,
+      "avg_pnl_pct": -0.2191,
+      "win_rate": 0.4816,
+      "samples": 899,
+      "buy_count": 433,
+      "sell_count": 466,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "AGLD/USDC": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.3866,
+      "avg_pnl_pct": -0.2191,
+      "win_rate": 0.4816,
+      "samples": 899,
+      "buy_count": 433,
+      "sell_count": 466,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "AI/USD": {
+      "trend_direction": "down",
+      "trend_strength": 0.5006,
+      "avg_pnl_pct": -0.8372,
+      "win_rate": 0.4118,
+      "samples": 85,
+      "buy_count": 35,
+      "sell_count": 50,
+      "momentum_signal": "strong_sell",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "AI/USDC": {
+      "trend_direction": "down",
+      "trend_strength": 0.5006,
+      "avg_pnl_pct": -0.8372,
+      "win_rate": 0.4118,
+      "samples": 85,
+      "buy_count": 35,
+      "sell_count": 50,
+      "momentum_signal": "strong_sell",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "AIOZ/USD": {
+      "trend_direction": "down",
+      "trend_strength": 0.4422,
+      "avg_pnl_pct": -0.4299,
+      "win_rate": 0.43,
+      "samples": 900,
+      "buy_count": 387,
+      "sell_count": 513,
+      "momentum_signal": "sell",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "AIOZ/USDC": {
+      "trend_direction": "down",
+      "trend_strength": 0.4422,
+      "avg_pnl_pct": -0.4299,
+      "win_rate": 0.43,
+      "samples": 900,
+      "buy_count": 387,
+      "sell_count": 513,
+      "momentum_signal": "sell",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "AKT/USD": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.3622,
+      "avg_pnl_pct": -0.0192,
+      "win_rate": 0.4833,
+      "samples": 900,
+      "buy_count": 435,
+      "sell_count": 465,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "AKT/USDC": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.3622,
+      "avg_pnl_pct": -0.0192,
+      "win_rate": 0.4833,
+      "samples": 900,
+      "buy_count": 435,
+      "sell_count": 465,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ALCX/USD": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.3738,
+      "avg_pnl_pct": -0.0035,
+      "win_rate": 0.461,
+      "samples": 898,
+      "buy_count": 414,
+      "sell_count": 484,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ALCX/USDC": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.3738,
+      "avg_pnl_pct": -0.0035,
+      "win_rate": 0.461,
+      "samples": 898,
+      "buy_count": 414,
+      "sell_count": 484,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ALEO/USD": {
+      "trend_direction": "down",
+      "trend_strength": 0.4404,
+      "avg_pnl_pct": -0.4149,
+      "win_rate": 0.43,
+      "samples": 300,
+      "buy_count": 129,
+      "sell_count": 171,
+      "momentum_signal": "sell",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ALEO/USDC": {
+      "trend_direction": "down",
+      "trend_strength": 0.4404,
+      "avg_pnl_pct": -0.4149,
+      "win_rate": 0.43,
+      "samples": 300,
+      "buy_count": 129,
+      "sell_count": 171,
+      "momentum_signal": "sell",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ALEPH/USD": {
+      "trend_direction": "down",
+      "trend_strength": 0.4359,
+      "avg_pnl_pct": -0.2803,
+      "win_rate": 0.4114,
+      "samples": 299,
+      "buy_count": 123,
+      "sell_count": 176,
+      "momentum_signal": "sell",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ALEPH/USDC": {
+      "trend_direction": "down",
+      "trend_strength": 0.4359,
+      "avg_pnl_pct": -0.2803,
+      "win_rate": 0.4114,
+      "samples": 299,
+      "buy_count": 123,
+      "sell_count": 176,
+      "momentum_signal": "sell",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ALGO/USD": {
+      "trend_direction": "down",
+      "trend_strength": 0.4128,
+      "avg_pnl_pct": -0.2465,
+      "win_rate": 0.4433,
+      "samples": 300,
+      "buy_count": 133,
+      "sell_count": 167,
+      "momentum_signal": "sell",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ALGO/USDC": {
+      "trend_direction": "down",
+      "trend_strength": 0.4128,
+      "avg_pnl_pct": -0.2465,
+      "win_rate": 0.4433,
+      "samples": 300,
+      "buy_count": 133,
+      "sell_count": 167,
+      "momentum_signal": "sell",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ALICE/USD": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.3866,
+      "avg_pnl_pct": -0.202,
+      "win_rate": 0.4783,
+      "samples": 299,
+      "buy_count": 143,
+      "sell_count": 156,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ALICE/USDC": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.3866,
+      "avg_pnl_pct": -0.202,
+      "win_rate": 0.4783,
+      "samples": 299,
+      "buy_count": 143,
+      "sell_count": 156,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ALLO/USD": {
+      "trend_direction": "down",
+      "trend_strength": 0.4748,
+      "avg_pnl_pct": -0.5722,
+      "win_rate": 0.4032,
+      "samples": 186,
+      "buy_count": 75,
+      "sell_count": 111,
+      "momentum_signal": "sell",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ALLO/USDC": {
+      "trend_direction": "down",
+      "trend_strength": 0.4748,
+      "avg_pnl_pct": -0.5722,
+      "win_rate": 0.4032,
+      "samples": 186,
+      "buy_count": 75,
+      "sell_count": 111,
+      "momentum_signal": "sell",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ALT/USD": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.4149,
+      "avg_pnl_pct": -0.4275,
+      "win_rate": 0.4749,
+      "samples": 299,
+      "buy_count": 142,
+      "sell_count": 157,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ALT/USDC": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.4149,
+      "avg_pnl_pct": -0.4275,
+      "win_rate": 0.4749,
+      "samples": 299,
+      "buy_count": 142,
+      "sell_count": 157,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "AMP/USD": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.4191,
+      "avg_pnl_pct": -0.4805,
+      "win_rate": 0.4783,
+      "samples": 299,
+      "buy_count": 143,
+      "sell_count": 156,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "AMP/USDC": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.4191,
+      "avg_pnl_pct": -0.4805,
+      "win_rate": 0.4783,
+      "samples": 299,
+      "buy_count": 143,
+      "sell_count": 156,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ANKR/USD": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.4048,
+      "avg_pnl_pct": -0.3327,
+      "win_rate": 0.4733,
+      "samples": 300,
+      "buy_count": 142,
+      "sell_count": 158,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ANKR/USDC": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.4048,
+      "avg_pnl_pct": -0.3327,
+      "win_rate": 0.4733,
+      "samples": 300,
+      "buy_count": 142,
+      "sell_count": 158,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "APE/USD": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.4128,
+      "avg_pnl_pct": -0.3325,
+      "win_rate": 0.46,
+      "samples": 300,
+      "buy_count": 138,
+      "sell_count": 162,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "APE/USDC": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.4128,
+      "avg_pnl_pct": -0.3325,
+      "win_rate": 0.46,
+      "samples": 300,
+      "buy_count": 138,
+      "sell_count": 162,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "APE/USDT": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.4243,
+      "avg_pnl_pct": -0.3871,
+      "win_rate": 0.4515,
+      "samples": 299,
+      "buy_count": 135,
+      "sell_count": 164,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "API3/USD": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.4043,
+      "avg_pnl_pct": -0.1474,
+      "win_rate": 0.4381,
+      "samples": 299,
+      "buy_count": 131,
+      "sell_count": 168,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "API3/USDC": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.4043,
+      "avg_pnl_pct": -0.1474,
+      "win_rate": 0.4381,
+      "samples": 299,
+      "buy_count": 131,
+      "sell_count": 168,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "APR/USD": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.3772,
+      "avg_pnl_pct": 0.121,
+      "win_rate": 0.5217,
+      "samples": 207,
+      "buy_count": 108,
+      "sell_count": 99,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "APR/USDC": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.3773,
+      "avg_pnl_pct": 0.122,
+      "win_rate": 0.5217,
+      "samples": 207,
+      "buy_count": 108,
+      "sell_count": 99,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "APT/USD": {
+      "trend_direction": "down",
+      "trend_strength": 0.4467,
+      "avg_pnl_pct": -0.4691,
+      "win_rate": 0.43,
+      "samples": 300,
+      "buy_count": 129,
+      "sell_count": 171,
+      "momentum_signal": "sell",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "APT/USDC": {
+      "trend_direction": "down",
+      "trend_strength": 0.4467,
+      "avg_pnl_pct": -0.4691,
+      "win_rate": 0.43,
+      "samples": 300,
+      "buy_count": 129,
+      "sell_count": 171,
+      "momentum_signal": "sell",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ARB/USD": {
+      "trend_direction": "down",
+      "trend_strength": 0.4253,
+      "avg_pnl_pct": -0.3442,
+      "win_rate": 0.4415,
+      "samples": 299,
+      "buy_count": 132,
+      "sell_count": 167,
+      "momentum_signal": "sell",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ARB/USDC": {
+      "trend_direction": "down",
+      "trend_strength": 0.4253,
+      "avg_pnl_pct": -0.3442,
+      "win_rate": 0.4415,
+      "samples": 299,
+      "buy_count": 132,
+      "sell_count": 167,
+      "momentum_signal": "sell",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ARKM/USD": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.4205,
+      "avg_pnl_pct": -0.3722,
+      "win_rate": 0.4548,
+      "samples": 299,
+      "buy_count": 136,
+      "sell_count": 163,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ARKM/USDC": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.4205,
+      "avg_pnl_pct": -0.3722,
+      "win_rate": 0.4548,
+      "samples": 299,
+      "buy_count": 136,
+      "sell_count": 163,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ARPA/USD": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.4026,
+      "avg_pnl_pct": -0.1325,
+      "win_rate": 0.5619,
+      "samples": 299,
+      "buy_count": 168,
+      "sell_count": 131,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ARPA/USDC": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.4026,
+      "avg_pnl_pct": -0.1325,
+      "win_rate": 0.5619,
+      "samples": 299,
+      "buy_count": 168,
+      "sell_count": 131,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ASM/USD": {
+      "trend_direction": "down",
+      "trend_strength": 0.4263,
+      "avg_pnl_pct": -0.2942,
+      "win_rate": 0.43,
+      "samples": 300,
+      "buy_count": 129,
+      "sell_count": 171,
+      "momentum_signal": "sell",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ASM/USDC": {
+      "trend_direction": "down",
+      "trend_strength": 0.4263,
+      "avg_pnl_pct": -0.2942,
+      "win_rate": 0.43,
+      "samples": 300,
+      "buy_count": 129,
+      "sell_count": 171,
+      "momentum_signal": "sell",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "AST/USD": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.4114,
+      "avg_pnl_pct": -0.4143,
+      "win_rate": 0.4783,
+      "samples": 299,
+      "buy_count": 143,
+      "sell_count": 156,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "AST/USDC": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.4114,
+      "avg_pnl_pct": -0.4143,
+      "win_rate": 0.4783,
+      "samples": 299,
+      "buy_count": 143,
+      "sell_count": 156,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ASTER/USD": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.3949,
+      "avg_pnl_pct": -0.3156,
+      "win_rate": 0.4865,
+      "samples": 185,
+      "buy_count": 90,
+      "sell_count": 95,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ASTER/USDC": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.3949,
+      "avg_pnl_pct": -0.3156,
+      "win_rate": 0.4865,
+      "samples": 185,
+      "buy_count": 90,
+      "sell_count": 95,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ATH/USD": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.4131,
+      "avg_pnl_pct": -0.3525,
+      "win_rate": 0.4633,
+      "samples": 300,
+      "buy_count": 139,
+      "sell_count": 161,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ATH/USDC": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.4131,
+      "avg_pnl_pct": -0.3525,
+      "win_rate": 0.4633,
+      "samples": 300,
+      "buy_count": 139,
+      "sell_count": 161,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ATOM/USD": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.386,
+      "avg_pnl_pct": -0.2054,
+      "win_rate": 0.48,
+      "samples": 300,
+      "buy_count": 144,
+      "sell_count": 156,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ATOM/USDC": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.386,
+      "avg_pnl_pct": -0.2054,
+      "win_rate": 0.48,
+      "samples": 300,
+      "buy_count": 144,
+      "sell_count": 156,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "ATOM/USDT": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.381,
+      "avg_pnl_pct": -0.1885,
+      "win_rate": 0.4849,
+      "samples": 299,
+      "buy_count": 145,
+      "sell_count": 154,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "AUCTION/USD": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.373,
+      "avg_pnl_pct": -0.1711,
+      "win_rate": 0.505,
+      "samples": 299,
+      "buy_count": 151,
+      "sell_count": 148,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    },
+    "AUDIO/USD": {
+      "trend_direction": "neutral",
+      "trend_strength": 0.383,
+      "avg_pnl_pct": -0.2567,
+      "win_rate": 0.495,
+      "samples": 299,
+      "buy_count": 148,
+      "sell_count": 151,
+      "momentum_signal": "neutral",
+      "trained_at": "2026-06-07T00:04:34.946129+00:00"
+    }
+  },
+  "training_stats": {
+    "pairs_in_cumulative": 79,
+    "pairs_with_trend": 79,
+    "total_known_pairs": 118,
+    "backfill_pairs_processed": 118
+  },
+  "backfill_complete": true,
+  "backfill_pairs_processed": [
+    "00/USD",
+    "00/USDC",
+    "0G/USD",
+    "1INCH/USD",
+    "1INCH/USDC",
+    "2Z/USD",
+    "2Z/USDC",
+    "A/USD",
+    "A8/USD",
+    "A8/USDC",
+    "AAVE/USD",
+    "AAVE/USDC",
+    "AB/USD",
+    "ABT/USD",
+    "ABT/USDC",
+    "ACA/USD",
+    "ACH/USD",
+    "ACH/USDC",
+    "ACS/USD",
+    "ACS/USDC",
+    "ACT/USD",
+    "ACU/USD",
+    "ACX/USD",
+    "ACX/USDC",
+    "ADA/USD",
+    "ADA/USDC",
+    "ADA/USDT",
+    "ADI/USD",
+    "ADX/USD",
+    "AERGO/USD",
+    "AERGO/USDC",
+    "AERO/USD",
+    "AERO/USDC",
+    "AEVO/USD",
+    "AGLD/USD",
+    "AGLD/USDC",
+    "AI/USD",
+    "AI/USDC",
+    "AI3/USD",
+    "AIN/USD",
+    "AIO/USD",
+    "AIOZ/USD",
+    "AIOZ/USDC",
+    "AIXBT/USD",
+    "AKE/USD",
+    "AKT/USD",
+    "AKT/USDC",
+    "ALCH/USD",
+    "ALCX/USD",
+    "ALCX/USDC",
+    "ALEO/USD",
+    "ALEO/USDC",
+    "ALEO/USDT",
+    "ALEPH/USD",
+    "ALEPH/USDC",
+    "ALGO/USD",
+    "ALGO/USDC",
+    "ALGO/USDT",
+    "ALICE/USD",
+    "ALICE/USDC",
+    "ALKIMI/USD",
+    "ALLO/USD",
+    "ALLO/USDC",
+    "ALMANAK/USD",
+    "ALPHA/USD",
+    "ALT/USD",
+    "ALT/USDC",
+    "ALTHEA/USD",
+    "AMI/USD",
+    "AMP/USD",
+    "AMP/USDC",
+    "ANIME/USD",
+    "ANKR/USD",
+    "ANKR/USDC",
+    "ANON/USD",
+    "APE/USD",
+    "APE/USDC",
+    "APE/USDT",
+    "APENFT/USD",
+    "API3/USD",
+    "API3/USDC",
+    "APR/USD",
+    "APR/USDC",
+    "APT/USD",
+    "APT/USDC",
+    "APU/USD",
+    "APXUSD/USD",
+    "APXUSD/USDC",
+    "AR/USD",
+    "ARB/USD",
+    "ARB/USDC",
+    "ARC/USD",
+    "ARKM/USD",
+    "ARKM/USDC",
+    "ARPA/USD",
+    "ARPA/USDC",
+    "ART/USD",
+    "ASM/USD",
+    "ASM/USDC",
+    "ASRR/USD",
+    "ASSET/USD",
+    "AST/USD",
+    "AST/USDC",
+    "ASTER/USD",
+    "ASTER/USDC",
+    "ASTR/USD",
+    "ATH/USD",
+    "ATH/USDC",
+    "ATLAS/USD",
+    "ATOM/USD",
+    "ATOM/USDC",
+    "ATOM/USDT",
+    "AUCTION/USD",
+    "AUD/USD",
+    "AUDIO/USD",
+    "AUDX/USD",
+    "AURA/USD",
+    "AUSD/USD"
+  ],
+  "backfill_sundays_done": 5,
+  "cumulative_pair_stats": {
+    "00/USD": {
+      "samples": 898,
+      "sum_pnl": -253.5509293563033,
+      "wins": 486,
+      "losses": 412,
+      "buy_count": 486,
+      "sell_count": 412
+    },
+    "00/USDC": {
+      "samples": 898,
+      "sum_pnl": -253.5509293563033,
+      "wins": 486,
+      "losses": 412,
+      "buy_count": 486,
+      "sell_count": 412
+    },
+    "1INCH/USD": {
+      "samples": 898,
+      "sum_pnl": -265.1739513024258,
+      "wins": 487,
+      "losses": 411,
+      "buy_count": 487,
+      "sell_count": 411
+    },
+    "1INCH/USDC": {
+      "samples": 898,
+      "sum_pnl": -265.1739513024258,
+      "wins": 487,
+      "losses": 411,
+      "buy_count": 487,
+      "sell_count": 411
+    },
+    "2Z/USD": {
+      "samples": 669,
+      "sum_pnl": -237.5757188144979,
+      "wins": 317,
+      "losses": 352,
+      "buy_count": 317,
+      "sell_count": 352
+    },
+    "2Z/USDC": {
+      "samples": 669,
+      "sum_pnl": -237.5757188144979,
+      "wins": 317,
+      "losses": 352,
+      "buy_count": 317,
+      "sell_count": 352
+    },
+    "A8/USD": {
+      "samples": 898,
+      "sum_pnl": -288.3178839867118,
+      "wins": 383,
+      "losses": 515,
+      "buy_count": 383,
+      "sell_count": 515
+    },
+    "A8/USDC": {
+      "samples": 898,
+      "sum_pnl": -288.3178839867118,
+      "wins": 383,
+      "losses": 515,
+      "buy_count": 383,
+      "sell_count": 515
+    },
+    "AAVE/USD": {
+      "samples": 900,
+      "sum_pnl": -298.41811304255236,
+      "wins": 406,
+      "losses": 494,
+      "buy_count": 406,
+      "sell_count": 494
+    },
+    "AAVE/USDC": {
+      "samples": 900,
+      "sum_pnl": -298.41811304255236,
+      "wins": 406,
+      "losses": 494,
+      "buy_count": 406,
+      "sell_count": 494
+    },
+    "ABT/USD": {
+      "samples": 899,
+      "sum_pnl": -237.32213539158755,
+      "wins": 344,
+      "losses": 555,
+      "buy_count": 344,
+      "sell_count": 555
+    },
+    "ABT/USDC": {
+      "samples": 899,
+      "sum_pnl": -237.32213539158755,
+      "wins": 344,
+      "losses": 555,
+      "buy_count": 344,
+      "sell_count": 555
+    },
+    "ACH/USD": {
+      "samples": 899,
+      "sum_pnl": -274.59653245582973,
+      "wins": 424,
+      "losses": 475,
+      "buy_count": 424,
+      "sell_count": 475
+    },
+    "ACH/USDC": {
+      "samples": 899,
+      "sum_pnl": -274.59653245582973,
+      "wins": 424,
+      "losses": 475,
+      "buy_count": 424,
+      "sell_count": 475
+    },
+    "ACS/USD": {
+      "samples": 898,
+      "sum_pnl": -437.9722635874457,
+      "wins": 396,
+      "losses": 502,
+      "buy_count": 396,
+      "sell_count": 502
+    },
+    "ACS/USDC": {
+      "samples": 898,
+      "sum_pnl": -437.9722635874457,
+      "wins": 396,
+      "losses": 502,
+      "buy_count": 396,
+      "sell_count": 502
+    },
+    "ACX/USD": {
+      "samples": 898,
+      "sum_pnl": -265.2018128101888,
+      "wins": 430,
+      "losses": 468,
+      "buy_count": 430,
+      "sell_count": 468
+    },
+    "ACX/USDC": {
+      "samples": 898,
+      "sum_pnl": -265.2018128101888,
+      "wins": 430,
+      "losses": 468,
+      "buy_count": 430,
+      "sell_count": 468
+    },
+    "ADA/USD": {
+      "samples": 900,
+      "sum_pnl": -300.1849293709698,
+      "wins": 391,
+      "losses": 509,
+      "buy_count": 391,
+      "sell_count": 509
+    },
+    "ADA/USDC": {
+      "samples": 900,
+      "sum_pnl": -300.1849293709698,
+      "wins": 391,
+      "losses": 509,
+      "buy_count": 391,
+      "sell_count": 509
+    },
+    "ADA/USDT": {
+      "samples": 899,
+      "sum_pnl": -303.14508188307616,
+      "wins": 378,
+      "losses": 521,
+      "buy_count": 378,
+      "sell_count": 521
+    },
+    "AERGO/USD": {
+      "samples": 899,
+      "sum_pnl": -175.34342610053005,
+      "wins": 419,
+      "losses": 480,
+      "buy_count": 419,
+      "sell_count": 480
+    },
+    "AERGO/USDC": {
+      "samples": 899,
+      "sum_pnl": -175.34342610053005,
+      "wins": 419,
+      "losses": 480,
+      "buy_count": 419,
+      "sell_count": 480
+    },
+    "AERO/USD": {
+      "samples": 900,
+      "sum_pnl": -63.25194911511439,
+      "wins": 399,
+      "losses": 501,
+      "buy_count": 399,
+      "sell_count": 501
+    },
+    "AERO/USDC": {
+      "samples": 900,
+      "sum_pnl": -63.25194911511439,
+      "wins": 399,
+      "losses": 501,
+      "buy_count": 399,
+      "sell_count": 501
+    },
+    "AGLD/USD": {
+      "samples": 899,
+      "sum_pnl": -196.95876585122966,
+      "wins": 433,
+      "losses": 466,
+      "buy_count": 433,
+      "sell_count": 466
+    },
+    "AGLD/USDC": {
+      "samples": 899,
+      "sum_pnl": -196.95876585122966,
+      "wins": 433,
+      "losses": 466,
+      "buy_count": 433,
+      "sell_count": 466
+    },
+    "AI/USD": {
+      "samples": 85,
+      "sum_pnl": -71.16518637044292,
+      "wins": 35,
+      "losses": 50,
+      "buy_count": 35,
+      "sell_count": 50
+    },
+    "AI/USDC": {
+      "samples": 85,
+      "sum_pnl": -71.16518637044292,
+      "wins": 35,
+      "losses": 50,
+      "buy_count": 35,
+      "sell_count": 50
+    },
+    "AIOZ/USD": {
+      "samples": 900,
+      "sum_pnl": -386.88895752023393,
+      "wins": 387,
+      "losses": 513,
+      "buy_count": 387,
+      "sell_count": 513
+    },
+    "AIOZ/USDC": {
+      "samples": 900,
+      "sum_pnl": -386.88895752023393,
+      "wins": 387,
+      "losses": 513,
+      "buy_count": 387,
+      "sell_count": 513
+    },
+    "AKT/USD": {
+      "samples": 900,
+      "sum_pnl": -17.266510473442423,
+      "wins": 435,
+      "losses": 465,
+      "buy_count": 435,
+      "sell_count": 465
+    },
+    "AKT/USDC": {
+      "samples": 900,
+      "sum_pnl": -17.266510473442423,
+      "wins": 435,
+      "losses": 465,
+      "buy_count": 435,
+      "sell_count": 465
+    },
+    "ALCX/USD": {
+      "samples": 898,
+      "sum_pnl": -3.112100656391412,
+      "wins": 414,
+      "losses": 484,
+      "buy_count": 414,
+      "sell_count": 484
+    },
+    "ALCX/USDC": {
+      "samples": 898,
+      "sum_pnl": -3.112100656391412,
+      "wins": 414,
+      "losses": 484,
+      "buy_count": 414,
+      "sell_count": 484
+    },
+    "ALEO/USD": {
+      "samples": 300,
+      "sum_pnl": -124.47090664094898,
+      "wins": 129,
+      "losses": 171,
+      "buy_count": 129,
+      "sell_count": 171
+    },
+    "ALEO/USDC": {
+      "samples": 300,
+      "sum_pnl": -124.47090664094898,
+      "wins": 129,
+      "losses": 171,
+      "buy_count": 129,
+      "sell_count": 171
+    },
+    "ALEPH/USD": {
+      "samples": 299,
+      "sum_pnl": -83.80931315813095,
+      "wins": 123,
+      "losses": 176,
+      "buy_count": 123,
+      "sell_count": 176
+    },
+    "ALEPH/USDC": {
+      "samples": 299,
+      "sum_pnl": -83.80931315813095,
+      "wins": 123,
+      "losses": 176,
+      "buy_count": 123,
+      "sell_count": 176
+    },
+    "ALGO/USD": {
+      "samples": 300,
+      "sum_pnl": -73.95024660555947,
+      "wins": 133,
+      "losses": 167,
+      "buy_count": 133,
+      "sell_count": 167
+    },
+    "ALGO/USDC": {
+      "samples": 300,
+      "sum_pnl": -73.95024660555947,
+      "wins": 133,
+      "losses": 167,
+      "buy_count": 133,
+      "sell_count": 167
+    },
+    "ALICE/USD": {
+      "samples": 299,
+      "sum_pnl": -60.3845929404299,
+      "wins": 143,
+      "losses": 156,
+      "buy_count": 143,
+      "sell_count": 156
+    },
+    "ALICE/USDC": {
+      "samples": 299,
+      "sum_pnl": -60.3845929404299,
+      "wins": 143,
+      "losses": 156,
+      "buy_count": 143,
+      "sell_count": 156
+    },
+    "ALLO/USD": {
+      "samples": 186,
+      "sum_pnl": -106.42926199170172,
+      "wins": 75,
+      "losses": 111,
+      "buy_count": 75,
+      "sell_count": 111
+    },
+    "ALLO/USDC": {
+      "samples": 186,
+      "sum_pnl": -106.42926199170172,
+      "wins": 75,
+      "losses": 111,
+      "buy_count": 75,
+      "sell_count": 111
+    },
+    "ALT/USD": {
+      "samples": 299,
+      "sum_pnl": -127.82214415219198,
+      "wins": 142,
+      "losses": 157,
+      "buy_count": 142,
+      "sell_count": 157
+    },
+    "ALT/USDC": {
+      "samples": 299,
+      "sum_pnl": -127.82214415219198,
+      "wins": 142,
+      "losses": 157,
+      "buy_count": 142,
+      "sell_count": 157
+    },
+    "AMP/USD": {
+      "samples": 299,
+      "sum_pnl": -143.66455175210427,
+      "wins": 143,
+      "losses": 156,
+      "buy_count": 143,
+      "sell_count": 156
+    },
+    "AMP/USDC": {
+      "samples": 299,
+      "sum_pnl": -143.66455175210427,
+      "wins": 143,
+      "losses": 156,
+      "buy_count": 143,
+      "sell_count": 156
+    },
+    "ANKR/USD": {
+      "samples": 300,
+      "sum_pnl": -99.81910823932446,
+      "wins": 142,
+      "losses": 158,
+      "buy_count": 142,
+      "sell_count": 158
+    },
+    "ANKR/USDC": {
+      "samples": 300,
+      "sum_pnl": -99.81910823932446,
+      "wins": 142,
+      "losses": 158,
+      "buy_count": 142,
+      "sell_count": 158
+    },
+    "APE/USD": {
+      "samples": 300,
+      "sum_pnl": -99.76130489912715,
+      "wins": 138,
+      "losses": 162,
+      "buy_count": 138,
+      "sell_count": 162
+    },
+    "APE/USDC": {
+      "samples": 300,
+      "sum_pnl": -99.76130489912715,
+      "wins": 138,
+      "losses": 162,
+      "buy_count": 138,
+      "sell_count": 162
+    },
+    "APE/USDT": {
+      "samples": 299,
+      "sum_pnl": -115.7437580296292,
+      "wins": 135,
+      "losses": 164,
+      "buy_count": 135,
+      "sell_count": 164
+    },
+    "API3/USD": {
+      "samples": 299,
+      "sum_pnl": -44.0805632073158,
+      "wins": 131,
+      "losses": 168,
+      "buy_count": 131,
+      "sell_count": 168
+    },
+    "API3/USDC": {
+      "samples": 299,
+      "sum_pnl": -44.0805632073158,
+      "wins": 131,
+      "losses": 168,
+      "buy_count": 131,
+      "sell_count": 168
+    },
+    "APR/USD": {
+      "samples": 207,
+      "sum_pnl": 25.0413212194961,
+      "wins": 108,
+      "losses": 99,
+      "buy_count": 108,
+      "sell_count": 99
+    },
+    "APR/USDC": {
+      "samples": 207,
+      "sum_pnl": 25.244573252016423,
+      "wins": 108,
+      "losses": 99,
+      "buy_count": 108,
+      "sell_count": 99
+    },
+    "APT/USD": {
+      "samples": 300,
+      "sum_pnl": -140.72404595462348,
+      "wins": 129,
+      "losses": 171,
+      "buy_count": 129,
+      "sell_count": 171
+    },
+    "APT/USDC": {
+      "samples": 300,
+      "sum_pnl": -140.72404595462348,
+      "wins": 129,
+      "losses": 171,
+      "buy_count": 129,
+      "sell_count": 171
+    },
+    "ARB/USD": {
+      "samples": 299,
+      "sum_pnl": -102.92474190604558,
+      "wins": 132,
+      "losses": 167,
+      "buy_count": 132,
+      "sell_count": 167
+    },
+    "ARB/USDC": {
+      "samples": 299,
+      "sum_pnl": -102.92474190604558,
+      "wins": 132,
+      "losses": 167,
+      "buy_count": 132,
+      "sell_count": 167
+    },
+    "ARKM/USD": {
+      "samples": 299,
+      "sum_pnl": -111.29120379569096,
+      "wins": 136,
+      "losses": 163,
+      "buy_count": 136,
+      "sell_count": 163
+    },
+    "ARKM/USDC": {
+      "samples": 299,
+      "sum_pnl": -111.29120379569096,
+      "wins": 136,
+      "losses": 163,
+      "buy_count": 136,
+      "sell_count": 163
+    },
+    "ARPA/USD": {
+      "samples": 299,
+      "sum_pnl": -39.61158635924467,
+      "wins": 168,
+      "losses": 131,
+      "buy_count": 168,
+      "sell_count": 131
+    },
+    "ARPA/USDC": {
+      "samples": 299,
+      "sum_pnl": -39.61158635924467,
+      "wins": 168,
+      "losses": 131,
+      "buy_count": 168,
+      "sell_count": 131
+    },
+    "ASM/USD": {
+      "samples": 300,
+      "sum_pnl": -88.2516657316546,
+      "wins": 129,
+      "losses": 171,
+      "buy_count": 129,
+      "sell_count": 171
+    },
+    "ASM/USDC": {
+      "samples": 300,
+      "sum_pnl": -88.2516657316546,
+      "wins": 129,
+      "losses": 171,
+      "buy_count": 129,
+      "sell_count": 171
+    },
+    "AST/USD": {
+      "samples": 299,
+      "sum_pnl": -123.87418463616072,
+      "wins": 143,
+      "losses": 156,
+      "buy_count": 143,
+      "sell_count": 156
+    },
+    "AST/USDC": {
+      "samples": 299,
+      "sum_pnl": -123.87418463616072,
+      "wins": 143,
+      "losses": 156,
+      "buy_count": 143,
+      "sell_count": 156
+    },
+    "ASTER/USD": {
+      "samples": 185,
+      "sum_pnl": -58.38537579605281,
+      "wins": 90,
+      "losses": 95,
+      "buy_count": 90,
+      "sell_count": 95
+    },
+    "ASTER/USDC": {
+      "samples": 185,
+      "sum_pnl": -58.38537579605281,
+      "wins": 90,
+      "losses": 95,
+      "buy_count": 90,
+      "sell_count": 95
+    },
+    "ATH/USD": {
+      "samples": 300,
+      "sum_pnl": -105.7392327425345,
+      "wins": 139,
+      "losses": 161,
+      "buy_count": 139,
+      "sell_count": 161
+    },
+    "ATH/USDC": {
+      "samples": 300,
+      "sum_pnl": -105.7392327425345,
+      "wins": 139,
+      "losses": 161,
+      "buy_count": 139,
+      "sell_count": 161
+    },
+    "ATOM/USD": {
+      "samples": 300,
+      "sum_pnl": -61.62332229650262,
+      "wins": 144,
+      "losses": 156,
+      "buy_count": 144,
+      "sell_count": 156
+    },
+    "ATOM/USDC": {
+      "samples": 300,
+      "sum_pnl": -61.62332229650262,
+      "wins": 144,
+      "losses": 156,
+      "buy_count": 144,
+      "sell_count": 156
+    },
+    "ATOM/USDT": {
+      "samples": 299,
+      "sum_pnl": -56.3469904589093,
+      "wins": 145,
+      "losses": 154,
+      "buy_count": 145,
+      "sell_count": 154
+    },
+    "AUCTION/USD": {
+      "samples": 299,
+      "sum_pnl": -51.16566263699085,
+      "wins": 151,
+      "losses": 148,
+      "buy_count": 151,
+      "sell_count": 148
+    },
+    "AUDIO/USD": {
+      "samples": 299,
+      "sum_pnl": -76.759807343211,
+      "wins": 148,
+      "losses": 151,
+      "buy_count": 148,
+      "sell_count": 151
+    }
+  },
+  "last_trained_at": "2026-06-07T00:04:34.946129+00:00",
+  "trained_at": "2026-06-07T00:04:34.946129+00:00",
+  "last_trained_week_key": "2026-W23"
+}

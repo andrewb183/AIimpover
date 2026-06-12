@@ -1,0 +1,267 @@
+{
+  "started_at": "2026-05-01T11:45:53.932539-04:00",
+  "last_heartbeat_at": "2026-05-02T21:12:48.409165-04:00",
+  "last_goal_met_at": "",
+  "last_rewrite_execution": {},
+  "rewrite_counts": {},
+  "failure_log": [],
+  "synthesis_stats": {
+    "active_or_configured_modules": 6,
+    "rewrite_history_entries": 4,
+    "file_rewrites_logged": 0,
+    "last_progress_check": "2026-05-02T21:12:48.597540",
+    "milestones": {
+      "framework_operational": true,
+      "rewrite_rules_learning": true,
+      "workspace_file_rewrites": false
+    }
+  },
+  "module_health": {
+    "state_persistence": {
+      "healthy": true,
+      "last_checked_at": "2026-05-02T21:12:48.408449"
+    },
+    "rewrite_engine": {
+      "healthy": true,
+      "last_checked_at": "2026-05-02T21:12:48.408694"
+    },
+    "synthesis_planner": {
+      "healthy": true,
+      "last_checked_at": "2026-05-02T21:12:48.410899"
+    },
+    "monitoring": {
+      "healthy": true,
+      "last_checked_at": "2026-05-02T21:12:48.411171"
+    },
+    "scheduler": {
+      "healthy": true,
+      "last_checked_at": "2026-05-02T21:12:48.514970"
+    },
+    "orchestration": {
+      "healthy": true,
+      "last_checked_at": "2026-05-02T21:12:48.514980"
+    }
+  },
+  "modules": {
+    "llm_ai": {
+      "title": "LLM/AI Model Integration",
+      "enabled": true,
+      "status": "configured",
+      "integrations": [
+        "OpenAI",
+        "local model",
+        "Hugging Face"
+      ],
+      "capabilities": [
+        "fallback routing",
+        "dynamic prompt routing",
+        "model selection"
+      ],
+      "self_healing": true,
+      "self_learning": true,
+      "self_fixing": true,
+      "last_status_refresh": "2026-05-02T21:12:48.584944"
+    },
+    "database_storage": {
+      "title": "Database/Storage",
+      "enabled": true,
+      "status": "active",
+      "integrations": [
+        "SQLite",
+        "PostgreSQL",
+        "MongoDB",
+        "SQLAlchemy"
+      ],
+      "capabilities": [
+        "local persistence",
+        "schema migration",
+        "state storage"
+      ],
+      "self_healing": true,
+      "self_learning": true,
+      "self_fixing": true,
+      "last_status_refresh": "2026-05-02T21:12:48.584950"
+    },
+    "external_apis": {
+      "title": "External APIs",
+      "enabled": true,
+      "status": "stubbed",
+      "integrations": [
+        "weather",
+        "news",
+        "finance",
+        "GitHub"
+      ],
+      "capabilities": [
+        "pluggable connectors",
+        "endpoint retry",
+        "self-update hooks"
+      ],
+      "self_healing": true,
+      "self_learning": true,
+      "self_fixing": true,
+      "last_status_refresh": "2026-05-02T21:12:48.584952"
+    },
+    "task_scheduling": {
+      "title": "Task Scheduling/Automation",
+      "enabled": true,
+      "status": "active",
+      "integrations": [
+        "APScheduler"
+      ],
+      "capabilities": [
+        "periodic jobs",
+        "self-triggered jobs",
+        "schedule tuning"
+      ],
+      "self_healing": true,
+      "self_learning": true,
+      "self_fixing": true,
+      "last_status_refresh": "2026-05-02T21:12:48.584955"
+    },
+    "notifications": {
+      "title": "Notification Systems",
+      "enabled": true,
+      "status": "configured",
+      "integrations": [
+        "Twilio",
+        "Telegram",
+        "Discord",
+        "Slack",
+        "Teams"
+      ],
+      "capabilities": [
+        "channel retry",
+        "delivery escalation",
+        "multi-channel fallback"
+      ],
+      "self_healing": true,
+      "self_learning": true,
+      "self_fixing": true,
+      "last_status_refresh": "2026-05-02T21:12:48.584984"
+    },
+    "replication_scaling": {
+      "title": "Self-Replication/Scaling",
+      "enabled": true,
+      "status": "stubbed",
+      "integrations": [
+        "Docker",
+        "Kubernetes",
+        "REST",
+        "gRPC",
+        "queue"
+      ],
+      "capabilities": [
+        "spawn workers",
+        "agent messaging",
+        "horizontal scaling hooks"
+      ],
+      "self_healing": true,
+      "self_learning": true,
+      "self_fixing": true,
+      "last_status_refresh": "2026-05-02T21:12:48.584988"
+    },
+    "security_monitoring": {
+      "title": "Security/Monitoring",
+      "enabled": true,
+      "status": "active",
+      "integrations": [
+        "Sentry",
+        "Prometheus",
+        "fail2ban"
+      ],
+      "capabilities": [
+        "error monitoring",
+        "metrics",
+        "ban-rule updates"
+      ],
+      "self_healing": true,
+      "self_learning": true,
+      "self_fixing": true,
+      "last_status_refresh": "2026-05-02T21:12:48.584990"
+    },
+    "web_scraping": {
+      "title": "Web Scraping/Data Collection",
+      "enabled": true,
+      "status": "stubbed",
+      "integrations": [
+        "BeautifulSoup",
+        "Scrapy"
+      ],
+      "capabilities": [
+        "data gathering",
+        "selector adaptation",
+        "scrape fix logging"
+      ],
+      "self_healing": true,
+      "self_learning": true,
+      "self_fixing": true,
+      "last_status_refresh": "2026-05-02T21:12:48.584992"
+    },
+    "user_auth": {
+      "title": "User Authentication",
+      "enabled": true,
+      "status": "stubbed",
+      "integrations": [
+        "OAuth",
+        "JWT"
+      ],
+      "capabilities": [
+        "user management",
+        "secret rotation hooks",
+        "provider failover"
+      ],
+      "self_healing": true,
+      "self_learning": true,
+      "self_fixing": true,
+      "last_status_refresh": "2026-05-02T21:12:48.584994"
+    },
+    "voice_audio": {
+      "title": "Voice/Audio",
+      "enabled": true,
+      "status": "stubbed",
+      "integrations": [
+        "Whisper",
+        "Azure Speech",
+        "Google Speech"
+      ],
+      "capabilities": [
+        "speech-to-text",
+        "text-to-speech",
+        "provider selection"
+      ],
+      "self_healing": true,
+      "self_learning": true,
+      "self_fixing": true,
+      "last_status_refresh": "2026-05-02T21:12:48.584996"
+    },
+    "agent_swarm": {
+      "title": "Self-Improving Agent Swarm",
+      "enabled": true,
+      "status": "active",
+      "integrations": [
+        "worker roles",
+        "backlog orchestration",
+        "self-rewrite executor"
+      ],
+      "capabilities": [
+        "parallel task ownership",
+        "rewrite proposals",
+        "feedback-informed evolution"
+      ],
+      "self_healing": true,
+      "self_learning": true,
+      "self_fixing": true,
+      "last_status_refresh": "2026-05-02T21:12:48.584998"
+    }
+  },
+  "auto_apply_site_feedback": true,
+  "rewrite_backlog_enabled": true,
+  "last_updated": "2026-06-12T10:11:15.879597",
+  "last_daily_evolution_at": "2026-06-12T10:01:00.568550-04:00",
+  "last_daily_evolution_reason": "periodic_refresh_1h",
+  "last_archived_submission_count": 0,
+  "last_downtime_promoted_count": 0,
+  "last_live_site_refresh_at": "2026-06-12T10:10:02.332383-04:00",
+  "last_live_site_refresh_reason": "screen_learning_mutation"
+}

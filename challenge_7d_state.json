@@ -1,0 +1,14 @@
+{
+  "status": "running",
+  "started_at": "2026-04-10T14:16:33.492272+00:00",
+  "ends_at": "2026-06-09T14:16:33.492272+00:00",
+  "challenge_exchange": "kraken",
+  "budget_usd": 5.0,
+  "target_usd": 10.0,
+  "start_kraken_usd": 0.0,
+  "latest_kraken_usd": 7.8458,
+  "trade_count": 0,
+  "cycle_count": 4,
+  "last_cycle_at": "2026-04-10T16:23:33.743049+00:00",
+  "last_4hr_report_at": "2026-04-10T16:23:33.743049+00:00"
+}

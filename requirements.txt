@@ -1,0 +1,7 @@
+# CryptoTrader dependencies
+# Install: pip3 install -r requirements.txt
+
+ccxt>=4.2.0          # Exchange connectivity (Binance, Coinbase, Kraken)
+requests>=2.31.0     # HTTP for supplemental API calls
+python-dotenv>=1.0.0 # Load .env file for API keys
+playwright>=1.43.0   # Optional browser automation for claim-page assist

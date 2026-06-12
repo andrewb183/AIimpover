@@ -1,0 +1,62 @@
+[
+  {
+    "exchange": "kraken",
+    "pair": "DOGE/USDT",
+    "side": "buy",
+    "mode": "LIVE",
+    "opened_at": "2026-05-04T10:12:35.032193+00:00",
+    "order_id": "OBKQA3-B62NX-Z5REB4",
+    "size_usd": 5.0,
+    "base_amount": 46.0,
+    "price": 0.10925,
+    "change_pct": 0.8958256372367934,
+    "profit_stop_reason": null,
+    "strategy": "volatility_spot_cycle",
+    "status": "submitted"
+  },
+  {
+    "exchange": "coinbase",
+    "pair": "A8/USDC",
+    "side": "buy",
+    "mode": "LIVE",
+    "opened_at": "2026-05-06T21:47:54.927266+00:00",
+    "order_id": "03da1173-3472-4022-a19e-00cacffb4a72",
+    "size_usd": 1.0,
+    "base_amount": 86.0,
+    "price": 0.0116,
+    "change_pct": 0.0,
+    "profit_stop_reason": null,
+    "strategy": "volatility_spot_cycle",
+    "status": "submitted"
+  },
+  {
+    "exchange": "coinbase",
+    "pair": "A8/USD",
+    "side": "sell",
+    "mode": "LIVE",
+    "opened_at": "2026-05-10T19:54:18.080595+00:00",
+    "order_id": "cf508a17-6eaf-4683-acc7-ad05528eab48",
+    "size_usd": 1.0625,
+    "base_amount": 85.0,
+    "price": 0.0125,
+    "change_pct": 0.0,
+    "profit_stop_reason": null,
+    "strategy": "volatility_spot_cycle",
+    "status": "submitted"
+  },
+  {
+    "exchange": "coinbase",
+    "pair": "AIOZ/USD",
+    "side": "buy",
+    "mode": "LIVE",
+    "opened_at": "2026-05-10T19:54:21.211911+00:00",
+    "order_id": "44bd61f1-fa92-4cb2-a1e1-cce7e2681f3f",
+    "size_usd": 1.0,
+    "base_amount": 13.0,
+    "price": 0.0783,
+    "change_pct": 0.0,
+    "profit_stop_reason": null,
+    "strategy": "volatility_spot_cycle",
+    "status": "submitted"
+  }
+]

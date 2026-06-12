@@ -1,0 +1,3759 @@
+{
+  "started_at": "2026-05-01T11:45:53.932539-04:00",
+  "last_heartbeat_at": "2026-06-02T10:57:33.313842-04:00",
+  "last_goal_met_at": "2026-05-02T22:15:58.660195-04:00",
+  "last_rewrite_execution": {
+    "processed_at": "2026-06-02T09:22:10.442040",
+    "result": "created_new_rule",
+    "rule_id": "c70ea5814f9d8c5ca0c45d52",
+    "source": "swarm_logs",
+    "candidate_side_effect": null
+  },
+  "rewrite_counts": {
+    "created_new_rule": 328
+  },
+  "failure_log": [],
+  "synthesis_stats": {
+    "active_or_configured_modules": 9,
+    "rewrite_history_entries": 332,
+    "file_rewrites_logged": 0,
+    "last_progress_check": "2026-06-02T10:58:05.111320",
+    "milestones": {
+      "framework_operational": true,
+      "rewrite_rules_learning": true,
+      "workspace_file_rewrites": false
+    },
+    "v1_bridge": {
+      "last_polled_at": "2026-06-02T10:53:31.699738",
+      "v1_rewrite_history_entries": 4,
+      "v1_file_rewrites_logged": 0,
+      "trainer_issue_seen": false
+    },
+    "last_external_synthesis": {
+      "at": "2026-06-02T10:58:01.796182",
+      "problem": "general reliability drift",
+      "source": "system_monitor",
+      "goal": "latency",
+      "returncode": 0,
+      "stderr": "",
+      "stdout_preview": "{\n  \"agent\": \"skynetv2\",\n  \"problem\": \"general reliability drift\",\n  \"language\": \"python\",\n  \"goal\": \"latency\",\n  \"web_context\": {\n    \"query\": \"general reliability drift python latency safe refactoring\",\n    \"source_count\": 1,\n    \"google_ai_status\": \"missing_api_key\"\n  },\n  \"report\": {\n    \"problem\": \"general reliability drift\",\n    \"source\": \"internal\",\n    \"severity\": \"latency\",\n    \"pattern_family\": \"general_resilience\",\n    \"hybrid_strategy\": \"pair observability with a conservative retry-and-record plan Hybridized with pair observability with a conservative retry-and-record plan.\",\n    \"steps\": [\n      \"log\",\n      \"monitor\",\n      \"record_history\",\n      \"surface_to_registry\"\n    ],\n    \"scores\": {\n      \"latency\": 7,\n      \"robustness\": 6,\n      \"maintainability\": 7,\n      \"parallelability\": 7\n    },\n    \"big_o\": {\n      \"time\": \"O(k + n)\",\n      \"space\": \"O(k)\",\n      \"notes\": \"k is the number of matched local patterns; n is token count in the failure signature.\"\n    },\n    \"notes\": [\n      \"Matched pattern families: general_resilience\",\n      \"Designed for local execution and deterministic rule generation.\",\n      \"No network calls are required for synthesis.\"\n    ]\n  },\n"
+    },
+    "ai_os_health_score": 68.64,
+    "ai_os_health_components": {
+      "module_health": 0.818,
+      "rewrite_health": 1.0,
+      "web_health": 1.0,
+      "swarm_health": 0.0,
+      "swarm_issue_signatures": 72,
+      "swarm_services_scanned": 7,
+      "rolled_back_rewrites": 0,
+      "web_visits": 60
+    },
+    "ai_os_health_updated_at": "2026-06-02T10:58:05.270323",
+    "trainer_reliability_trend": [
+      {
+        "at": "2026-06-02T10:10:59.203320",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:11:00.621234",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:11:02.105707",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:11:03.534955",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:11:05.471642",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:11:06.926938",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:11:08.361232",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:11:09.897733",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:11:11.963956",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:11:14.149078",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:11:15.718056",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:11:17.350660",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:11:18.999833",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:11:20.607104",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:11:22.778502",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:11:24.403425",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:11:25.942445",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:12:07.991239",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:12:44.412041",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:23:08.102492",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:23:14.932344",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:23:25.101879",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:23:26.580914",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:23:28.177873",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:23:30.140169",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:23:31.630760",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:23:33.053082",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:23:34.503906",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:23:35.981786",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:23:37.952380",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:23:39.387950",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:23:40.895197",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:23:42.319125",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:23:43.727640",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:23:45.739960",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:23:47.206867",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:23:48.641624",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:23:50.072929",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:23:51.550445",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:23:53.750068",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:23:56.812667",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:23:58.666176",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:24:01.153210",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:24:02.748925",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:24:05.321953",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:24:06.921940",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:24:08.527225",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:24:10.160024",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:24:11.747653",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:24:13.912593",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:24:15.529867",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:24:26.264796",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:24:27.867520",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:24:49.435662",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:25:19.840428",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:25:30.639471",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:25:32.137428",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:25:33.620927",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:25:35.721834",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:25:39.588966",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:25:41.116155",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:25:42.675700",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:25:44.254381",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:25:45.751389",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:25:47.820330",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:25:49.341031",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:25:50.799752",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:25:52.322003",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:26:13.824561",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:26:15.910608",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:26:17.376688",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:26:18.919275",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:26:40.438812",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:26:52.323169",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:27:27.541312",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:27:29.719722",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:27:31.173144",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:27:32.600729",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:27:34.048544",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:27:45.826853",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:27:57.782504",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:28:19.421549",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:28:26.643999",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:28:28.291228",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:28:30.504102",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:28:32.221733",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:28:33.873087",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:28:36.140466",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:28:37.829421",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:28:40.030645",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:28:41.667464",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:28:44.366755",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:28:46.030950",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:29:22.617536",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:29:25.263750",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:29:26.694496",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:29:28.160699",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:29:30.269813",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:29:31.710410",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:29:33.671867",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:29:35.096409",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:29:36.503856",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:29:39.930811",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:29:42.528743",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:29:47.738231",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:00.991310",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:02.418244",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:03.872363",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:05.323159",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:07.251115",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:08.688372",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:10.748524",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:12.197649",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:13.624182",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:16.217714",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:17.659990",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:19.084405",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:20.536641",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:21.954363",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:23.903227",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:25.392466",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:26.855187",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:28.719520",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:30.145419",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:32.152334",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:33.587149",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:35.016480",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:36.433727",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:37.861164",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:39.791444",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:41.246756",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:42.695354",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:44.182999",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:45.625843",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:47.609455",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:30:49.071791",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:31:25.316811",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:31:29.313760",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:32:09.875380",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:32:21.883418",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:32:24.870903",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:32:26.756969",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:32:28.378663",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:32:29.940678",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:32:32.790512",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:32:34.398435",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:32:36.629441",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:32:38.213843",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:32:39.800999",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:32:52.036514",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:32:53.672603",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:32:55.310835",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:32:57.063643",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:32:58.741441",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:33:26.986719",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:33:44.298646",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:33:45.972054",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:33:47.663023",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:33:49.296787",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:33:51.513508",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:33:53.213163",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:33:54.966119",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:33:56.546868",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:33:58.865618",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:01.118425",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:02.801211",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:04.460155",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:06.129763",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:07.820577",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:10.044443",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:11.696067",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:13.394409",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:16.172010",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:17.593868",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:19.536984",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:20.972937",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:22.424460",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:23.861610",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:25.294213",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:27.246569",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:29.408994",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:30.827028",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:32.237793",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:43.368097",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:45.588998",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:47.252072",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:48.970823",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:50.618200",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:52.324810",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:54.674197",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:56.343020",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:34:58.029035",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:35:00.177102",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:35:29.942230",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:35:33.942417",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:36:04.229092",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:36:09.727088",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:36:11.417478",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:36:13.056015",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:36:15.333933",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:36:18.017363",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:36:19.731108",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:36:21.411024",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:36:23.064986",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:36:25.329047",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:36:27.021898",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:36:28.683857",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:36:30.354168",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:36:32.032281",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:36:34.415461",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:36:45.709235",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:36:47.363798",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:36:49.088891",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:36:50.747028",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:36:54.786511",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:36:56.447161",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:36:58.148288",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:36:59.789795",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:37:01.490846",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:37:30.728016",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:37:32.390013",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:37:33.982928",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:37:35.705637",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:37:46.235404",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:37:59.609138",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:38:01.404345",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:38:03.057485",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:38:04.757916",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:38:06.460837",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:38:08.733102",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:38:10.403222",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:38:12.048582",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:38:13.779229",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:38:15.412722",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:38:17.679823",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:38:19.528681",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:38:21.209716",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:38:22.899129",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:38:24.638270",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:38:27.003375",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:38:28.616085",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:38:30.327311",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:38:36.661951",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:38:49.480949",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:38:51.722475",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:38:53.617106",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:38:55.347256",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:38:57.013028",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:38:58.719162",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:39:01.007500",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:39:02.730368",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:39:04.407420",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:39:32.304232",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:39:36.876573",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:39:39.231440",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:39:51.039219",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:39:52.771780",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:40:14.381416",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:40:16.077564",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:40:18.366340",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:40:22.479407",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:40:23.925978",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:40:25.394516",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:40:26.858753",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:40:28.888450",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:40:30.312347",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:40:31.770072",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:40:33.286907",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:40:34.731657",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:40:36.693706",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:40:38.119179",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:40:39.588363",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:40:50.028264",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:40:51.473459",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:40:53.415746",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:40:54.873110",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:40:56.334987",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:40:57.805189",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:40:59.233347",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:41:01.237749",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:41:02.712779",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:41:04.137653",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:41:36.455795",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:42:18.230481",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:42:31.452721",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:42:32.959854",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:42:34.466822",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:42:36.067400",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:42:37.868253",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:42:39.994443",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:42:41.620386",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:42:43.225522",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:42:44.818509",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:42:46.415654",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:42:48.772538",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:42:50.444989",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:42:52.027168",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:43:00.397128",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:43:02.603647",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:43:40.452275",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:54:02.652110",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:54:22.164875",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:54:23.934229",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:54:25.692962",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:54:39.108546",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:54:40.771602",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:54:42.682888",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:54:44.444167",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:54:46.196279",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:54:48.863468",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:54:51.103967",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:54:52.599566",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:54:54.118229",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:54:55.658682",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:54:57.762766",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:54:59.273594",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:55:00.792235",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:55:02.367942",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:55:04.045531",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:55:06.323317",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:55:08.736450",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:55:21.239608",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:55:22.782171",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:55:24.287778",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:55:26.450060",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:55:28.034546",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:55:29.566792",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:55:31.155612",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:55:58.678745",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:56:05.933342",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:56:07.577064",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:56:09.204549",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:56:25.074566",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:56:26.662913",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:56:28.934045",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:56:30.597294",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:56:32.232408",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:56:33.730977",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:56:35.301667",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:56:37.696217",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:56:39.265018",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:56:40.987478",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:56:42.532684",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:56:44.063414",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:56:47.309804",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:56:49.860940",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:56:51.446049",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:56:53.066482",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:56:54.636590",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:56:57.068984",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:56:58.633160",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:57:00.358196",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:57:02.133361",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:57:03.831893",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:57:06.451508",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:57:08.344849",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:57:10.407779",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:57:27.567280",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:57:29.322123",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      },
+      {
+        "at": "2026-06-02T10:58:02.220038",
+        "service": "codegen_nlp-trainer-cpu",
+        "running": 1,
+        "desired": 1,
+        "required": 1,
+        "issue_hits": 0,
+        "reliability": 1.0
+      }
+    ],
+    "trainer_reliability_1h": 1.0,
+    "trainer_reliability_3h": 1.0,
+    "workspace_coverage_plan": {
+      "at": "2026-06-02T10:57:33.294655",
+      "total_eligible": 42431,
+      "touched_today": 0,
+      "remaining": 42431,
+      "seconds_left_today": 46945,
+      "loops_left_estimate": 3260,
+      "required_files_per_cycle": 14,
+      "current_max_auto_rewrite_files_per_cycle": 49825850,
+      "effective_max_auto_rewrite_files_per_cycle": 49825850,
+      "changed": false
+    },
+    "ollama_runtime": {
+      "healthy": true,
+      "checked_at": "2026-06-02T10:57:26.392580",
+      "generate_url": "http://127.0.0.1:11434/api/generate",
+      "base_url": "http://127.0.0.1:11434",
+      "selected_model": "qwen2.5-coder:1.5b",
+      "models_detected": [
+        "qwen2.5-coder:1.5b"
+      ],
+      "autocorrected": false,
+      "diagnostics": []
+    },
+    "local_neural_backup_runtime": {
+      "healthy": true,
+      "checked_at": "2026-06-02T10:56:24.609634",
+      "selected_path": "/mnt/dataset_storage/skynetv1/nlp_specialist_agent_final",
+      "candidates_checked": [
+        {
+          "path": "/mnt/dataset_storage/skynetv1",
+          "exists": true,
+          "looks_like_model_dir": false
+        },
+        {
+          "path": "/mnt/dataset_storage/skynetv1/nlp_specialist_agent_final",
+          "exists": true,
+          "looks_like_model_dir": true
+        }
+      ]
+    },
+    "latest_network_scan_report": {
+      "generated_at": "2026-06-02T10:43:45.308101",
+      "current_ssid": "Verizon_J3BG7V-IoT",
+      "seen_ssids": [
+        "ATTKd9VhDk",
+        "EvandKala",
+        "Lloyd",
+        "Ohana",
+        "Verizon_J3BG7V",
+        "Verizon_J3BG7V-IoT",
+        "xfinitywifi"
+      ],
+      "total_networks": 4,
+      "hosts_scanned_total": 256,
+      "hosts_with_open_ports_total": 69,
+      "report_path": "/home/pi/Desktop/test/create/network_reports/network_scan_20260602_105308.docx",
+      "email_sent": false,
+      "inbound_ips_detected": 5,
+      "outbound_ips_detected": 17,
+      "known_devices_pending": 0,
+      "known_devices_enrolled": 2,
+      "wireless_signals_captured": 14,
+      "bluetooth_nearby_devices": 0,
+      "broadcast_activity_rows": 8,
+      "stream_monitor_matches": 0
+    }
+  },
+  "module_health": {
+    "state_persistence": {
+      "healthy": true,
+      "last_checked_at": "2026-06-02T10:57:54.012420"
+    },
+    "rewrite_engine": {
+      "healthy": true,
+      "last_checked_at": "2026-06-02T10:57:54.012510"
+    },
+    "synthesis_planner": {
+      "healthy": true,
+      "last_checked_at": "2026-06-02T10:57:54.031109"
+    },
+    "monitoring": {
+      "healthy": true,
+      "last_checked_at": "2026-06-02T10:57:54.031206"
+    },
+    "scheduler": {
+      "healthy": true,
+      "last_checked_at": "2026-06-02T10:57:54.131693"
+    },
+    "orchestration": {
+      "healthy": true,
+      "last_checked_at": "2026-06-02T10:57:54.131699"
+    }
+  },
+  "modules": {
+    "llm_ai": {
+      "title": "LLM/AI Model Integration",
+      "enabled": true,
+      "status": "active",
+      "integrations": [
+        "OpenAI",
+        "local model",
+        "Hugging Face"
+      ],
+      "capabilities": [
+        "fallback routing",
+        "dynamic prompt routing",
+        "model selection"
+      ],
+      "self_healing": true,
+      "self_learning": true,
+      "self_fixing": true,
+      "last_status_refresh": "2026-06-02T10:58:04.530424",
+      "completion": {
+        "required": [
+          "OLLAMA_URL configured",
+          "local neural backup available"
+        ],
+        "passed": [
+          "OLLAMA_URL configured",
+          "local neural backup available"
+        ],
+        "complete": true,
+        "ratio": 1.0
+      }
+    },
+    "database_storage": {
+      "title": "Database/Storage",
+      "enabled": true,
+      "status": "active",
+      "integrations": [
+        "SQLite",
+        "PostgreSQL",
+        "MongoDB",
+        "SQLAlchemy"
+      ],
+      "capabilities": [
+        "local persistence",
+        "schema migration",
+        "state storage"
+      ],
+      "self_healing": true,
+      "self_learning": true,
+      "self_fixing": true,
+      "last_status_refresh": "2026-06-02T10:58:04.530433",
+      "completion": {
+        "required": [
+          "runtime heartbeat"
+        ],
+        "passed": [
+          "runtime heartbeat"
+        ],
+        "complete": true,
+        "ratio": 1.0
+      }
+    },
+    "external_apis": {
+      "title": "External APIs",
+      "enabled": true,
+      "status": "configured",
+      "integrations": [
+        "weather",
+        "news",
+        "finance",
+        "GitHub"
+      ],
+      "capabilities": [
+        "pluggable connectors",
+        "endpoint retry",
+        "self-update hooks"
+      ],
+      "self_healing": true,
+      "self_learning": true,
+      "self_fixing": true,
+      "last_status_refresh": "2026-06-02T10:58:04.530468",
+      "completion": {
+        "required": [
+          "At least one external API key or HTTP API client"
+        ],
+        "passed": [
+          "At least one external API key or HTTP API client"
+        ],
+        "complete": true,
+        "ratio": 1.0
+      }
+    },
+    "task_scheduling": {
+      "title": "Task Scheduling/Automation",
+      "enabled": true,
+      "status": "active",
+      "integrations": [
+        "APScheduler"
+      ],
+      "capabilities": [
+        "periodic jobs",
+        "self-triggered jobs",
+        "schedule tuning"
+      ],
+      "self_healing": true,
+      "self_learning": true,
+      "self_fixing": true,
+      "last_status_refresh": "2026-06-02T10:58:04.530473",
+      "completion": {
+        "required": [
+          "runtime heartbeat"
+        ],
+        "passed": [
+          "runtime heartbeat"
+        ],
+        "complete": true,
+        "ratio": 1.0
+      }
+    },
+    "notifications": {
+      "title": "Notification Systems",
+      "enabled": true,
+      "status": "configured",
+      "integrations": [
+        "Twilio",
+        "Telegram",
+        "Discord",
+        "Slack",
+        "Teams"
+      ],
+      "capabilities": [
+        "channel retry",
+        "delivery escalation",
+        "multi-channel fallback"
+      ],
+      "self_healing": true,
+      "self_learning": true,
+      "self_fixing": true,
+      "last_status_refresh": "2026-06-02T10:58:04.530490",
+      "completion": {
+        "required": [
+          "SMTP user configured",
+          "SMTP password configured"
+        ],
+        "passed": [
+          "SMTP user configured",
+          "SMTP password configured"
+        ],
+        "complete": true,
+        "ratio": 1.0
+      }
+    },
+    "replication_scaling": {
+      "title": "Self-Replication/Scaling",
+      "enabled": true,
+      "status": "active",
+      "integrations": [
+        "Docker",
+        "Kubernetes",
+        "REST",
+        "gRPC",
+        "queue"
+      ],
+      "capabilities": [
+        "spawn workers",
+        "agent messaging",
+        "horizontal scaling hooks"
+      ],
+      "self_healing": true,
+      "self_learning": true,
+      "self_fixing": true,
+      "last_status_refresh": "2026-06-02T10:58:04.530494",
+      "completion": {
+        "required": [
+          "runtime heartbeat"
+        ],
+        "passed": [
+          "runtime heartbeat"
+        ],
+        "complete": true,
+        "ratio": 1.0
+      }
+    },
+    "security_monitoring": {
+      "title": "Security/Monitoring",
+      "enabled": true,
+      "status": "active",
+      "integrations": [
+        "Sentry",
+        "Prometheus",
+        "fail2ban"
+      ],
+      "capabilities": [
+        "error monitoring",
+        "metrics",
+        "ban-rule updates"
+      ],
+      "self_healing": true,
+      "self_learning": true,
+      "self_fixing": true,
+      "last_status_refresh": "2026-06-02T10:58:04.530497",
+      "completion": {
+        "required": [
+          "runtime heartbeat"
+        ],
+        "passed": [
+          "runtime heartbeat"
+        ],
+        "complete": true,
+        "ratio": 1.0
+      }
+    },
+    "web_scraping": {
+      "title": "Web Scraping/Data Collection",
+      "enabled": true,
+      "status": "active",
+      "integrations": [
+        "BeautifulSoup",
+        "Scrapy"
+      ],
+      "capabilities": [
+        "data gathering",
+        "selector adaptation",
+        "scrape fix logging"
+      ],
+      "self_healing": true,
+      "self_learning": true,
+      "self_fixing": true,
+      "last_status_refresh": "2026-06-02T10:58:04.530501",
+      "completion": {
+        "required": [
+          "runtime heartbeat"
+        ],
+        "passed": [
+          "runtime heartbeat"
+        ],
+        "complete": true,
+        "ratio": 1.0
+      }
+    },
+    "user_auth": {
+      "title": "User Authentication",
+      "enabled": true,
+      "status": "implemented",
+      "integrations": [
+        "OAuth",
+        "JWT"
+      ],
+      "capabilities": [
+        "user management",
+        "secret rotation hooks",
+        "provider failover"
+      ],
+      "self_healing": true,
+      "self_learning": true,
+      "self_fixing": true,
+      "last_status_refresh": "2026-06-02T10:58:04.530508",
+      "completion": {
+        "required": [
+          "JWT secret or OAuth client id"
+        ],
+        "passed": [
+          "JWT secret or OAuth client id"
+        ],
+        "complete": true,
+        "ratio": 1.0
+      }
+    },
+    "voice_audio": {
+      "title": "Voice/Audio",
+      "enabled": true,
+      "status": "stubbed",
+      "integrations": [
+        "Whisper",
+        "Azure Speech",
+        "Google Speech"
+      ],
+      "capabilities": [
+        "speech-to-text",
+        "text-to-speech",
+        "provider selection"
+      ],
+      "self_healing": true,
+      "self_learning": true,
+      "self_fixing": true,
+      "last_status_refresh": "2026-06-02T10:58:04.533242",
+      "completion": {
+        "required": [
+          "whisper or faster_whisper package installed"
+        ],
+        "passed": [],
+        "complete": false,
+        "ratio": 0.0
+      }
+    },
+    "agent_swarm": {
+      "title": "Self-Improving Agent Swarm",
+      "enabled": true,
+      "status": "active",
+      "integrations": [
+        "worker roles",
+        "backlog orchestration",
+        "self-rewrite executor"
+      ],
+      "capabilities": [
+        "parallel task ownership",
+        "rewrite proposals",
+        "feedback-informed evolution"
+      ],
+      "self_healing": true,
+      "self_learning": true,
+      "self_fixing": true,
+      "last_status_refresh": "2026-06-02T10:58:04.533259",
+      "completion": {
+        "required": [
+          "runtime heartbeat"
+        ],
+        "passed": [
+          "runtime heartbeat"
+        ],
+        "complete": true,
+        "ratio": 1.0
+      }
+    }
+  },
+  "auto_apply_site_feedback": true,
+  "rewrite_backlog_enabled": true,
+  "last_updated": "2026-06-02T10:58:04.533262",
+  "last_daily_evolution_at": "2026-05-02T20:45:57.275676-04:00",
+  "last_daily_evolution_reason": "periodic_refresh_1h",
+  "last_archived_submission_count": 0,
+  "last_downtime_promoted_count": 0,
+  "ai_os_kernel": {
+    "name": "ai_os_kernel_v1",
+    "booted_at": "2026-05-22T12:54:07.462004-04:00",
+    "cycle_count": 67132,
+    "last_cycle_at": "2026-06-02T10:57:33.249488-04:00",
+    "last_cycle_duration_ms": 35569.42,
+    "last_cycle_status": "running",
+    "command_bus": {
+      "enabled": true,
+      "available_commands": [
+        "ask_user",
+        "chat",
+        "comprehensive_scan",
+        "discover_devices",
+        "evolve_website",
+        "learn_screen",
+        "observe_screen",
+        "prepare_deployment",
+        "queue_rewrite",
+        "ref",
+        "rewrite_now",
+        "scan_all_ports",
+        "scan_network",
+        "show_devices",
+        "show_network",
+        "show_traffic",
+        "status",
+        "ui_action",
+        "ui_demo",
+        "ui_script",
+        "user_reply"
+      ],
+      "history_size": 0,
+      "last_command": {}
+    }
+  }
+}

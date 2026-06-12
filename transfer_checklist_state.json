@@ -1,0 +1,12 @@
+{
+  "started_at": "2026-04-02T18:23:10.278355+00:00",
+  "timeout_at": "2026-04-03T00:23:10.278355+00:00",
+  "kraken_btc_address": "35ftF3q9wqjNLQitqVQLx1kJMYim4Efri6",
+  "expected_min_usd_increase": 4.0,
+  "baseline_total_usd": 0.0,
+  "baseline_btc": 0.0,
+  "status": "confirmed",
+  "confirmed_at": "2026-04-02T18:49:00.786977+00:00",
+  "confirmed_total_usd": 7.2166,
+  "confirmed_btc": 0.00010791
+}

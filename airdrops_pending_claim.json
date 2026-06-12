@@ -1,0 +1,38 @@
+[
+  {
+    "source": "airdropalert",
+    "name": "Testnet is live → contribute data and earn $VFSN rewards",
+    "url": "https://airdropalert.com/browse-airdrops/?category=new",
+    "reward_usd_est": 0,
+    "claim_steps": 4,
+    "contract_addr": "",
+    "is_scam": false,
+    "sec_flagged": false,
+    "contract_verified": false,
+    "status": "claiming",
+    "discovered_at": "2026-04-10T15:15:30.382887+00:00",
+    "requires_purchase": false,
+    "requires_gas": false,
+    "id": "1bdba688",
+    "score": 30,
+    "is_free": false
+  },
+  {
+    "source": "airdropalert",
+    "name": "Just added a referral program! Check out full details, Hot farm!",
+    "url": "https://airdropalert.com/browse-airdrops/?category=new",
+    "reward_usd_est": 0,
+    "claim_steps": 4,
+    "contract_addr": "",
+    "is_scam": false,
+    "sec_flagged": false,
+    "contract_verified": false,
+    "status": "claiming",
+    "discovered_at": "2026-04-10T15:15:30.382940+00:00",
+    "requires_purchase": false,
+    "requires_gas": false,
+    "id": "7c92694c",
+    "score": 30,
+    "is_free": false
+  }
+]

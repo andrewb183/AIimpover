@@ -1,0 +1,16 @@
+[
+  {
+    "title": "Implement device discovery",
+    "pseudocode": "# Pseudocode for: Implement device discovery\n# Scan local network, enumerate devices, log results",
+    "status": "pending",
+    "approved": false,
+    "created_at": "2026-05-21T14:00:00"
+  },
+  {
+    "title": "Add self-healing for failed services",
+    "pseudocode": "# Pseudocode for: Add self-healing for failed services\n# Monitor service health, restart if down",
+    "status": "pending",
+    "approved": false,
+    "created_at": "2026-05-21T14:00:00"
+  }
+]
