@@ -1,0 +1,15 @@
+[Unit]
+Description=skynetv2 autonomous agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/pi/Desktop/test/create
+ExecStart=/home/pi/Desktop/test/.venv/bin/python /home/pi/Desktop/test/create/skynetv2_agent.py
+Restart=always
+RestartSec=5
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

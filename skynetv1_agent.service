@@ -1,0 +1,16 @@
+[Unit]
+Description=skynetv1 Autonomous Monitoring Agent
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /home/pi/Desktop/test/create/skynetv1_agent.py
+Restart=always
+RestartSec=10
+User=pi
+WorkingDirectory=/home/pi/Desktop/test/create
+StandardOutput=append:/home/pi/Desktop/test/create/skynetv1_agent.log
+StandardError=append:/home/pi/Desktop/test/create/skynetv1_agent.log
+
+[Install]
+WantedBy=multi-user.target

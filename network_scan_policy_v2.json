@@ -1,0 +1,141 @@
+{
+  "enabled": true,
+  "require_approved_ssid": true,
+  "approved_ssids": [
+    "ATT8wQu5GK",
+    "ATTKd9VhDk",
+    "Charles",
+    "DieMeatbags",
+    "DontTreadOnMe",
+    "EvandKala",
+    "Lloyd",
+    "NETGEAR98",
+    "Ohana",
+    "Pollimicha",
+    "RedBarn",
+    "Scapegoat",
+    "TMOBILE-81A1",
+    "Verizon_J3BG7V",
+    "Verizon_J3BG7V-IoT",
+    "XFSETUP-C10C",
+    "Xfinity Mobile",
+    "xfinitywifi"
+  ],
+  "require_approved_subnet": true,
+  "approved_subnets": [
+    "192.168.1.0/24"
+  ],
+  "scan_sources": [
+    "arp"
+  ],
+  "auto_add_known_ssids": true,
+  "allow_non_active_ssid_probe_once": false,
+  "non_active_probe_attempts": {
+    "ATTKd9VhDk": {
+      "attempted_at": "2026-05-01T11:50:52.923834",
+      "status": "connect_probe_skipped_no_credentials",
+      "note": "No credentials or saved connection available.",
+      "connect_probe_attempted": true,
+      "connect_probe_attempted_at": "2026-05-01T13:29:17.297507"
+    },
+    "EvandKala": {
+      "attempted_at": "2026-05-01T11:50:52.923859",
+      "status": "connect_probe_skipped_no_credentials",
+      "note": "No credentials or saved connection available.",
+      "connect_probe_attempted": true,
+      "connect_probe_attempted_at": "2026-05-01T11:58:34.072727"
+    },
+    "Lloyd": {
+      "attempted_at": "2026-05-01T11:50:52.923863",
+      "status": "connect_probe_skipped_no_credentials",
+      "note": "No credentials or saved connection available.",
+      "connect_probe_attempted": true,
+      "connect_probe_attempted_at": "2026-05-01T13:29:17.340023"
+    },
+    "Ohana": {
+      "attempted_at": "2026-05-01T11:50:52.923866",
+      "status": "connect_probe_skipped_no_credentials",
+      "note": "No credentials or saved connection available.",
+      "connect_probe_attempted": true,
+      "connect_probe_attempted_at": "2026-05-01T11:58:34.121052"
+    },
+    "Scapegoat": {
+      "attempted_at": "2026-05-01T11:50:52.923869",
+      "status": "connect_probe_skipped_no_credentials",
+      "note": "No credentials or saved connection available.",
+      "connect_probe_attempted": true,
+      "connect_probe_attempted_at": "2026-05-01T13:33:35.815525"
+    },
+    "Verizon_J3BG7V": {
+      "attempted_at": "2026-05-01T11:50:52.923872",
+      "status": "connect_probe_skipped_no_credentials",
+      "note": "No credentials or saved connection available.",
+      "connect_probe_attempted": true,
+      "connect_probe_attempted_at": "2026-05-01T11:58:34.167486"
+    },
+    "xfinitywifi": {
+      "attempted_at": "2026-05-01T11:50:52.923874",
+      "status": "connect_probe_skipped_no_credentials",
+      "note": "No credentials or saved connection available.",
+      "connect_probe_attempted": true,
+      "connect_probe_attempted_at": "2026-05-01T12:03:50.024553"
+    },
+    "DontTreadOnMe": {
+      "first_seen_at": "2026-05-01T11:58:33.862270",
+      "status": "connect_probe_skipped_no_credentials",
+      "note": "No credentials or saved connection available.",
+      "connect_probe_attempted": true,
+      "connect_probe_attempted_at": "2026-05-01T11:58:34.002858"
+    },
+    "Charles": {
+      "first_seen_at": "2026-05-12T17:40:02.339589",
+      "status": "connect_probe_skipped_no_credentials",
+      "connect_probe_attempted": true,
+      "connect_probe_attempted_at": "2026-05-12T17:40:02.376719",
+      "note": "No credentials or saved connection available."
+    }
+  },
+  "last_seen_ssids": [
+    "Verizon_J3BG7V-IoT"
+  ],
+  "allow_non_active_connect_probe_once": true,
+  "ssid_credentials": {},
+  "allow_saved_connection_probe": true,
+  "allow_interactive_wifi_prompts": false,
+  "enable_wifi_scans": true,
+  "enable_port_scan": true,
+  "port_scan_interval_sec": 1800,
+  "port_scan_timeout_ms": 250,
+  "port_scan_max_hosts_per_network": 64,
+  "port_scan_max_networks": 8,
+  "network_scan_email_enabled": true,
+  "network_scan_report_dir": "/home/pi/Desktop/test/create/network_reports",
+  "network_scan_email_to": "",
+  "port_scan_ports": [
+    22,
+    53,
+    80,
+    123,
+    135,
+    139,
+    443,
+    445,
+    3306,
+    3389,
+    5432,
+    6379,
+    8080
+  ],
+  "ssid_observed_networks": {},
+  "port_scan_mode": "quick",
+  "enable_traffic_tracing": true,
+  "enable_device_inventory": true,
+  "enable_wireless_signal_scan": true,
+  "enable_bluetooth_scan": true,
+  "bluetooth_scan_timeout_sec": 8,
+  "enable_broadcast_activity_scan": true,
+  "updated_at": "2026-05-12T18:02:21.025524",
+  "wireless_signal_max_entries": 25,
+  "stream_monitor_ip_addresses": [],
+  "stream_monitor_max_connections": 200
+}

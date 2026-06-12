@@ -1,0 +1,91 @@
+{
+  "enabled": true,
+  "require_approved_ssid": true,
+  "approved_ssids": [
+    "ATTKd9VhDk",
+    "DontTreadOnMe",
+    "EvandKala",
+    "Lloyd",
+    "Ohana",
+    "Scapegoat",
+    "Verizon_J3BG7V",
+    "Verizon_J3BG7V-IoT",
+    "xfinitywifi"
+  ],
+  "require_approved_subnet": true,
+  "approved_subnets": [
+    "192.168.1.0/24"
+  ],
+  "scan_sources": [
+    "arp"
+  ],
+  "updated_at": "2026-05-02T20:46:55.789882",
+  "auto_add_known_ssids": true,
+  "allow_non_active_ssid_probe_once": false,
+  "non_active_probe_attempts": {
+    "ATTKd9VhDk": {
+      "attempted_at": "2026-05-01T11:50:52.923834",
+      "status": "connect_probe_skipped_no_credentials",
+      "note": "No credentials or saved connection available.",
+      "connect_probe_attempted": true,
+      "connect_probe_attempted_at": "2026-05-01T13:29:17.297507"
+    },
+    "EvandKala": {
+      "attempted_at": "2026-05-01T11:50:52.923859",
+      "status": "connect_probe_skipped_no_credentials",
+      "note": "No credentials or saved connection available.",
+      "connect_probe_attempted": true,
+      "connect_probe_attempted_at": "2026-05-01T11:58:34.072727"
+    },
+    "Lloyd": {
+      "attempted_at": "2026-05-01T11:50:52.923863",
+      "status": "connect_probe_skipped_no_credentials",
+      "note": "No credentials or saved connection available.",
+      "connect_probe_attempted": true,
+      "connect_probe_attempted_at": "2026-05-01T13:29:17.340023"
+    },
+    "Ohana": {
+      "attempted_at": "2026-05-01T11:50:52.923866",
+      "status": "connect_probe_skipped_no_credentials",
+      "note": "No credentials or saved connection available.",
+      "connect_probe_attempted": true,
+      "connect_probe_attempted_at": "2026-05-01T11:58:34.121052"
+    },
+    "Scapegoat": {
+      "attempted_at": "2026-05-01T11:50:52.923869",
+      "status": "connect_probe_skipped_no_credentials",
+      "note": "No credentials or saved connection available.",
+      "connect_probe_attempted": true,
+      "connect_probe_attempted_at": "2026-05-01T13:33:35.815525"
+    },
+    "Verizon_J3BG7V": {
+      "attempted_at": "2026-05-01T11:50:52.923872",
+      "status": "connect_probe_skipped_no_credentials",
+      "note": "No credentials or saved connection available.",
+      "connect_probe_attempted": true,
+      "connect_probe_attempted_at": "2026-05-01T11:58:34.167486"
+    },
+    "xfinitywifi": {
+      "attempted_at": "2026-05-01T11:50:52.923874",
+      "status": "connect_probe_skipped_no_credentials",
+      "note": "No credentials or saved connection available.",
+      "connect_probe_attempted": true,
+      "connect_probe_attempted_at": "2026-05-01T12:03:50.024553"
+    },
+    "DontTreadOnMe": {
+      "first_seen_at": "2026-05-01T11:58:33.862270",
+      "status": "connect_probe_skipped_no_credentials",
+      "note": "No credentials or saved connection available.",
+      "connect_probe_attempted": true,
+      "connect_probe_attempted_at": "2026-05-01T11:58:34.002858"
+    }
+  },
+  "last_seen_ssids": [
+    "Verizon_J3BG7V-IoT"
+  ],
+  "allow_non_active_connect_probe_once": false,
+  "ssid_credentials": {},
+  "allow_saved_connection_probe": false,
+  "allow_interactive_wifi_prompts": false,
+  "enable_wifi_scans": false
+}
