@@ -1,0 +1,1601 @@
+Todepf_ 5_AI_Apps_forshDISK_SPACE_ANALYSIS.md#!/usr/bin/env python3
+import tkinter as tk
+from tkinter import ttk, messagebox, scrolledtext, filedialog
+import threading
+import queue
+import time
+try:
+    import ujson as json
+except ImportError:
+    import json
+import os
+import re
+import requests
+import random
+import subprocess
+import shutil
+from datetime import datetime
+import signal
+import argparse
+from typing import Any, cast
+try:
+    import redis
+    REDIS_AVAILABLE = True
+except ImportError:
+    redis = None
+    REDIS_AVAILABLE = False
+import sys
+from pathlib import Path
+import fcntl
+from tempfile import NamedTemporaryFile
+import uuid
+
+try:
+    import psycopg2
+    POSTGRES_AVAILABLE = True
+except ImportError:
+    psycopg2 = None
+    POSTGRES_AVAILABLE = False
+
+# Import ConfigLoader for distributed Swarm config
+sys.path.insert(0, str(Path(__file__).parent))
+from config_loader import ConfigLoader
+
+
+class _HeadlessWidget:
+    def config(self, *args, **kwargs):
+        return None
+
+    YMo_wneiyth_w_iATIH_TAoIo_lTso_O2l0s2_62_)p2a6r_par
+    
+    insert(self, *args, **kwargs):
+        return None
+
+    def see(self, *args, **kwargs):
+        return None
+
+    def update_idletasks(self):
+        return None
+
+
+class _HeadlessRoot:
+    def __init__(self):
+        self._stop = threading.Event()
+
+    def title(self, *args, **kwargs):
+        return None
+
+    def geometry(self, *args, **kwargs):
+        return None
+
+    def protocol(self, *args, **kwargs):
+        return None
+
+    def after(self, delay_ms, callback=None, *args):
+        if callback is None:
+            return None
+        if delay_ms <= 0:
+            return callback(*args)
+        timer = threading.Timer(float(delay_ms) / 1000.0, callback, args=args)
+        timer.daemon = True
+        timer.start()
+        return timer
+
+    def mainloop(self):
+        while not self._stop.wait(1.0):
+            pass
+
+    def destroy(self):
+        self._stop.set()
+
+    def quit(self):
+        self._stop.set()
+
+class IdeaGeneratorApp:
+    @staticmethod
+    def _normalize_endpoint(endpoint):
+        if isinstance(endpoint, list):
+            return endpoint[0] if endpoint else ""
+        return endpoint or ""
+
+    def _normalize_model_endpoints(self, endpoints):
+        normalized = {}
+        if not isinstance(endpoints, dict):
+            return normalized
+        for model_name, endpoint in endpoints.items():
+            value = self._normalize_endpoint(endpoint)
+            if value:
+                normalized[model_name] = value
+        return normalized
+
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Background Code Idea Generator")
+        self.root.geometry("600x500")
+        # Safety flags: auto-send ENABLED for continuous processing
+        self.auto_send_enabled = True
+        self.auto_task_drop_enabled = True  # enable dropping task files for worker2
+        
+        # Initialize defaults first
+        self.config = {}
+        self.redis_config = {}
+        self.queue_key = "ideas:queue"
+        self.models = ["qwen2.5-coder"]
+        self.model_runtime_names = {}
+        self.model_endpoints = {"qwen2.5-coder": "http://localhost:11435"}
+        self.redis_client = None
+        self.pg_host = None
+        self.pg_user = None
+        self.pg_pass = None
+        self.pg_db = None
+        
+        self.languages = ["Python", "JavaScript", "Java", "C++", "C#", "Go", "Rust"]
+        self.idea_queue = queue.Queue()
+        self.running = False
+        self.thread = None
+        self.mode = "Generate"
+        self.loaded_ideas = []
+        self.web_ideas_used = []
+        self.shown_ideas = set()  # Track shown idea titles to prevent duplicates
+        self.models_loaded = False
+        self.serve_processes = []
+        self.generation_interval_seconds = int(os.getenv("OUTLINE_INTERVAL_SECONDS", "300"))
+        raw_timeout_seconds = int(os.getenv("OUTLINE_REQUEST_TIMEOUT_SECONDS", "14400"))
+        self.request_timeout_seconds = max(60, min(raw_timeout_seconds, 14400))
+        raw_max_tokens = int(os.getenv("OUTLINE_MODEL_MAX_TOKENS", "1000000"))
+        self.model_max_tokens = max(500000, min(raw_max_tokens, 1000000))
+        raw_fallback_tokens = int(os.getenv("OUTLINE_FALLBACK_MAX_TOKENS", "16384"))
+        self.fallback_max_tokens = max(1024, min(raw_fallback_tokens, 65536))
+        self.archive_large_generations = os.getenv("OUTLINE_ARCHIVE_GENERATIONS", "true").lower() in ("1", "true", "yes")
+        self.generation_chunk_chars = max(4000, int(os.getenv("OUTLINE_CHUNK_CHARS", "12000")))
+        self.generation_archive_dir = Path(__file__).parent / "generation_archives"
+        self.queue_pause_threshold = int(os.getenv("OUTLINE_QUEUE_PAUSE_THRESHOLD", "10"))
+        self.queue_resume_threshold = int(os.getenv("OUTLINE_QUEUE_RESUME_THRESHOLD", "1"))
+        self.paused = False  # Track pause state
+        
+        # GUI Elements
+        frame = ttk.Frame(root)
+        frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        
+        # Mode selection
+        ttk.Label(frame, text="Mode:").grid(row=0, column=0, sticky=tk.W)
+        self.mode_var = tk.StringVar(value="Generate")
+        ttk.Radiobutton(frame, text="Generate New Ideas", variable=self.mode_var, 
+                        value="Generate", command=self.update_mode).grid(row=0, column=1, sticky=tk.W)
+        ttk.Radiobutton(frame, text="Load Ideas from File", variable=self.mode_var, 
+                        value="Load", command=self.update_mode).grid(row=0, column=2, sticky=tk.W)
+        ttk.Radiobutton(frame, text="Fetch Ideas from Web", variable=self.mode_var, 
+                        value="Web", command=self.update_mode).grid(row=0, column=3, sticky=tk.W)
+        
+        # Load button
+        self.load_button = ttk.Button(frame, text="Select Ideas File", 
+                                      command=self.load_ideas_from_file, state=tk.DISABLED)
+        self.load_button.grid(row=1, column=0, columnspan=2, pady=5, sticky=tk.EW)
+        
+        # Start/Stop button
+        self.start_stop_button = ttk.Button(frame, text="Start Generation", 
+                                           command=self.toggle_generation)
+        self.start_stop_button.grid(row=1, column=2, columnspan=2, pady=5, sticky=tk.EW)
+        
+        # Status label
+        self.status_label = ttk.Label(frame, text="Status: Stopped")
+        self.status_label.grid(row=2, column=0, columnspan=4, pady=5, sticky=tk.W)
+        
+        # Log display
+        ttk.Label(frame, text="Generation Log:").grid(row=3, column=0, columnspan=4, sticky=tk.W)
+        self.log_text = scrolledtext.ScrolledText(frame, height=15, width=70)
+        self.log_text.grid(row=4, column=0, columnspan=4, sticky=tk.NSEW, pady=5)
+        
+        frame.grid_rowconfigure(4, weight=1)
+        frame.grid_columnconfigure(0, weight=1)
+
+        self.run_preflight_checks()
+        
+        # NOW load config for distributed Swarm deployment (after log_text widget exists)
+        try:
+            self.config = ConfigLoader.load_config()
+            # Get model endpoints from config (e.g., http://ollama-qwen:11435 or override via env vars)
+            self.model_endpoints = self._normalize_model_endpoints(
+                self.config.get('models', {}).get('endpoints', {})
+            )
+            
+            # Allow environment variable overrides (e.g., OLLAMA_QWEN_ENDPOINT, OLLAMA_DEEPSEEK_ENDPOINT)
+            qwen_override = os.environ.get('OLLAMA_QWEN_ENDPOINT')
+            deepseek_override = os.environ.get('OLLAMA_DEEPSEEK_ENDPOINT')
+            if qwen_override:
+                self.model_endpoints['qwen2.5-coder'] = qwen_override
+            if deepseek_override:
+                self.model_endpoints['deepseek-r1'] = deepseek_override
+            
+            # If running on host (not in Docker), translate Swarm DNS to localhost
+            # (Only translate if we're OUTSIDE Docker, indicated by lack of /.dockerenv)
+            if not os.path.exists('/.dockerenv'):
+                translated_endpoints = {}
+                for model_name, endpoint in self.model_endpoints.items():
+                    if 'ollama-qwen' in endpoint:
+                        translated_endpoints[model_name] = endpoint.replace('ollama-qwen', 'localhost')
+                    elif 'ollama-deepseek' in endpoint:
+                        translated_endpoints[model_name] = endpoint.replace('ollama-deepseek', 'localhost')
+                    else:
+                        translated_endpoints[model_name] = endpoint
+                self.model_endpoints = translated_endpoints
+            else:
+                # Running in Docker - use endpoints as configured
+                pass
+            
+            self.redis_config = self.config.get('redis', {})
+            self.queue_key = self.config.get('queues', {}).get('ideas', self.queue_key)
+            
+            # Initialize Redis for queue publishing
+            redis_host = self.redis_config.get('host', 'localhost')
+            # Only translate redis hostname if running outside Docker
+            if not os.path.exists('/.dockerenv') and redis_host == 'redis':
+                redis_host = 'localhost'  # Use localhost when running on host
+                
+            if REDIS_AVAILABLE:
+                try:
+                    if redis is None:
+                        raise RuntimeError("redis module unavailable")
+                    self.redis_client = redis.Redis(
+                        host=redis_host,
+                        port=self.redis_config.get('port', 6379),
+                        db=self.redis_config.get('db', 0),
+                        decode_responses=True,
+                        socket_timeout=self.redis_config.get('socket_timeout', 10)
+                    )
+                    self.redis_client.ping()  # Test connection
+                    self.log("✓ Connected to Redis for queue publishing")
+                except Exception as redis_err:
+                    self.redis_client = None
+                    self.log(f"⚠ Redis unavailable: {redis_err} (queue publish disabled)")
+            else:
+                self.log("⚠ redis package not installed; queue publishing disabled")
+            self.models = list(self.model_endpoints.keys()) if self.model_endpoints else ["qwen2.5-coder"]
+            
+            # Initialize Postgres connection for storing ideas
+            if POSTGRES_AVAILABLE:
+                self.pg_host = os.environ.get('POSTGRES_HOST', 'postgres')
+                if not os.path.exists('/.dockerenv') and self.pg_host == 'postgres':
+                    self.pg_host = 'localhost'
+                self.pg_user = os.environ.get('POSTGRES_USER', 'codegen')
+                self.pg_pass = os.environ.get('POSTGRES_PASSWORD', 'codegen_pass123')
+                self.pg_db = os.environ.get('POSTGRES_DB', 'codegen_db')
+                try:
+                    if psycopg2 is None:
+                        raise RuntimeError("psycopg2 module unavailable")
+                    test_conn = psycopg2.connect(
+                        host=self.pg_host, user=self.pg_user,
+                        password=self.pg_pass, database=self.pg_db,
+                        connect_timeout=5
+                    )
+                    test_conn.close()
+                    self.log("✓ Connected to Postgres for idea tracking")
+                except Exception as pg_err:
+                    self.log(f"⚠ Postgres unavailable: {pg_err} (ideas will use Redis only)")
+                    self.pg_host = None
+            else:
+                self.log("⚠ psycopg2 not available (install: pip install psycopg2-binary)")
+                self.pg_host = None
+        except Exception as e:
+            self.log(f"⚠ ConfigLoader/Redis initialization failed: {e}, using defaults")
+        
+        # Load existing ideas log
+        self.load_ideas_log()
+        
+        # Start popup checker
+        self.check_popup_queue()
+        
+        # Handle window close
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
+
+        # Check worker2 service status on startup
+        threading.Thread(target=self.ensure_worker2_running, daemon=True).start()
+
+        # Start loading models in background
+        threading.Thread(target=self.load_models, daemon=True).start()
+    
+    def update_mode(self):
+        self.mode = self.mode_var.get()
+        if self.mode == "Load":
+            self.load_button.config(state=tk.NORMAL)
+        else:
+            self.load_button.config(state=tk.DISABLED)
+    
+    def toggle_generation(self):
+        if self.running:
+            self.running = False
+            self.status_label.config(text="Status: Stopping...")
+            if self.thread:
+                self.thread.join(timeout=200)
+            self.start_stop_button.config(text="Start Generation")
+            self.log("Generation stopped")
+            self.status_label.config(text="Status: Stopped")
+        else:
+            if not self.models_loaded:
+                if getattr(self, "headless", False):
+                    self.log("Models are still loading. Please wait.")
+                    return
+                messagebox.showinfo("Info", "Models are still loading. Please wait.")
+                return
+            self.running = True
+            self.thread = threading.Thread(target=self.generation_loop, daemon=True)
+            self.thread.start()
+            self.start_stop_button.config(text="Stop Generation")
+            self.log("Generation started")
+            self.status_label.config(text="Status: Running")
+
+    def generation_loop(self):
+        try:
+            import psutil
+        except ImportError:
+            psutil = None
+        while self.running:
+            if psutil is not None:
+                self.log(f"RAM usage: {psutil.virtual_memory().percent}%")
+            try:
+                if self.mode == "Load":
+                    if self.loaded_ideas:
+                        idea = self.loaded_ideas.pop(0)
+                        self.idea_queue.put(idea)
+                        self.save_idea(idea)
+                        self.log(f"Loaded idea: {idea['title']}")
+                    else:
+                        self.running = False
+                        self.root.after(0, lambda: self.status_label.config(text="Status: No more ideas"))
+                        break
+                elif self.mode == "Web":
+                    idea = self.fetch_web_idea()
+                    if idea:
+                        self.idea_queue.put(idea)
+                        self.save_idea(idea)
+                        self.log(f"Fetched idea from web: {idea['title']}")
+                        # Check if we have a web idea to pass to mk14
+                        self.attempt_mk14_integration(idea)
+                else:
+                    # Check if queue is paused (too many pending ideas)
+                    if not self.check_queue_size_and_pause():
+                        # Queue is full, skip generation this cycle
+                        time.sleep(self.generation_interval_seconds)
+                        continue
+                    
+                    idea = self.generate_idea()
+                    if idea:
+                        self.idea_queue.put(idea)
+                        self.save_idea(idea)
+                        self.log(f"Generated idea: {idea['title']}")
+                
+                time.sleep(self.generation_interval_seconds)
+            except Exception as e:
+                self.log(f"Error in generation loop: {str(e)}")
+                import traceback
+                self.log(f"Traceback: {traceback.format_exc()}")
+                time.sleep(60)
+
+    def check_queue_size_and_pause(self):
+        """
+        Check Redis queue size. Pause generation if >= PAUSE_THRESHOLD.
+        Resume if queue drops to <= RESUME_THRESHOLD.
+        Returns: True if should generate, False if paused.
+        """
+        try:
+            if not self.redis_client:
+                return True  # Default to generating if Redis unavailable
+
+            queue_size = int(cast(Any, self.redis_client.llen(self.queue_key)))
+            # Update status label with queue size
+            self.set_status_text(f"Status: Running | Queue size: {queue_size}")
+
+            # Transition to paused state
+            if queue_size >= self.queue_pause_threshold and not self.paused:
+                self.paused = True
+                self.log(f"⏸️  PAUSED: Queue has {queue_size} ideas (>= {self.queue_pause_threshold})")
+                self.log("        Waiting for workers to process ideas...")
+                return False
+
+            # Transition to resumed state
+            if queue_size <= self.queue_resume_threshold and self.paused:
+                self.paused = False
+                self.log(f"▶️  RESUMED: Queue down to {queue_size} ideas (<= {self.queue_resume_threshold})")
+                return True
+
+            # Already paused, stay paused
+            if self.paused:
+                return False
+
+            # Log queue health while running
+            if queue_size > 0:
+                pct = min(100, int((queue_size / self.queue_pause_threshold) * 100))
+                self.log(f"✓ Queue health: {queue_size}/{self.queue_pause_threshold} ({pct}%)")
+
+            return True  # OK to generate
+
+        except Exception as e:
+            self.log(f"⚠️  Error checking queue size: {e}")
+            return True  # Default to generating if check fails
+
+    def _resolve_runtime_model_name(self, endpoint, model_name, timeout=5):
+        try:
+            tags_response = requests.get(f"{endpoint}/api/tags", timeout=timeout)
+            if tags_response.status_code != 200:
+                return ""
+            tags_data = tags_response.json()
+            model_names = [m.get('name', '') for m in tags_data.get('models', [])]
+            return next((name for name in model_names if model_name == name or model_name in name), "")
+        except Exception:
+            return ""
+
+    def _chunk_text(self, text):
+        if not text:
+            return []
+        return [text[i:i + self.generation_chunk_chars] for i in range(0, len(text), self.generation_chunk_chars)]
+
+    def _sanitize_filename(self, value):
+        cleaned = re.sub(r'[^a-zA-Z0-9._-]+', '_', value.strip())
+        return cleaned[:120] or "untitled"
+
+    def _archive_generation_response(self, model_name, language, prompt, response_text):
+        if not self.archive_large_generations or not response_text:
+            return
+        try:
+            self.generation_archive_dir.mkdir(parents=True, exist_ok=True)
+            run_id = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}"
+            run_dir = self.generation_archive_dir / run_id
+            run_dir.mkdir(parents=True, exist_ok=True)
+
+            prompt_file = run_dir / "prompt.txt"
+            response_file = run_dir / "response_raw.txt"
+            reassembled_file = run_dir / "response_reassembled.txt"
+            chunks_dir = run_dir / "chunks"
+            chunks_dir.mkdir(parents=True, exist_ok=True)
+
+            prompt_file.write_text(prompt, encoding="utf-8")
+            response_file.write_text(response_text, encoding="utf-8")
+
+            chunks = self._chunk_text(response_text)
+            chunk_files = []
+            for idx, chunk in enumerate(chunks, start=1):
+                chunk_name = f"chunk_{idx:04d}.txt"
+                chunk_path = chunks_dir / chunk_name
+                chunk_path.write_text(chunk, encoding="utf-8")
+                chunk_files.append(chunk_name)
+
+            reassembled_file.write_text("".join(chunks), encoding="utf-8")
+
+            manifest = {
+                "run_id": run_id,
+                "timestamp": datetime.now().isoformat(),
+                "model": model_name,
+                "language": language,
+                "max_tokens_requested": self.model_max_tokens,
+                "fallback_max_tokens": self.fallback_max_tokens,
+                "chunk_char_size": self.generation_chunk_chars,
+                "response_char_count": len(response_text),
+                "chunk_count": len(chunks),
+                "chunk_files": chunk_files,
+                "refeed_order": chunk_files,
+                "refeed_instructions": "Feed chunk files to the model in order, then ask it to merge all parts into one final artifact.",
+            }
+
+            manifest_path = run_dir / "manifest.json"
+            with open(manifest_path, 'w', encoding='utf-8') as mf:
+                json.dump(manifest, mf, indent=2)
+
+            self.log(
+                f"✓ Archived generation payload: {run_dir} | chars={len(response_text)} | chunks={len(chunks)}"
+            )
+        except Exception as archive_err:
+            self.log(f"⚠ Could not archive generation payload: {archive_err}")
+
+    def _post_generate(self, endpoint, runtime_model, prompt, max_tokens, timeout_seconds):
+        return requests.post(
+            f"{endpoint}/api/generate",
+            json={
+                "model": runtime_model,
+                "prompt": prompt,
+                "stream": False,
+                "options": {
+                    "num_predict": max_tokens
+                }
+            },
+            timeout=timeout_seconds
+        )
+
+    def generate_idea(self):
+        language = random.choice(self.languages)
+        prompt = f"Generate a creative idea for a new {language} code project. Provide a title, a brief description, and a sample code snippet. Format as: Title: <title>\nDescription: <desc>\nCode:\n```{language.lower()}\n<code>\n```"
+        
+        for model in self.models:
+            endpoint = self.model_endpoints.get(model, "http://localhost:11435")
+            runtime_model = self.model_runtime_names.get(model, model)
+            if runtime_model == model:
+                resolved_name = self._resolve_runtime_model_name(endpoint, model, timeout=8)
+                if resolved_name:
+                    runtime_model = resolved_name
+                    self.model_runtime_names[model] = resolved_name
+            # Health check before POST
+            try:
+                requests.get(endpoint, timeout=2)
+            except Exception:
+                self.log(f"Model endpoint {endpoint} not reachable, skipping")
+                continue
+            try:
+                response = self._post_generate(
+                    endpoint=endpoint,
+                    runtime_model=runtime_model,
+                    prompt=prompt,
+                    max_tokens=self.model_max_tokens,
+                    timeout_seconds=self.request_timeout_seconds,
+                )
+                if response.status_code == 200:
+                    result = response.json().get('response', '')
+                    if result:
+                        self._archive_generation_response(runtime_model, language, prompt, result)
+                        idea = self.parse_idea(result, language)
+                        if idea:
+                            return idea
+                elif response.status_code == 404 and "not found" in response.text.lower():
+                    resolved_name = self._resolve_runtime_model_name(endpoint, model, timeout=10)
+                    if resolved_name and resolved_name != runtime_model:
+                        self.model_runtime_names[model] = resolved_name
+                        self.log(f"↻ Resolved runtime name for {model} -> {resolved_name}, retrying")
+                        retry_response = self._post_generate(
+                            endpoint=endpoint,
+                            runtime_model=resolved_name,
+                            prompt=prompt,
+                            max_tokens=self.model_max_tokens,
+                            timeout_seconds=self.request_timeout_seconds,
+                        )
+                        if retry_response.status_code == 200:
+                            result = retry_response.json().get('response', '')
+                            if result:
+                                self._archive_generation_response(resolved_name, language, prompt, result)
+                                idea = self.parse_idea(result, language)
+                                if idea:
+                                    return idea
+                else:
+                    self.log(f"⚠ Model {runtime_model} at {endpoint} returned status {response.status_code}: {response.text[:200]}")
+            except requests.exceptions.Timeout:
+                resolved_name = self._resolve_runtime_model_name(endpoint, model, timeout=10)
+                if resolved_name:
+                    self.model_runtime_names[model] = resolved_name
+                    runtime_model = resolved_name
+                self.log(f"⚠ Timeout for model {model} at {endpoint}; retrying with fallback token budget")
+                try:
+                    fallback_response = self._post_generate(
+                        endpoint=endpoint,
+                        runtime_model=runtime_model,
+                        prompt=prompt,
+                        max_tokens=self.fallback_max_tokens,
+                        timeout_seconds=min(self.request_timeout_seconds, 1800),
+                    )
+                    if fallback_response.status_code == 200:
+                        result = fallback_response.json().get('response', '')
+                        if result:
+                            self._archive_generation_response(runtime_model, language, prompt, result)
+                            idea = self.parse_idea(result, language)
+                            if idea:
+                                return idea
+                except Exception as fallback_err:
+                    self.log(f"⚠ Fallback generation failed for {model} at {endpoint}: {fallback_err}")
+            except requests.exceptions.ConnectionError:
+                self.log(f"⚠ Connection error for model {model} at {endpoint}, trying next")
+            except Exception as e:
+                self.log(f"⚠ Error with model {model} at {endpoint}: {str(e)}, trying next")
+        
+        self.log("✗ Failed to generate idea from all models")
+        return None
+
+    def fetch_web_idea(self):
+        # Define multiple API sources
+        sources = [
+            {
+                "name": "github",
+                "url": "https://api.github.com/search/repositories?q=language:python&sort=stars&order=desc&per_page=20",
+                "parser": self._parse_github_response
+            },
+            {
+                "name": "gitlab",
+                "url": "https://gitlab.com/api/v4/projects?order_by=stars&sort=desc&per_page=20",
+                "parser": self._parse_gitlab_response
+            },
+            {
+                "name": "libraries.io",
+                "url": "https://libraries.io/api/search?q=&platforms=pypi&sort=stars&per_page=20",
+                "parser": self._parse_librariesio_response
+            },
+            {
+                "name": "bitbucket",
+                "url": "https://api.bitbucket.org/2.0/repositories?q=language=\"python\"&sort=-updated_on&pagelen=20",
+                "parser": self._parse_bitbucket_response
+            }
+        ]
+        
+        # Try sources in random order
+        random.shuffle(sources)
+        
+        for source in sources:
+            try:
+                self.log(f"Fetching from {source['name']}...")
+                response = requests.get(source["url"], timeout=15)
+                
+                if response.status_code == 200:
+                    idea = source["parser"](response.json(), source["name"])
+                    if idea:
+                        return idea
+                else:
+                    self.log(f"⚠ {source['name']} returned status {response.status_code}")
+            except requests.exceptions.Timeout:
+                self.log(f"⚠ Timeout fetching from {source['name']}")
+            except Exception as e:
+                self.log(f"⚠ Error with {source['name']}: {str(e)}")
+        
+        self.log("✗ Failed to fetch ideas from all sources")
+        return None
+    
+    def _parse_github_response(self, data, source_name):
+        """Parse GitHub API response"""
+        repos = data.get('items', [])
+        if not repos:
+            return None
+        
+        available_repos = [r for r in repos if r['id'] not in self.web_ideas_used]
+        if not available_repos:
+            self.web_ideas_used = []
+            available_repos = repos
+        
+        repo = random.choice(available_repos)
+        self.web_ideas_used.append(repo['id'])
+        
+        title = repo['name']
+        description = repo.get('description') or "A trending GitHub repository."
+        url = repo['html_url']
+        code = f"# {title}\n# Source: {url}\n# Description: {description}\n# Add your implementation here\nprint('Starting {title}')\n"
+        
+        return {
+            "title": title,
+            "description": description,
+            "code": code,
+            "language": "Python",
+            "source": source_name,
+            "url": url,
+            "timestamp": time.time()
+        }
+    
+    def _parse_gitlab_response(self, data, source_name):
+        """Parse GitLab API response"""
+        if not data or not isinstance(data, list):
+            return None
+        
+        available_repos = [r for r in data if r['id'] not in self.web_ideas_used]
+        if not available_repos:
+            self.web_ideas_used = []
+            available_repos = data
+        
+        if not available_repos:
+            return None
+        
+        repo = random.choice(available_repos)
+        self.web_ideas_used.append(repo['id'])
+        
+        title = repo.get('name', 'Untitled')
+        description = repo.get('description') or "A trending GitLab project."
+        url = repo.get('web_url', '')
+        code = f"# {title}\n# Source: {url}\n# Description: {description}\n# Add your implementation here\nprint('Starting {title}')\n"
+        
+        return {
+            "title": title,
+            "description": description,
+            "code": code,
+            "language": "Python",
+            "source": source_name,
+            "url": url,
+            "timestamp": time.time()
+        }
+    
+    def _parse_librariesio_response(self, data, source_name):
+        """Parse Libraries.io API response"""
+        items = data if isinstance(data, list) else []
+        if not items:
+            return None
+        
+        available_items = [r for r in items if r.get('name') not in self.web_ideas_used]
+        if not available_items:
+            self.web_ideas_used = []
+            available_items = items
+        
+        if not available_items:
+            return None
+        
+        item = random.choice(available_items)
+        self.web_ideas_used.append(item.get('name'))
+        
+        title = item.get('name', 'Untitled')
+        description = item.get('description') or "A popular Python library."
+        url = item.get('repository_url', '') or item.get('homepage', '')
+        code = f"# {title}\n# Source: {url}\n# Description: {description}\n# Installation: pip install {title}\nimport {title.lower().replace('-', '_')}\n\nprint('Using {title}')\n"
+        
+        return {
+            "title": title,
+            "description": description,
+            "code": code,
+            "language": "Python",
+            "source": source_name,
+            "url": url,
+            "timestamp": time.time()
+        }
+    
+    def _parse_bitbucket_response(self, data, source_name):
+        """Parse Bitbucket API response"""
+        repos = data.get('values', [])
+        if not repos:
+            return None
+        
+        available_repos = [r for r in repos if r.get('uuid') not in self.web_ideas_used]
+        if not available_repos:
+            self.web_ideas_used = []
+            available_repos = repos
+        
+        if not available_repos:
+            return None
+        
+        repo = random.choice(available_repos)
+        self.web_ideas_used.append(repo.get('uuid'))
+        
+        title = repo.get('name', 'Untitled')
+        description = repo.get('description') or "A Bitbucket repository."
+        url = repo.get('links', {}).get('html', {}).get('href', '')
+        code = f"# {title}\n# Source: {url}\n# Description: {description}\n# Add your implementation here\nprint('Starting {title}')\n"
+        
+        return {
+            "title": title,
+            "description": description,
+            "code": code,
+            "language": "Python",
+            "source": source_name,
+            "url": url,
+            "timestamp": time.time()
+        }
+
+    def parse_idea(self, response, language):
+        lines = response.split('\n')
+        title = ""
+        description = ""
+        code = ""
+        in_code = False
+        backtick_count = 0
+        
+        for line in lines:
+            if line.startswith("Title:"):
+                title = line[6:].strip()
+            elif line.startswith("Description:"):
+                description = line[12:].strip()
+            elif line.startswith("Code:"):
+                in_code = True
+            elif in_code:
+                if line.strip().startswith("```"):
+                    backtick_count += 1
+                    if backtick_count == 2:
+                        break
+                else:
+                    code += line + '\n'
+        
+        if title and (description or code):
+            return {
+                "title": title,
+                "description": description,
+                "code": code.strip(),
+                "language": language,
+                "timestamp": time.time()
+            }
+
+        # Fallback parser: tolerate looser model formats and markdown-only responses.
+        title_match = re.search(r'^Title:\s*(.+)$', response, flags=re.IGNORECASE | re.MULTILINE)
+        if title_match:
+            title = title_match.group(1).strip().strip('"')
+
+        desc_match = re.search(r'^Description:\s*(.*)$', response, flags=re.IGNORECASE | re.MULTILINE)
+        if desc_match:
+            description = desc_match.group(1).strip()
+
+        code_match = re.search(r'```[a-zA-Z0-9_+#-]*\n(.*?)```', response, flags=re.DOTALL)
+        if code_match:
+            code = code_match.group(1).strip()
+
+        if not title:
+            for line in lines:
+                stripped = line.strip()
+                if stripped and not stripped.startswith('```'):
+                    title = stripped[:80]
+                    break
+
+        if not description and title:
+            description = "Auto-parsed idea from model output."
+
+        if title and (description or code):
+            if not code:
+                code = f"# Auto-generated fallback snippet for {title}\nprint('Idea generated')"
+            return {
+                "title": title,
+                "description": description,
+                "code": code.strip(),
+                "language": language,
+                "timestamp": time.time()
+            }
+        
+        return None
+
+
+    def save_idea(self, idea):
+        ideas_file = os.path.join(os.path.dirname(__file__), "ideas_log.json")
+        queue_key = self.queue_key
+        ideas = []
+
+        # Disk space check (10MB minimum)
+        if shutil.disk_usage(os.path.dirname(ideas_file)).free < 10 * 1024 * 1024:
+            self.log('Low disk space, skipping idea save')
+            return
+
+        # Use file locking to prevent concurrent corruption
+        lock_file = ideas_file + '.lock'
+        try:
+            with open(lock_file, 'w') as lock_f:
+                fcntl.flock(lock_f.fileno(), fcntl.LOCK_EX)  # Exclusive lock
+                try:
+                    # Read existing ideas with lock held
+                    if os.path.exists(ideas_file) and os.path.getsize(ideas_file) > 0:
+                        try:
+                            with open(ideas_file, 'r') as f:
+                                ideas = json.load(f)
+                        except json.JSONDecodeError as e:
+                            self.log(f"⚠ ideas_log.json corrupted, resetting: {e}")
+                            ideas = []
+                        except Exception as e:
+                            self.log(f"⚠ Could not read ideas_log.json, continuing: {e}")
+                    
+                    # Append new idea
+                    ideas.append(idea)
+                    
+                    # Atomic write with lock held
+                    temp_name = None
+                    try:
+                        with NamedTemporaryFile('w', dir=os.path.dirname(ideas_file), delete=False, suffix='.tmp') as tmp:
+                            json.dump(ideas, tmp, indent=2)
+                            tmp.flush()
+                            os.fsync(tmp.fileno())
+                            temp_name = tmp.name
+                        
+                        try:
+                            os.replace(temp_name, ideas_file)
+                            self.log("✓ Idea saved to ideas_log.json")
+                        except OSError as replace_err:
+                            # Fallback for bind-mount EBUSY errors
+                            if getattr(replace_err, 'errno', None) == 16 or 'resource busy' in str(replace_err).lower():
+                                with open(ideas_file, 'w') as f:
+                                    json.dump(ideas, f, indent=2)
+                                self.log("✓ Idea saved to ideas_log.json (fallback write)")
+                            else:
+                                raise
+                    finally:
+                        if temp_name and os.path.exists(temp_name):
+                            try:
+                                os.unlink(temp_name)
+                            except Exception:
+                                pass
+                finally:
+                    fcntl.flock(lock_f.fileno(), fcntl.LOCK_UN)  # Release lock
+        except Exception as e:
+            self.log(f"⚠ Error saving idea to file (continuing with queue publish): {e}")
+
+        # Redis publish (runs even if file save fails)
+        if self.redis_client:
+            try:
+                self.redis_client.lpush(queue_key, json.dumps(idea))
+                self.log(f"✓ Idea published to Redis queue: {queue_key}")
+            except Exception as redis_err:
+                self.log(f"⚠ Redis publish failed: {redis_err}")
+        else:
+            self.log("⚠ Redis client unavailable; handoff skipped")
+
+        # Postgres INSERT (best effort)
+        if POSTGRES_AVAILABLE and self.pg_host:
+            try:
+                if psycopg2 is None:
+                    raise RuntimeError("psycopg2 module unavailable")
+                conn = psycopg2.connect(
+                    host=self.pg_host, user=self.pg_user,
+                    password=self.pg_pass, database=self.pg_db,
+                    connect_timeout=5
+                )
+                cursor = conn.cursor()
+                
+                # Generate unique idea_id if not present
+                idea_id = idea.get('id') or str(uuid.uuid4())
+                
+                cursor.execute("""
+                    INSERT INTO ideas_queue (idea_id, title, description, language, sample_code, status, attempts)
+                    VALUES (%s, %s, %s, %s, %s, 'pending', 0)
+                    ON CONFLICT (idea_id) DO NOTHING
+                """, (
+                    idea_id,
+                    idea.get('title', ''),
+                    idea.get('description', ''),
+                    idea.get('language', 'Python'),
+                    idea.get('code', '')
+                ))
+                
+                conn.commit()
+                cursor.close()
+                conn.close()
+                self.log(f"✓ Idea saved to Postgres (idea_id: {idea_id[:8]}...)")
+            except Exception as pg_err:
+                self.log(f"⚠ Postgres INSERT failed: {pg_err}")
+        
+        # 3) Best-effort worker check
+        try:
+            self.ensure_worker2_running()
+        except Exception as worker_err:
+            self.log(f"⚠ Worker check failed: {worker_err}")
+    
+    def load_ideas_log(self):
+        ideas_file = os.path.join(os.path.dirname(__file__), "ideas_log.json")
+        lock_file = ideas_file + '.lock'
+        try:
+            # Use file locking to prevent reading corrupted data
+            with open(lock_file, 'w') as lock_f:
+                fcntl.flock(lock_f.fileno(), fcntl.LOCK_SH)  # Shared lock (read)
+                try:
+                    if os.path.exists(ideas_file) and os.path.getsize(ideas_file) > 0:
+                        try:
+                            with open(ideas_file, 'r') as f:
+                                ideas = json.load(f)
+                            self.log(f"Loaded {len(ideas)} ideas from history (showing last 5)")
+                            for idea in ideas[-5:]:
+                                raw_ts = idea.get('timestamp')
+                                if isinstance(raw_ts, (int, float)):
+                                    timestamp = datetime.fromtimestamp(raw_ts).strftime("%Y-%m-%d %H:%M:%S")
+                                else:
+                                    timestamp = "unknown-time"
+                                self.log(f"  • {idea['title']} ({timestamp})")
+                        except json.JSONDecodeError:
+                            # Corrupted file: reset it on next write (don't log to spam)
+                            self.log("⚠ ideas_log.json corrupted on startup (will rebuild from Redis)")
+                    else:
+                        self.log("No ideas history found (file empty or missing)")
+                finally:
+                    fcntl.flock(lock_f.fileno(), fcntl.LOCK_UN)
+        except Exception as e:
+            # File lock errors don't prevent startup
+            if "corrupt" not in str(e).lower():
+                self.log(f"⚠ Error loading ideas log: {str(e)}")
+
+    def check_popup_queue(self):
+        try:
+            while True:
+                idea = self.idea_queue.get_nowait()
+                # Skip if already shown
+                idea_title = idea.get('title', '')
+                if idea_title not in self.shown_ideas:
+                    self.shown_ideas.add(idea_title)
+                    self.show_popup(idea)
+                else:
+                    self.log(f"⏭️ Skipping duplicate idea: {idea_title}")
+        except queue.Empty:
+            pass
+        self.root.after(1000, self.check_popup_queue)
+
+    def load_ideas_from_file(self):
+        file_path = filedialog.askopenfilename(
+            filetypes=[("Text files", "*.txt"), ("JSON files", "*.json")]
+        )
+        if not file_path:
+            return
+        
+        try:
+            with open(file_path, 'r') as f:
+                if file_path.endswith('.json'):
+                    self.loaded_ideas = json.load(f)
+                    if not isinstance(self.loaded_ideas, list):
+                        self.loaded_ideas = [self.loaded_ideas]
+                else:
+                    content = f.read()
+                    blocks = content.split('---')
+                    self.loaded_ideas = []
+                    for block in blocks:
+                        if block.strip():
+                            idea = self.parse_idea(block.strip(), "Python")
+                            if idea:
+                                self.loaded_ideas.append(idea)
+            
+            for idea in self.loaded_ideas:
+                if 'language' not in idea:
+                    idea['language'] = 'Python'
+            
+            self.log(f"✓ Loaded {len(self.loaded_ideas)} ideas from file")
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to load file: {str(e)}")
+            self.log(f"✗ Failed to load file: {str(e)}")
+
+    def show_popup(self, idea):
+        if getattr(self, "headless", False):
+            self.log(
+                f"Headless mode received idea: {idea.get('title', 'untitled')} "
+                f"({idea.get('language', 'Python')})"
+            )
+            return
+        popup = tk.Toplevel(self.root)
+        popup.title("New Code Idea!")
+        popup.geometry("600x500")
+        popup.attributes('-topmost', True)
+        
+        # Title
+        title_label = ttk.Label(popup, text=f"Title: {idea['title']}", 
+                               font=("Arial", 12, "bold"))
+        title_label.pack(pady=5)
+        
+        # Language and metadata
+        meta_text = f"Language: {idea.get('language', 'Python')}"
+        if 'source' in idea:
+            meta_text += f" | Source: {idea['source']}"
+        meta_label = ttk.Label(popup, text=meta_text, font=("Arial", 10))
+        meta_label.pack(pady=2)
+        
+        # Description
+        desc_label = ttk.Label(popup, text=f"Description: {idea['description']}", 
+                              wraplength=550, justify=tk.LEFT)
+        desc_label.pack(pady=5, padx=10, fill=tk.X)
+        
+        # Code display
+        code_frame = ttk.Frame(popup)
+        code_frame.pack(pady=5, padx=10, fill=tk.BOTH, expand=True)
+        
+        ttk.Label(code_frame, text="Sample Code:").pack(anchor=tk.W)
+        
+        code_text = scrolledtext.ScrolledText(code_frame, height=12, width=70)
+        code_text.insert(tk.END, idea['code'])
+        code_text.config(state=tk.DISABLED)
+        code_text.pack(fill=tk.BOTH, expand=True)
+        
+        # Buttons
+        button_frame = ttk.Frame(popup)
+        button_frame.pack(pady=10, fill=tk.X, padx=10)
+        
+        def save_code():
+            lang = idea.get('language', 'Python')
+            ext_map = {
+                "Python": ".py",
+                "JavaScript": ".js",
+                "Java": ".java",
+                "C++": ".cpp",
+                "C#": ".cs",
+                "Go": ".go",
+                "Rust": ".rs"
+            }
+            ext = ext_map.get(lang, ".txt")
+            filename = f"{idea['title'].replace(' ', '_')}{ext}"
+            filepath = os.path.join(os.path.dirname(__file__), filename)
+            
+            try:
+                with open(filepath, 'w') as f:
+                    f.write(idea['code'])
+                messagebox.showinfo("Saved", f"Code saved to {filename}")
+                self.log(f"✓ Code saved: {filename}")
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to save: {str(e)}")
+                self.log(f"✗ Failed to save code: {str(e)}")
+            
+            popup.destroy()
+        
+        def pass_to_mk14():
+            if self._has_mk14():
+                try:
+                    self.log(f"→ Passing idea to mk14: {idea['title']}")
+                    # mk14 implementation will be added later
+                    subprocess.Popen(["python3", "mk14.py", json.dumps(idea)], cwd=os.path.dirname(__file__))
+                    messagebox.showinfo("Success", "Idea passed to mk14 for implementation")
+                except Exception as e:
+                    messagebox.showerror("Error", f"Failed to pass to mk14: {str(e)}")
+                    self.log(f"✗ Failed to pass to mk14: {str(e)}")
+            else:
+                messagebox.showinfo("Info", "mk14 program not available yet")
+            
+            popup.destroy()
+        
+        def dismiss():
+            popup.destroy()
+        
+        ttk.Button(button_frame, text="Save Code", command=save_code).pack(side=tk.LEFT, padx=5)
+        ttk.Button(button_frame, text="Pass to mk14", command=pass_to_mk14).pack(side=tk.LEFT, padx=5)
+        ttk.Button(button_frame, text="Dismiss", command=dismiss).pack(side=tk.RIGHT, padx=5)
+        
+        # Make it non-modal
+        popup.transient(self.root)
+        popup.grab_release()
+    
+    def _has_mk14(self):
+        return os.path.exists(os.path.join(os.path.dirname(__file__), "mk14.py"))
+    
+    def attempt_mk14_integration(self, idea):
+        if not self.auto_send_enabled:
+            self.log("Auto-send to mk14 disabled; skipping pass-through.")
+            return False
+        if self._has_mk14() and idea.get('source') in ['github', 'gitlab', 'bitbucket', 'libraries.io']:
+            try:
+                self.log(f"→ Attempting to pass web idea to mk14: {idea['title']}")
+                subprocess.Popen(["python3", "mk14.py", json.dumps(idea)], cwd=os.path.dirname(__file__))
+                return True
+            except Exception as e:
+                self.log(f"⚠ Could not pass to mk14: {str(e)}")
+                return False
+        return False
+
+    def _append_log_line(self, log_message):
+        self.log_text.insert(tk.END, log_message + "\n")
+        self.log_text.see(tk.END)
+        self.log_text.update_idletasks()
+
+    def set_status_text(self, text):
+        if threading.current_thread() is threading.main_thread():
+            self.status_label.config(text=text)
+        else:
+            self.root.after(0, lambda: self.status_label.config(text=text))
+
+    def run_preflight_checks(self):
+        if not REDIS_AVAILABLE:
+            self.log("⚠ Preflight: redis package missing (pip install redis)")
+        if not self._has_mk14():
+            self.log("⚠ Preflight: mk14.py not found; direct mk14 handoff disabled")
+
+    def log(self, message):
+        timestamp = datetime.now().strftime("%H:%M:%S")
+        log_message = f"[{timestamp}] {message}"
+        print(log_message)
+        if hasattr(self, "log_text") and self.log_text is not None and threading.current_thread() is threading.main_thread():
+            self._append_log_line(log_message)
+        elif hasattr(self, "log_text") and self.log_text is not None:
+            self.root.after(0, lambda: self._append_log_line(log_message))
+    
+    def ensure_worker2_running(self):
+        """Check worker2 Swarm service status without starting any local process."""
+        try:
+            if not shutil.which("docker"):
+                self.log("⚠ Docker CLI not available; cannot check worker2 Swarm service")
+                return
+
+            service_name = ""
+            docker_result = subprocess.run(
+                [
+                    "docker",
+                    "service",
+                    "ls",
+                    "--filter",
+                    "label=com.docker.stack.namespace=worker2",
+                    "--format",
+                    "{{.Name}}",
+                ],
+                capture_output=True,
+                text=True,
+                timeout=5
+            )
+            if docker_result.returncode == 0:
+                service_lines = [line.strip() for line in docker_result.stdout.splitlines() if line.strip()]
+                if service_lines:
+                    service_name = service_lines[0]
+                    self.log(f"✓ Docker Swarm worker2 service is visible as {service_name}")
+                else:
+                    self.log("⚠ Docker Swarm worker2 service not found or not reachable")
+                    self.log("ℹ outline will not start worker2 locally; deploy the worker2 stack instead")
+                    return
+            else:
+                self.log("⚠ Docker Swarm worker2 service not found or not reachable")
+                self.log("ℹ outline will not start worker2 locally; deploy the worker2 stack instead")
+                return
+
+            # Optional: log the service details for visibility without managing it.
+            result = subprocess.run(
+                ["docker", "service", "ps", service_name, "--no-trunc"],
+                capture_output=True,
+                text=True,
+                timeout=5
+            )
+            if result.returncode == 0 and result.stdout.strip():
+                self.log("✓ worker2 task listing retrieved from Swarm")
+            else:
+                self.log("⚠ Could not retrieve worker2 task listing from Swarm")
+        except Exception as e:
+            self.log(f"⚠ Could not check worker2 Swarm status: {str(e)}")
+    
+    def on_closing(self):
+        self.running = False
+        if self.thread:
+            self.thread.join(timeout=20000)
+        for p in self.serve_processes:
+            p.terminate()
+        try:
+            self.root.destroy()
+        except Exception:
+            pass
+
+    def load_models(self):
+        def update_status(text):
+            self.root.after(0, lambda: self.status_label.config(text=text))
+        
+        def enable_button():
+            self.root.after(0, lambda: self.start_stop_button.config(state=tk.NORMAL))
+        
+        def disable_button():
+            self.root.after(0, lambda: self.start_stop_button.config(state=tk.DISABLED))
+        
+        disable_button()
+        update_status("Status: Loading models...")
+
+        if not self.model_endpoints:
+            self.model_endpoints = {"qwen2.5-coder": "http://localhost:11435"}
+        
+        loaded_models = []
+        
+        # Check models via ConfigLoader endpoints (support overlay DNS in Swarm)
+        for model_name, endpoint in self.model_endpoints.items():
+            try:
+                self.log(f"Checking model {model_name} at {endpoint}...")
+                
+                # Health check via /api/tags endpoint
+                tags_response = requests.get(
+                    f"{endpoint}/api/tags",
+                    timeout=3
+                )
+                
+                if tags_response.status_code == 200:
+                    tags_data = tags_response.json()
+                    model_names = [m.get('name', '') for m in tags_data.get('models', [])]
+                    matched_name = next((name for name in model_names if model_name == name or model_name in name), "")
+
+                    if matched_name:
+                        self.model_runtime_names[model_name] = matched_name
+                        self.log(f"✓ Model {model_name} available at {endpoint}")
+                        loaded_models.append(model_name)
+                    else:
+                        self.log(f"✗ Model {model_name} not found at {endpoint}")
+                else:
+                    self.log(f"✗ Service at {endpoint} returned status {tags_response.status_code}")
+                        
+            except requests.exceptions.Timeout:
+                self.log(f"⚠ Timeout checking {model_name} at {endpoint} (service may be busy)")
+                # Still consider it loaded if port responds
+                try:
+                    # Quick TCP check via socket
+                    import socket
+                    from urllib.parse import urlparse
+                    parsed = urlparse(endpoint)
+                    host = parsed.hostname or 'localhost'
+                    port = parsed.port or 11435
+                    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    sock.settimeout(1)
+                    result = sock.connect_ex((host, port))
+                    sock.close()
+                    if result == 0:
+                        resolved_name = self._resolve_runtime_model_name(endpoint, model_name, timeout=10)
+                        self.model_runtime_names[model_name] = resolved_name or model_name
+                        if resolved_name:
+                            self.log(f"✓ {endpoint} is responding; resolved {model_name} -> {resolved_name} while busy")
+                        else:
+                            self.log(f"✓ {endpoint} is responding; using fallback runtime name {model_name} while busy")
+                        loaded_models.append(model_name)
+                except Exception as e:
+                    self.log(f"✗ Error checking {model_name}: {str(e)}")
+            except Exception as e:
+                self.log(f"✗ Error for {model_name} at {endpoint}: {str(e)}")
+        
+        # Update self.models to only loaded ones
+        self.models = loaded_models
+        self.log(f"Loaded {len(self.models)} out of {len(self.model_endpoints)} models")
+        
+        self.models_loaded = True
+        update_status("Status: Models loaded")
+        enable_button()
+
+        # Auto-start generation for headless/container deployments
+        auto_start = os.getenv("OUTLINE_AUTO_START", "false").lower() in ("1", "true", "yes")
+        if auto_start and not self.running and loaded_models:
+            self.log("OUTLINE_AUTO_START enabled; starting generation loop")
+            self.root.after(0, self.toggle_generation)
+        elif auto_start and not loaded_models:
+            self.log("OUTLINE_AUTO_START requested, but no models were loaded; generation will stay stopped")
+
+def main():
+    parser = argparse.ArgumentParser(add_help=True)
+    parser.add_argument("--headless", action="store_true", help="Run without Tk/Xvfb if no display is available")
+    parser.add_argument("--rejoin-from-manifest", dest="manifest", default="", help="Path to generation_archives/*/manifest.json")
+    parser.add_argument(
+        "--rejoin-latest-manifest",
+        "--rejoin-latest",
+        "--latest-manifest",
+        dest="latest_manifest",
+        action="store_true",
+        help="Use the newest manifest under generation_archives",
+    )
+    parser.add_argument("--refeed-endpoint", dest="refeed_endpoint", default="", help="Override model endpoint for refeed request")
+    parser.add_argument("--refeed-model", dest="refeed_model", default="", help="Override model name for refeed request")
+    parser.add_argument("--refeed-timeout", dest="refeed_timeout", type=int, default=None, help="Timeout seconds for refeed request")
+    parser.add_argument("--refeed-max-tokens", dest="refeed_max_tokens", type=int, default=None, help="Token budget for refeed request")
+    args, _unknown = parser.parse_known_args()
+
+    manifest_path = args.manifest
+    if args.latest_manifest and not manifest_path:
+        latest_manifest = find_latest_manifest()
+        if latest_manifest is None:
+            raise SystemExit("No manifest.json files found under generation_archives")
+        manifest_path = str(latest_manifest)
+        print(f"Auto-selected latest manifest: {manifest_path}")
+
+    if manifest_path:
+        raise SystemExit(
+            rejoin_from_manifest(
+                manifest_path=manifest_path,
+                endpoint_override=args.refeed_endpoint or None,
+                model_override=args.refeed_model or None,
+                timeout_override=args.refeed_timeout,
+                max_tokens_override=args.refeed_max_tokens,
+            )
+        )
+
+    if args.headless:
+        raise SystemExit(launch_headless_outline())
+
+    try:
+        root = tk.Tk()
+    except tk.TclError as exc:
+        print(f"No GUI display available ({exc}); starting headless fallback.")
+        raise SystemExit(launch_headless_outline())
+
+    app = IdeaGeneratorApp(root)
+
+    # Handle Ctrl+C gracefully via signal
+    def handle_sigint(signum, frame):
+        try:
+            app.on_closing()
+        except Exception:
+            pass
+        root.quit()
+
+    signal.signal(signal.SIGINT, handle_sigint)
+
+    try:
+        root.mainloop()
+    except KeyboardInterrupt:
+        try:
+            app.on_closing()
+        except Exception:
+            pass
+
+
+def rejoin_from_manifest(manifest_path, endpoint_override=None, model_override=None, timeout_override=None, max_tokens_override=None):
+    manifest_file = Path(manifest_path).expanduser().resolve()
+    if not manifest_file.exists():
+        print(f"Manifest not found: {manifest_file}")
+        return 1
+
+    try:
+        with open(manifest_file, 'r', encoding='utf-8') as f:
+            manifest = json.load(f)
+    except Exception as exc:
+        print(f"Failed to read manifest: {exc}")
+        return 1
+
+    run_dir = manifest_file.parent
+    chunks_dir = run_dir / "chunks"
+    if not chunks_dir.exists():
+        print(f"Chunks directory not found: {chunks_dir}")
+        return 1
+
+    refeed_order = manifest.get("refeed_order") or manifest.get("chunk_files") or []
+    if not refeed_order:
+        refeed_order = sorted([p.name for p in chunks_dir.glob("chunk_*.txt")])
+
+    chunks = []
+    missing = []
+    for name in refeed_order:
+        chunk_path = chunks_dir / name
+        if not chunk_path.exists():
+            missing.append(name)
+            continue
+        chunks.append(chunk_path.read_text(encoding='utf-8'))
+
+    if missing:
+        print(f"Missing chunk files in manifest order: {missing}")
+        return 1
+    if not chunks:
+        print("No chunks found to rejoin.")
+        return 1
+
+    combined = "".join(chunks)
+    combined_file = run_dir / "response_reassembled_from_manifest.txt"
+    combined_file.write_text(combined, encoding='utf-8')
+
+    cfg = ConfigLoader.load_config()
+    endpoints = cfg.get('models', {}).get('endpoints', {})
+    default_endpoint = "http://localhost:11435"
+    qwen_ep = endpoints.get('qwen2.5-coder', default_endpoint)
+    if isinstance(qwen_ep, list):
+        qwen_ep = qwen_ep[0] if qwen_ep else default_endpoint
+    endpoint = endpoint_override or os.getenv("REJOIN_REFED_ENDPOINT") or str(qwen_ep)
+    if 'ollama-qwen' in endpoint and not os.path.exists('/.dockerenv'):
+        endpoint = endpoint.replace('ollama-qwen', 'localhost')
+    if 'ollama-deepseek' in endpoint and not os.path.exists('/.dockerenv'):
+        endpoint = endpoint.replace('ollama-deepseek', 'localhost')
+
+    model_name = model_override or manifest.get("model") or os.getenv("REJOIN_REFED_MODEL") or "qwen2.5-coder"
+    timeout_seconds = timeout_override if timeout_override is not None else int(os.getenv("OUTLINE_REQUEST_TIMEOUT_SECONDS", "14400"))
+    timeout_seconds = max(60, min(timeout_seconds, 14400))
+
+    raw_max_tokens = max_tokens_override if max_tokens_override is not None else int(os.getenv("OUTLINE_MODEL_MAX_TOKENS", "1000000"))
+    max_tokens = max(500000, min(raw_max_tokens, 1000000))
+
+    refeed_prompt = (
+        "You are receiving a previously chunked generation. Reconstruct and merge all content into one coherent final artifact. "
+        "Preserve details, fix only obvious truncation seams, and output the final merged result.\n\n"
+        f"Source metadata: model={manifest.get('model', 'unknown')}, language={manifest.get('language', 'unknown')}, "
+        f"chunks={len(chunks)}\n\n"
+        "BEGIN_REJOINED_CONTENT\n"
+        f"{combined}\n"
+        "END_REJOINED_CONTENT\n"
+    )
+
+    payload = {
+        "model": model_name,
+        "prompt": refeed_prompt,
+        "stream": False,
+        "options": {
+            "num_predict": max_tokens
+        }
+    }
+
+    request_dump = run_dir / "refeed_request.json"
+    with open(request_dump, 'w', encoding='utf-8') as rf:
+        json.dump(payload, rf, indent=2)
+
+    print(f"Rejoining chunks from: {manifest_file}")
+    print(f"Chunk count: {len(chunks)}")
+    print(f"Combined file: {combined_file}")
+    print(f"Refeed endpoint: {endpoint}")
+    print(f"Refeed model: {model_name}")
+    print(f"Refeed timeout: {timeout_seconds}s")
+    print(f"Refeed max tokens (clamped 500000-1000000): {max_tokens}")
+
+    try:
+        response = requests.post(
+            f"{endpoint}/api/generate",
+            json=payload,
+            timeout=timeout_seconds
+        )
+    except Exception as exc:
+        print(f"Refeed request failed: {exc}")
+        return 1
+
+    if response.status_code != 200:
+        print(f"Refeed failed: HTTP {response.status_code}: {response.text[:400]}")
+        return 1
+
+    data = response.json()
+    merged_text = data.get('response', '')
+    if not merged_text:
+        print("Refeed succeeded but returned empty response.")
+        return 1
+
+    output_path = run_dir / "refeed_merged_output.txt"
+    output_path.write_text(merged_text, encoding='utf-8')
+    print(f"Refeed merged output saved: {output_path}")
+    return 0
+
+
+def find_latest_manifest():
+    archive_root = Path(__file__).parent / "generation_archives"
+    if not archive_root.exists():
+        return None
+
+    manifests = sorted(
+        archive_root.glob("*/manifest.json"),
+        key=lambda path: path.stat().st_mtime,
+        reverse=True,
+    )
+    return manifests[0] if manifests else None
+
+
+def launch_headless_outline():
+    root = _HeadlessRoot()
+    app = IdeaGeneratorApp.__new__(IdeaGeneratorApp)
+    app.root = root
+    app.headless = True
+    app.auto_send_enabled = True
+    app.auto_task_drop_enabled = True
+    app.config = {}
+    app.redis_config = {}
+    app.queue_key = "ideas:queue"
+    app.models = ["qwen2.5-coder"]
+    app.model_runtime_names = {}
+    app.model_endpoints = {"qwen2.5-coder": "http://localhost:11435"}
+    app.redis_client = None
+    app.pg_host = None
+    app.pg_user = None
+    app.pg_pass = None
+    app.pg_db = None
+    app.languages = ["Python", "JavaScript", "Java", "C++", "C#", "Go", "Rust"]
+    app.idea_queue = queue.Queue()
+    app.running = False
+    app.thread = None
+    app.mode = "Generate"
+    app.loaded_ideas = []
+    app.web_ideas_used = []
+    app.shown_ideas = set()
+    app.models_loaded = False
+    app.serve_processes = []
+    app.generation_interval_seconds = int(os.getenv("OUTLINE_INTERVAL_SECONDS", "300"))
+    raw_timeout_seconds = int(os.getenv("OUTLINE_REQUEST_TIMEOUT_SECONDS", "14400"))
+    app.request_timeout_seconds = max(60, min(raw_timeout_seconds, 14400))
+    raw_max_tokens = int(os.getenv("OUTLINE_MODEL_MAX_TOKENS", "1000000"))
+    app.model_max_tokens = max(500000, min(raw_max_tokens, 1000000))
+    raw_fallback_tokens = int(os.getenv("OUTLINE_FALLBACK_MAX_TOKENS", "16384"))
+    app.fallback_max_tokens = max(1024, min(raw_fallback_tokens, 65536))
+    app.archive_large_generations = os.getenv("OUTLINE_ARCHIVE_GENERATIONS", "true").lower() in ("1", "true", "yes")
+    app.generation_chunk_chars = max(4000, int(os.getenv("OUTLINE_CHUNK_CHARS", "12000")))
+    app.generation_archive_dir = Path(__file__).parent / "generation_archives"
+    app.queue_pause_threshold = int(os.getenv("OUTLINE_QUEUE_PAUSE_THRESHOLD", "10"))
+    app.queue_resume_threshold = int(os.getenv("OUTLINE_QUEUE_RESUME_THRESHOLD", "1"))
+    app.paused = False
+    app.status_label = _HeadlessWidget()
+    app.start_stop_button = _HeadlessWidget()
+    app.load_button = _HeadlessWidget()
+    app.log_text = _HeadlessWidget()
+
+    app.run_preflight_checks()
+
+    try:
+        app.config = ConfigLoader.load_config()
+        app.model_endpoints = app._normalize_model_endpoints(
+            app.config.get("models", {}).get("endpoints", {})
+        )
+        qwen_override = os.environ.get("OLLAMA_QWEN_ENDPOINT")
+        deepseek_override = os.environ.get("OLLAMA_DEEPSEEK_ENDPOINT")
+        if qwen_override:
+            app.model_endpoints["qwen2.5-coder"] = qwen_override
+        if deepseek_override:
+            app.model_endpoints["deepseek-r1"] = deepseek_override
+        if not os.path.exists("/.dockerenv"):
+            translated_endpoints = {}
+            for model_name, endpoint in app.model_endpoints.items():
+                if "ollama-qwen" in endpoint:
+                    translated_endpoints[model_name] = endpoint.replace("ollama-qwen", "localhost")
+                elif "ollama-deepseek" in endpoint:
+                    translated_endpoints[model_name] = endpoint.replace("ollama-deepseek", "localhost")
+                else:
+                    translated_endpoints[model_name] = endpoint
+            app.model_endpoints = translated_endpoints
+
+        app.redis_config = app.config.get("redis", {})
+        app.queue_key = app.config.get("queues", {}).get("ideas", app.queue_key)
+    except Exception as exc:
+        app.log(f"⚠ ConfigLoader initialization failed in headless mode: {exc}, using defaults")
+
+    app.load_ideas_log()
+    threading.Thread(target=app.ensure_worker2_running, daemon=True).start()
+    threading.Thread(target=app.load_models, daemon=True).start()
+
+    def handle_sigint(signum, frame):
+        try:
+            app.on_closing()
+        except Exception:
+            pass
+        root.quit()
+
+    signal.signal(signal.SIGINT, handle_sigint)
+
+    try:
+        root.mainloop()
+    except KeyboardInterrupt:
+        try:
+            app.on_closing()
+        except Exception:
+            pass
+    return 0
+
+if __name__ == "__main__":
+    main()
